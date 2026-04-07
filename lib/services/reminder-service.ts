@@ -1,0 +1,446 @@
+import { GoalMode, Metric, WaterUnit, WeightUnit } from "@prisma/client";
+
+import { prisma } from "@/lib/db";
+import { getGoalByMetric, getGoalsByUserId } from "@/lib/services/goals-service";
+import { dateStringToStorageDate, getDateRange, getDateStringInTimezone } from "@/lib/utils/dates";
+import { GoalView, METRIC_ORDER } from "@/lib/utils/goals";
+import { toDisplaySleep, toDisplayWater, toDisplayWeight } from "@/lib/utils/units";
+
+type ReminderProfile = {
+  timezone: string;
+  reminderEnabled: boolean;
+  weightUnit: WeightUnit;
+  waterUnit: WaterUnit;
+};
+
+type ReminderTone = "warning" | "info" | "success";
+
+export type ReminderItem = {
+  id: string;
+  tone: ReminderTone;
+  title: string;
+  description: string;
+  actionHref: string;
+  actionLabel: string;
+};
+
+export type ReminderFeed = {
+  enabled: boolean;
+  todayDate: string;
+  reminders: ReminderItem[];
+};
+
+type RecordLike = {
+  sleepHours: number | null;
+  weightKg: number | null;
+  waterMl: number | null;
+};
+
+const metricLabels = {
+  [Metric.SLEEP]: "睡眠",
+  [Metric.WEIGHT]: "体重",
+  [Metric.WATER]: "饮水",
+} as const;
+
+const metricQueryParams = {
+  [Metric.SLEEP]: "sleep",
+  [Metric.WEIGHT]: "weight",
+  [Metric.WATER]: "water",
+} as const;
+
+function getMetricValue(metric: Metric, record: RecordLike | null) {
+  if (!record) {
+    return null;
+  }
+
+  if (metric === Metric.SLEEP) {
+    return record.sleepHours;
+  }
+
+  if (metric === Metric.WEIGHT) {
+    return record.weightKg;
+  }
+
+  return record.waterMl;
+}
+
+function isCompleteRecord(record: RecordLike | null) {
+  if (!record) {
+    return false;
+  }
+
+  return (
+    record.sleepHours !== null &&
+    record.weightKg !== null &&
+    record.waterMl !== null
+  );
+}
+
+function calculateStreak(todayDate: string, recordMap: Map<string, RecordLike>) {
+  let streak = 0;
+
+  for (const date of [...getDateRange(todayDate, 30)].reverse()) {
+    if (date === todayDate || streak > 0) {
+      if (!isCompleteRecord(recordMap.get(date) ?? null)) {
+        break;
+      }
+
+      streak += 1;
+    }
+  }
+
+  return streak;
+}
+
+function calculateMetricMissingStreak(
+  metric: Metric,
+  dates: string[],
+  recordMap: Map<string, RecordLike>,
+) {
+  let streak = 0;
+  let latestDate: string | null = null;
+
+  for (const date of [...dates].reverse()) {
+    const value = getMetricValue(metric, recordMap.get(date) ?? null);
+
+    if (value === null) {
+      streak += 1;
+      latestDate ??= date;
+      continue;
+    }
+
+    break;
+  }
+
+  return {
+    streak,
+    latestDate,
+  };
+}
+
+function calculateGoalMissStreak(
+  goal: GoalView,
+  dates: string[],
+  recordMap: Map<string, RecordLike>,
+) {
+  let streak = 0;
+
+  for (const date of [...dates].reverse()) {
+    const value = getMetricValue(goal.metric, recordMap.get(date) ?? null);
+    const result = evaluateGoal(value, goal);
+
+    if (result === false) {
+      streak += 1;
+      continue;
+    }
+
+    break;
+  }
+
+  return streak;
+}
+
+function evaluateGoal(value: number | null, goal: GoalView) {
+  if (!goal.isActive || value === null) {
+    return null;
+  }
+
+  if (goal.mode === GoalMode.IN_RANGE) {
+    if (goal.minValue === null || goal.maxValue === null) {
+      return null;
+    }
+
+    return value >= goal.minValue && value <= goal.maxValue;
+  }
+
+  if (goal.targetValue === null) {
+    return null;
+  }
+
+  if (goal.mode === GoalMode.AT_MOST) {
+    return value <= goal.targetValue;
+  }
+
+  return value >= goal.targetValue;
+}
+
+function getMetricUnitLabel(metric: Metric, profile: ReminderProfile) {
+  if (metric === Metric.SLEEP) {
+    return "小时";
+  }
+
+  if (metric === Metric.WEIGHT) {
+    return profile.weightUnit === WeightUnit.KG ? "kg" : "lb";
+  }
+
+  return profile.waterUnit === WaterUnit.ML ? "ml" : "oz";
+}
+
+function formatMetricValue(
+  metric: Metric,
+  value: number | null,
+  profile: ReminderProfile,
+) {
+  if (value === null) {
+    return null;
+  }
+
+  if (metric === Metric.SLEEP) {
+    return toDisplaySleep(value);
+  }
+
+  if (metric === Metric.WEIGHT) {
+    return toDisplayWeight(value, profile.weightUnit);
+  }
+
+  return toDisplayWater(value, profile.waterUnit);
+}
+
+function formatGoalDescription(
+  metric: Metric,
+  goal: GoalView,
+  profile: ReminderProfile,
+) {
+  if (!goal.isActive) {
+    return null;
+  }
+
+  const unitLabel = getMetricUnitLabel(metric, profile);
+  const target = formatMetricValue(metric, goal.targetValue, profile);
+  const min = formatMetricValue(metric, goal.minValue, profile);
+  const max = formatMetricValue(metric, goal.maxValue, profile);
+
+  if (goal.mode === GoalMode.IN_RANGE) {
+    return `${min} - ${max} ${unitLabel}`;
+  }
+
+  if (goal.mode === GoalMode.AT_MOST) {
+    return `不超过 ${target} ${unitLabel}`;
+  }
+
+  return `至少 ${target} ${unitLabel}`;
+}
+
+function listMissingMetrics(record: RecordLike | null) {
+  return METRIC_ORDER.filter((metric) => getMetricValue(metric, record) === null);
+}
+
+export async function getReminderFeedByUserId(
+  userId: string,
+  profile: ReminderProfile,
+): Promise<ReminderFeed> {
+  const todayDate = getDateStringInTimezone(profile.timezone);
+
+  if (!profile.reminderEnabled) {
+    return {
+      enabled: false,
+      todayDate,
+      reminders: [],
+    };
+  }
+
+  const dates = getDateRange(todayDate, 30);
+  const recent7Days = dates.slice(-7);
+
+  const [records, goals] = await Promise.all([
+    prisma.dailyRecord.findMany({
+      where: {
+        userId,
+        date: {
+          gte: dateStringToStorageDate(dates[0]),
+          lte: dateStringToStorageDate(todayDate),
+        },
+      },
+      orderBy: {
+        date: "asc",
+      },
+    }),
+    getGoalsByUserId(userId),
+  ]);
+
+  const recordMap = new Map(
+    records.map((record) => [
+      record.date.toISOString().slice(0, 10),
+      {
+        sleepHours: record.sleepHours === null ? null : Number(record.sleepHours),
+        weightKg: record.weightKg === null ? null : Number(record.weightKg),
+        waterMl: record.waterMl,
+      } satisfies RecordLike,
+    ]),
+  );
+
+  const reminders: ReminderItem[] = [];
+  const todayRecord = recordMap.get(todayDate) ?? null;
+  const missingMetrics = listMissingMetrics(todayRecord);
+
+  if (missingMetrics.length === METRIC_ORDER.length) {
+    reminders.push({
+      id: "missing-all-today",
+      tone: "warning",
+      title: "今天还没有开始记录",
+      description: "先补上睡眠、体重和饮水，后面的趋势、达标率和连续记录才会更有参考意义。",
+      actionHref: "/today",
+      actionLabel: "去补录今天的数据",
+    });
+  } else if (missingMetrics.length > 0) {
+    reminders.push({
+      id: "missing-some-today",
+      tone: "warning",
+      title: `今天还有 ${missingMetrics.length} 项待补录`,
+      description: `还差 ${missingMetrics.map((metric) => metricLabels[metric]).join("、")}，补齐后仪表盘的完成度和趋势会更完整。`,
+      actionHref: "/today",
+      actionLabel: "继续补录",
+    });
+  }
+
+  const metricMissingStreaks = METRIC_ORDER.map((metric) => ({
+    metric,
+    ...calculateMetricMissingStreak(metric, recent7Days, recordMap),
+  }))
+    .filter((item) => item.streak >= 2 && item.latestDate !== null)
+    .sort((left, right) => right.streak - left.streak);
+
+  const longestMissingMetric = metricMissingStreaks[0];
+
+  if (longestMissingMetric) {
+    reminders.push({
+      id: `missing-streak-${longestMissingMetric.metric.toLowerCase()}`,
+      tone: "warning",
+      title: `${metricLabels[longestMissingMetric.metric]}已经连续 ${longestMissingMetric.streak} 天没有记录`,
+      description: `连续缺失会让趋势判断出现断层。先把 ${metricLabels[longestMissingMetric.metric]} 补起来，再看近 7 天波动会更准确。`,
+      actionHref:
+        longestMissingMetric.latestDate === todayDate
+          ? "/today"
+          : `/today?date=${longestMissingMetric.latestDate}`,
+      actionLabel: "去补录这项数据",
+    });
+  }
+
+  const activeGoals = goals.filter((goal) => goal.isActive);
+
+  if (activeGoals.length === 0) {
+    reminders.push({
+      id: "goals-not-configured",
+      tone: "info",
+      title: "还没有设置健康目标",
+      description: "设置睡眠、体重和饮水目标后，仪表盘和趋势页才会开始计算达标率。",
+      actionHref: "/settings",
+      actionLabel: "去设置目标",
+    });
+  } else if (activeGoals.length < METRIC_ORDER.length) {
+    reminders.push({
+      id: "goals-partial",
+      tone: "info",
+      title: `还有 ${METRIC_ORDER.length - activeGoals.length} 项未设置目标`,
+      description: "目标越完整，你看到的达标率和提醒提示就越准确。",
+      actionHref: "/settings",
+      actionLabel: "继续完善目标",
+    });
+  }
+
+  const weakestGoal = activeGoals
+    .map((goal) => {
+      const metDays = recent7Days.filter((date) => {
+        const value = getMetricValue(goal.metric, recordMap.get(date) ?? null);
+        return evaluateGoal(value, goal) === true;
+      }).length;
+
+      return {
+        goal,
+        metDays,
+        rate: Math.round((metDays / recent7Days.length) * 1000) / 10,
+      };
+    })
+    .sort((left, right) => left.rate - right.rate)[0];
+
+  if (weakestGoal && weakestGoal.rate < 50) {
+    reminders.push({
+      id: `goal-underperforming-${weakestGoal.goal.metric.toLowerCase()}`,
+      tone: "warning",
+      title: `最近 7 天${metricLabels[weakestGoal.goal.metric]}达标率偏低`,
+      description: `最近 7 天只有 ${weakestGoal.metDays}/7 天达到“${formatGoalDescription(
+        weakestGoal.goal.metric,
+        weakestGoal.goal,
+        profile,
+      )}”，可以先把目标调到更容易坚持的区间，或者先保证每天补录。`,
+      actionHref: `/trends?metric=${metricQueryParams[weakestGoal.goal.metric]}&days=7`,
+      actionLabel: "查看趋势",
+    });
+  }
+
+  const goalMissStreaks = activeGoals
+    .map((goal) => ({
+      goal,
+      streak: calculateGoalMissStreak(goal, recent7Days, recordMap),
+    }))
+    .filter((item) => item.streak >= 3)
+    .sort((left, right) => right.streak - left.streak);
+
+  const longestGoalMiss = goalMissStreaks[0];
+
+  if (longestGoalMiss) {
+    reminders.push({
+      id: `goal-miss-streak-${longestGoalMiss.goal.metric.toLowerCase()}`,
+      tone: "info",
+      title: `${metricLabels[longestGoalMiss.goal.metric]}已经连续 ${longestGoalMiss.streak} 天未达标`,
+      description: `最近几天这项指标都没有达到“${formatGoalDescription(
+        longestGoalMiss.goal.metric,
+        longestGoalMiss.goal,
+        profile,
+      )}”。可以先把目标调得更容易坚持，或者优先观察这项指标的日常节奏。`,
+      actionHref: `/trends?metric=${metricQueryParams[longestGoalMiss.goal.metric]}&days=7`,
+      actionLabel: "查看最近 7 天趋势",
+    });
+  }
+
+  const streakDays = calculateStreak(todayDate, recordMap);
+
+  if (streakDays >= 3) {
+    reminders.push({
+      id: "consistency-streak",
+      tone: "success",
+      title: `你已经连续完整记录 ${streakDays} 天`,
+      description: "继续保持现在的节奏，连续数据会让趋势判断更稳定，也更容易看出行为变化带来的影响。",
+      actionHref: "/dashboard",
+      actionLabel: "查看仪表盘",
+    });
+  }
+
+  if (reminders.length < 3 && activeGoals.length > 0) {
+    const bestGoal = activeGoals
+      .map((goal) => {
+        const metDays = recent7Days.filter((date) => {
+          const value = getMetricValue(goal.metric, recordMap.get(date) ?? null);
+          return evaluateGoal(value, goal) === true;
+        }).length;
+
+        return {
+          goal,
+          metDays,
+          rate: Math.round((metDays / recent7Days.length) * 1000) / 10,
+        };
+      })
+      .sort((left, right) => right.rate - left.rate)[0];
+
+    if (bestGoal && bestGoal.rate >= 70) {
+      reminders.push({
+        id: `weekly-highpoint-${bestGoal.goal.metric.toLowerCase()}`,
+        tone: "success",
+        title: `最近 7 天最稳定的是${metricLabels[bestGoal.goal.metric]}`,
+        description: `${bestGoal.metDays}/7 天达到“${formatGoalDescription(
+          bestGoal.goal.metric,
+          bestGoal.goal,
+          profile,
+        )}”。这是你当前最容易保持的一项。`,
+        actionHref: `/trends?metric=${metricQueryParams[bestGoal.goal.metric]}&days=7`,
+        actionLabel: "查看这项趋势",
+      });
+    }
+  }
+
+  return {
+    enabled: true,
+    todayDate,
+    reminders: reminders.slice(0, 3),
+  };
+}

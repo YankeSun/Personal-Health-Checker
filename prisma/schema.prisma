@@ -1,0 +1,100 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Metric {
+  SLEEP
+  WEIGHT
+  WATER
+}
+
+enum GoalMode {
+  AT_LEAST
+  AT_MOST
+  IN_RANGE
+}
+
+enum WeightUnit {
+  KG
+  LB
+}
+
+enum WaterUnit {
+  ML
+  OZ
+}
+
+model User {
+  id           String       @id @default(cuid())
+  email        String       @unique
+  passwordHash String
+  createdAt    DateTime     @default(now())
+  updatedAt    DateTime     @updatedAt
+  profile      UserProfile?
+  dailyRecords DailyRecord[]
+  goals        Goal[]
+  sessions     Session[]
+}
+
+model UserProfile {
+  id              String     @id @default(cuid())
+  userId          String     @unique
+  displayName     String
+  timezone        String     @default("Asia/Shanghai")
+  weightUnit      WeightUnit @default(KG)
+  waterUnit       WaterUnit  @default(ML)
+  reminderEnabled Boolean    @default(true)
+  createdAt       DateTime   @default(now())
+  updatedAt       DateTime   @updatedAt
+  user            User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model Session {
+  id            String   @id @default(cuid())
+  userId        String
+  sessionToken  String   @unique
+  expiresAt     DateTime
+  createdAt     DateTime @default(now())
+  lastAccessedAt DateTime @default(now())
+  user          User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([expiresAt])
+}
+
+model DailyRecord {
+  id         String   @id @default(cuid())
+  userId     String
+  date       DateTime
+  sleepHours Decimal? @db.Decimal(4, 2)
+  weightKg   Decimal? @db.Decimal(5, 2)
+  waterMl    Int?
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, date])
+  @@index([userId, date])
+}
+
+model Goal {
+  id          String    @id @default(cuid())
+  userId      String
+  metric      Metric
+  mode        GoalMode
+  targetValue Decimal?  @db.Decimal(7, 2)
+  minValue    Decimal?  @db.Decimal(7, 2)
+  maxValue    Decimal?  @db.Decimal(7, 2)
+  isActive    Boolean   @default(true)
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, metric])
+  @@index([userId])
+}
