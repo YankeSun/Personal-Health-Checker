@@ -26,3 +26,8 @@
 
 - URL: https://health-tracker-403pehko3-yankesuns-projects.vercel.app
 - Compared with previous deployment: 移除底部三张说明卡；把产品引导收进首屏右侧，改成更图形化的核心记录与使用节奏展示，减少解释型文案。
+
+## 2026-04-08 14:51:56 CST · Preview
+
+- URL: https://health-tracker-kbuitpt9z-yankesuns-projects.vercel.app
+- Compared with previous deployment: 基于已推送到 GitHub 的 main 分支重新部署；包含入口页文案收紧与更成熟的产品表达。
