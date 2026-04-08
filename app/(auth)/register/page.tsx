@@ -14,8 +14,8 @@ export default async function RegisterPage() {
   return (
     <main className="flex min-h-screen items-center justify-center px-6 py-12">
       <AuthCard
-        title="创建你的健康账号"
-        description="把每天的记录、目标和偏好集中到同一个健康空间里，持续形成清晰的长期趋势。"
+        title="创建账号"
+        description="从今天开始。"
       >
         <RegisterForm />
       </AuthCard>

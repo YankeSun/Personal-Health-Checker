@@ -19,12 +19,12 @@ export function AuthCard({ title, description, children }: AuthCardProps) {
       </div>
       <div className="mt-8">{children}</div>
       <div className="mt-6 flex items-center justify-between gap-4 text-sm">
-        <p className="text-slate-500">还没准备好登录？</p>
+        <p className="text-slate-500">先看看产品。</p>
         <AppLink
           className="font-medium text-emerald-700 transition hover:text-emerald-800"
           href="/experience"
         >
-          查看产品界面
+          进入体验
         </AppLink>
       </div>
     </div>

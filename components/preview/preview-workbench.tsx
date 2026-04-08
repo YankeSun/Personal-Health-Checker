@@ -160,7 +160,7 @@ export function PreviewWorkbench({ screen, metric, days }: PreviewWorkbenchProps
             <p className="text-xs font-semibold uppercase tracking-[0.22em] text-emerald-700">
               Health Tracker
             </p>
-            <p className="text-sm text-slate-700">睡眠、体重、饮水，稳定记录。</p>
+            <p className="text-sm text-slate-700">只记三项。每天继续。</p>
           </div>
           <div className="flex flex-wrap gap-3">
             <AppLink
@@ -182,18 +182,18 @@ export function PreviewWorkbench({ screen, metric, days }: PreviewWorkbenchProps
           <div className="grid gap-8 lg:grid-cols-[1.2fr_0.8fr]">
             <div className="space-y-6">
               <div className="inline-flex rounded-full border border-emerald-300/70 bg-white/80 px-4 py-2 text-xs font-semibold uppercase tracking-[0.24em] text-emerald-800">
-                Personal Wellness
+                Daily Rhythm
               </div>
               <div className="space-y-4">
                 <h1 className="max-w-3xl text-5xl leading-tight text-slate-950 [font-family:var(--font-display)] sm:text-6xl">
-                  把健康记录
+                  先记下。
                   <br />
-                  变成有节奏的
+                  再看见。
                   <br />
-                  每日观察
+                  然后调整。
                 </h1>
                 <p className="max-w-2xl text-base leading-8 text-slate-700">
-                  从今天的记录到一周、一月的趋势，这里用同一套页面语言串起睡眠、体重和饮水三项核心指标，让每天的状态变化变得更容易理解。
+                  今天开始。变化会自己出现。
                 </p>
               </div>
               <div className="flex flex-wrap gap-3">
@@ -219,7 +219,7 @@ export function PreviewWorkbench({ screen, metric, days }: PreviewWorkbenchProps
                     Core Records
                   </p>
                   <span className="rounded-full bg-emerald-100 px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.18em] text-emerald-800">
-                    Daily
+                    3 Items
                   </span>
                 </div>
                 <div className="mt-4 space-y-3">
@@ -263,7 +263,7 @@ export function PreviewWorkbench({ screen, metric, days }: PreviewWorkbenchProps
                     Rhythm Loop
                   </p>
                   <span className="rounded-full bg-slate-900 px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.18em] text-white">
-                    Flow
+                    Daily
                   </span>
                 </div>
                 <div className="mt-5 flex items-center justify-between gap-3">
@@ -280,7 +280,7 @@ export function PreviewWorkbench({ screen, metric, days }: PreviewWorkbenchProps
                         <p className="mt-2 text-sm font-semibold text-slate-900">{item.label}</p>
                         <div className="mt-3 flex justify-center">
                           <span className={`rounded-full px-3 py-1 text-[11px] font-semibold tracking-[0.12em] ${item.accent}`}>
-                            Active
+                            Now
                           </span>
                         </div>
                       </div>
