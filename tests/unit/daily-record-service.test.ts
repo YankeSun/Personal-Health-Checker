@@ -5,6 +5,7 @@ import { prisma } from "@/lib/db";
 import {
   deleteDailyRecordByUserAndDate,
   getDailyRecordByUserAndDate,
+  getLatestMetricDefaultsByUserId,
   getRecentDailyRecordSummariesByUserId,
   upsertDailyRecordByUserId,
 } from "@/lib/services/daily-record-service";
@@ -216,6 +217,51 @@ describe("daily-record-service", () => {
         waterRecorded: true,
       },
     ]);
+  });
+
+  it("loads the latest recorded defaults for quick fill", async () => {
+    vi.mocked(prisma.dailyRecord.findMany).mockResolvedValue([
+      {
+        id: "record_3",
+        userId: "user_1",
+        date: new Date("2026-04-04T00:00:00.000Z"),
+        sleepHours: null,
+        weightKg: new Prisma.Decimal("63.00"),
+        waterMl: null,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      },
+      {
+        id: "record_2",
+        userId: "user_1",
+        date: new Date("2026-04-03T00:00:00.000Z"),
+        sleepHours: new Prisma.Decimal("7.2"),
+        weightKg: null,
+        waterMl: 2200,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      },
+    ]);
+
+    const defaults = await getLatestMetricDefaultsByUserId("user_1", "2026-04-04");
+
+    expect(prisma.dailyRecord.findMany).toHaveBeenCalledWith({
+      where: {
+        userId: "user_1",
+        date: {
+          gte: new Date("2026-03-06T00:00:00.000Z"),
+          lte: new Date("2026-04-04T00:00:00.000Z"),
+        },
+      },
+      orderBy: {
+        date: "desc",
+      },
+    });
+    expect(defaults).toEqual({
+      sleepHours: 7.2,
+      weightKg: 63,
+      waterMl: 2200,
+    });
   });
 
   it("deletes one daily record by user and date", async () => {

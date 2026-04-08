@@ -2,6 +2,7 @@ import { TodayRecordForm } from "@/components/forms/today-record-form";
 import { requireUser } from "@/lib/auth/guards";
 import {
   getDailyRecordByUserAndDate,
+  getLatestMetricDefaultsByUserId,
   getRecentDailyRecordSummariesByUserId,
 } from "@/lib/services/daily-record-service";
 import { getReminderFeedByUserId } from "@/lib/services/reminder-service";
@@ -18,6 +19,7 @@ import { normalizeRecordDateForTimezone } from "@/lib/validations/record-date";
 type TodayPageProps = {
   searchParams: Promise<{
     date?: string;
+    welcome?: string;
   }>;
 };
 
@@ -36,20 +38,19 @@ export default async function TodayPage({ searchParams }: TodayPageProps) {
     profile.timezone,
   );
   const bounds = getEditableRecordDateBounds(profile.timezone);
-  const [record, reminderFeed] = await Promise.all([
+  const [record, reminderFeed, recentRecords, latestDefaults] = await Promise.all([
     getDailyRecordByUserAndDate(user.id, selectedDate),
     getReminderFeedByUserId(user.id, profile),
+    getRecentDailyRecordSummariesByUserId(user.id, selectedDate, 14),
+    getLatestMetricDefaultsByUserId(user.id, selectedDate),
   ]);
-  const recentRecords = await getRecentDailyRecordSummariesByUserId(
-    user.id,
-    selectedDate,
-    14,
-  );
   const isToday = selectedDate === todayDate;
   const previousDate =
     selectedDate > bounds.minDate ? shiftDateString(selectedDate, -1) : null;
   const nextDate =
     selectedDate < bounds.maxDate ? shiftDateString(selectedDate, 1) : null;
+  const hasAnyHistory = recentRecords.some((item) => item.hasAnyRecord);
+  const showWelcome = isToday && !record && (resolvedSearchParams.welcome === "1" || !hasAnyHistory);
 
   return (
     <TodayRecordForm
@@ -63,6 +64,19 @@ export default async function TodayPage({ searchParams }: TodayPageProps) {
         weightUnit: profile.weightUnit,
         waterUnit: profile.waterUnit,
         reminderEnabled: profile.reminderEnabled,
+      }}
+      onboarding={
+        showWelcome
+          ? {
+              title: "先记今天",
+              description: "把三项核心记录补齐，再去看第一张仪表盘。",
+            }
+          : undefined
+      }
+      quickFillDefaults={{
+        sleepHours: toDisplaySleep(latestDefaults.sleepHours),
+        weight: toDisplayWeight(latestDefaults.weightKg, profile.weightUnit),
+        water: toDisplayWater(latestDefaults.waterMl, profile.waterUnit),
       }}
       hasExistingRecord={Boolean(record)}
       dateControls={{

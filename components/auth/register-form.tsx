@@ -43,7 +43,7 @@ export function RegisterForm() {
         return;
       }
 
-      router.push("/dashboard", { scroll: false });
+      router.push("/today?welcome=1", { scroll: false });
       router.refresh();
     } catch {
       setError("网络异常，请稍后再试");

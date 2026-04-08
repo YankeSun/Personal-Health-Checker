@@ -6,6 +6,7 @@ import {
   dateStringToStorageDate,
   getDateRange,
   getDateStringInTimezone,
+  shiftDateString,
   storageDateToDateString,
 } from "@/lib/utils/dates";
 
@@ -25,6 +26,12 @@ export type DailyRecordSummaryView = {
   sleepRecorded: boolean;
   weightRecorded: boolean;
   waterRecorded: boolean;
+};
+
+export type LatestMetricDefaultsView = {
+  sleepHours: number | null;
+  weightKg: number | null;
+  waterMl: number | null;
 };
 
 function getCompletedMetricCount(record: Pick<
@@ -128,6 +135,56 @@ export async function getRecentDailyRecordSummariesByUserId(
       waterRecorded: record?.waterMl != null,
     } satisfies DailyRecordSummaryView;
   });
+}
+
+export async function getLatestMetricDefaultsByUserId(
+  userId: string,
+  endDate: string,
+  lookbackDays = 30,
+) {
+  const startDate = shiftDateString(endDate, -(lookbackDays - 1));
+  const records = await prisma.dailyRecord.findMany({
+    where: {
+      userId,
+      date: {
+        gte: dateStringToStorageDate(startDate),
+        lte: dateStringToStorageDate(endDate),
+      },
+    },
+    orderBy: {
+      date: "desc",
+    },
+  });
+
+  const defaults: LatestMetricDefaultsView = {
+    sleepHours: null,
+    weightKg: null,
+    waterMl: null,
+  };
+
+  for (const record of records) {
+    if (defaults.sleepHours === null && record.sleepHours !== null) {
+      defaults.sleepHours = Number(record.sleepHours);
+    }
+
+    if (defaults.weightKg === null && record.weightKg !== null) {
+      defaults.weightKg = Number(record.weightKg);
+    }
+
+    if (defaults.waterMl === null && record.waterMl !== null) {
+      defaults.waterMl = record.waterMl;
+    }
+
+    if (
+      defaults.sleepHours !== null &&
+      defaults.weightKg !== null &&
+      defaults.waterMl !== null
+    ) {
+      break;
+    }
+  }
+
+  return defaults;
 }
 
 export async function upsertDailyRecordByUserId(
