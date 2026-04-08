@@ -1,11 +1,14 @@
 import { ReactNode } from "react";
 
+import { EmailVerificationBanner } from "@/components/auth/email-verification-banner";
 import { AppLink } from "@/components/shared/app-link";
 import { AppNavigation } from "@/components/shared/app-navigation";
 import { Logo } from "@/components/shared/logo";
 
 type AppShellProps = {
   userName: string;
+  userEmail: string;
+  emailVerified: boolean;
   children: ReactNode;
 };
 
@@ -17,7 +20,12 @@ const navigation = [
   { href: "/settings", label: "设置与目标", shortLabel: "设置" },
 ];
 
-export function AppShell({ userName, children }: AppShellProps) {
+export function AppShell({
+  userName,
+  userEmail,
+  emailVerified,
+  children,
+}: AppShellProps) {
   return (
     <div className="min-h-screen bg-[linear-gradient(180deg,#f7f7f4_0%,#eef6f0_50%,#f4f8fc_100%)]">
       <header className="sticky top-0 z-30 border-b border-white/70 bg-white/82 backdrop-blur">
@@ -43,7 +51,10 @@ export function AppShell({ userName, children }: AppShellProps) {
           </div>
         </div>
       </header>
-      <main className="mx-auto max-w-6xl px-6 py-8 pb-28 md:py-10 md:pb-10">{children}</main>
+      <main className="mx-auto max-w-6xl space-y-6 px-6 py-8 pb-28 md:py-10 md:pb-10">
+        {emailVerified ? null : <EmailVerificationBanner email={userEmail} />}
+        {children}
+      </main>
     </div>
   );
 }

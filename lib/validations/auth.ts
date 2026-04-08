@@ -18,5 +18,23 @@ export const loginSchema = z.object({
   password: z.string().min(1, "请输入密码"),
 });
 
+export const forgotPasswordSchema = z.object({
+  email: z.string().trim().email("请输入有效邮箱地址"),
+});
+
+export const resetPasswordSchema = z.object({
+  token: z.string().trim().min(1, "缺少重置令牌"),
+  password: z
+    .string()
+    .min(8, "密码至少需要 8 位")
+    .max(72, "密码长度不能超过 72 位"),
+});
+
+export const tokenSchema = z.object({
+  token: z.string().trim().min(1, "缺少令牌"),
+});
+
 export type RegisterInput = z.infer<typeof registerSchema>;
 export type LoginInput = z.infer<typeof loginSchema>;
+export type ForgotPasswordInput = z.infer<typeof forgotPasswordSchema>;
+export type ResetPasswordInput = z.infer<typeof resetPasswordSchema>;

@@ -9,6 +9,12 @@ export default async function AppLayout({
   const user = await requireUser();
 
   return (
-    <AppShell userName={user.profile?.displayName ?? user.email}>{children}</AppShell>
+    <AppShell
+      userName={user.profile?.displayName ?? user.email}
+      userEmail={user.email}
+      emailVerified={Boolean(user.emailVerifiedAt)}
+    >
+      {children}
+    </AppShell>
   );
 }

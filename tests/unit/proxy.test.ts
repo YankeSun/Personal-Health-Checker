@@ -23,6 +23,14 @@ describe("proxy", () => {
     expect(response?.status).toBe(200);
   });
 
+  it("treats history as a protected route", () => {
+    const request = new NextRequest("http://localhost:3000/history");
+    const response = proxy(request);
+
+    expect(response?.status).toBe(307);
+    expect(response?.headers.get("location")).toBe("http://localhost:3000/login");
+  });
+
   it("redirects authenticated users away from auth routes", () => {
     const request = new NextRequest("http://localhost:3000/login", {
       headers: {
@@ -35,5 +43,12 @@ describe("proxy", () => {
     expect(response?.headers.get("location")).toBe(
       "http://localhost:3000/dashboard",
     );
+  });
+
+  it("allows unauthenticated users to access forgot-password", () => {
+    const request = new NextRequest("http://localhost:3000/forgot-password");
+    const response = proxy(request);
+
+    expect(response?.status).toBe(200);
   });
 });

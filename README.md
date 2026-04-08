@@ -5,6 +5,7 @@
 - Next.js App Router + TypeScript + Tailwind
 - Prisma + PostgreSQL schema
 - 邮箱密码注册 / 登录 / 退出
+- 邮箱验证提醒、忘记密码、重置密码
 - HttpOnly Cookie + 服务端 Session
 - `/dashboard`、`/today`、`/trends`、`/settings` 受保护
 - 设置页支持读取和保存个人资料（昵称、时区、单位、提醒开关）
@@ -92,6 +93,7 @@ npm run smoke
 
 - 前端和 API：Vercel
 - 数据库：Neon PostgreSQL
+- 邮件发送：Resend（可选，但建议用于邮箱验证和密码重置）
 
 最小部署步骤：
 
@@ -99,6 +101,8 @@ npm run smoke
 2. 在 Vercel 导入仓库，并配置环境变量：
    - `DATABASE_URL`
    - `SESSION_SECRET`
+   - `EMAIL_FROM`
+   - `RESEND_API_KEY`
 3. 首次部署前执行一次数据库结构同步：
 
 ```bash
@@ -112,6 +116,8 @@ npm run prisma:seed
 ```
 
 项目已经加了 `postinstall` 自动执行 `prisma generate`，适合直接部署到 Vercel。
+
+如果暂时没有配置 `EMAIL_FROM` 和 `RESEND_API_KEY`，账号安全流程仍会创建验证 / 重置令牌，但邮件只会走服务端 fallback 日志，不会真正发送到用户邮箱。
 
 如果你要从本地继续发到同一个 Vercel 项目，并且给每次 deployment 留下简短说明，可以用：
 

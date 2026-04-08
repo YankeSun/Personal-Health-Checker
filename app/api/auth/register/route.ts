@@ -1,6 +1,7 @@
 import { ZodError } from "zod";
 
 import { createSession } from "@/lib/auth/session";
+import { issueEmailVerification } from "@/lib/services/account-security-service";
 import { registerUser, AuthError } from "@/lib/services/auth-service";
 import { jsonError, getZodErrorMessage } from "@/lib/utils/api";
 import { registerSchema } from "@/lib/validations/auth";
@@ -11,12 +12,18 @@ export async function POST(request: Request) {
     const user = await registerUser(body);
 
     await createSession(user.id);
+    try {
+      await issueEmailVerification(user.id, new URL(request.url).origin);
+    } catch (emailError) {
+      console.error("issue verification email error", emailError);
+    }
 
     return Response.json({
       user: {
         id: user.id,
         email: user.email,
         displayName: user.profile?.displayName,
+        emailVerified: Boolean(user.emailVerifiedAt),
       },
     });
   } catch (error) {
