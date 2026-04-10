@@ -20,6 +20,7 @@ export type RecordHistoryRow = {
   completedMetrics: number;
   hasAnyRecord: boolean;
   isComplete: boolean;
+  isBackfilled: boolean;
 };
 
 export type RecordHistoryWindow = {
@@ -76,6 +77,7 @@ export async function getRecordHistoryWindowByUserId(
       completedMetrics: 0,
       hasAnyRecord: false,
       isComplete: false,
+      isBackfilled: record?.isBackfilled ?? false,
     } satisfies RecordHistoryRow;
 
     const completedMetrics = getCompletedMetrics(row);

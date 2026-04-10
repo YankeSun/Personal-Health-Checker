@@ -16,6 +16,7 @@ export type DailyRecordView = {
   sleepHours: number | null;
   weightKg: number | null;
   waterMl: number | null;
+  isBackfilled: boolean;
 };
 
 export type DailyRecordSummaryView = {
@@ -54,6 +55,7 @@ function serializeDailyRecord(record: {
   sleepHours: Prisma.Decimal | number | null;
   weightKg: Prisma.Decimal | number | null;
   waterMl: number | null;
+  isBackfilled: boolean;
 }) {
   return {
     id: record.id,
@@ -61,6 +63,7 @@ function serializeDailyRecord(record: {
     sleepHours: record.sleepHours === null ? null : Number(record.sleepHours),
     weightKg: record.weightKg === null ? null : Number(record.weightKg),
     waterMl: record.waterMl,
+    isBackfilled: record.isBackfilled,
   } satisfies DailyRecordView;
 }
 
@@ -232,6 +235,9 @@ export async function getDailyRecordMilestonesByUserId(
 export async function upsertDailyRecordByUserId(
   userId: string,
   input: DailyRecordInput,
+  options?: {
+    isBackfilled?: boolean;
+  },
 ) {
   const record = await prisma.dailyRecord.upsert({
     where: {
@@ -246,11 +252,13 @@ export async function upsertDailyRecordByUserId(
       sleepHours: input.sleepHours,
       weightKg: input.weightKg,
       waterMl: input.waterMl,
+      isBackfilled: options?.isBackfilled ?? false,
     },
     update: {
       sleepHours: input.sleepHours,
       weightKg: input.weightKg,
       waterMl: input.waterMl,
+      isBackfilled: options?.isBackfilled ?? false,
     },
   });
 

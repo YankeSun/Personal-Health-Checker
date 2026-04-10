@@ -99,6 +99,7 @@ model DailyRecord {
   id         String   @id @default(cuid())
   userId     String
   date       DateTime
+  isBackfilled Boolean @default(false)
   sleepHours Decimal? @db.Decimal(4, 2)
   weightKg   Decimal? @db.Decimal(5, 2)
   waterMl    Int?

@@ -133,6 +133,7 @@ const schemaStatements = [
     "id" TEXT NOT NULL,
     "userId" TEXT NOT NULL,
     "date" TIMESTAMP(3) NOT NULL,
+    "isBackfilled" BOOLEAN NOT NULL DEFAULT false,
     "sleepHours" DECIMAL(4, 2),
     "weightKg" DECIMAL(5, 2),
     "waterMl" INTEGER,
@@ -141,6 +142,9 @@ const schemaStatements = [
     CONSTRAINT "DailyRecord_pkey" PRIMARY KEY ("id"),
     CONSTRAINT "DailyRecord_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE
   );
+  `,
+  `
+  ALTER TABLE "DailyRecord" ADD COLUMN IF NOT EXISTS "isBackfilled" BOOLEAN NOT NULL DEFAULT false;
   `,
   `
   CREATE UNIQUE INDEX IF NOT EXISTS "DailyRecord_userId_date_key" ON "DailyRecord"("userId", "date");

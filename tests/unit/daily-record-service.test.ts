@@ -34,6 +34,7 @@ describe("daily-record-service", () => {
       sleepHours: new Prisma.Decimal("7.5"),
       weightKg: new Prisma.Decimal("63.20"),
       waterMl: 1800,
+      isBackfilled: false,
       createdAt: new Date(),
       updatedAt: new Date(),
     });
@@ -54,6 +55,7 @@ describe("daily-record-service", () => {
       sleepHours: 7.5,
       weightKg: 63.2,
       waterMl: 1800,
+      isBackfilled: false,
     });
   });
 
@@ -65,6 +67,7 @@ describe("daily-record-service", () => {
       sleepHours: new Prisma.Decimal("6.8"),
       weightKg: new Prisma.Decimal("64.10"),
       waterMl: 2100,
+      isBackfilled: true,
       createdAt: new Date(),
       updatedAt: new Date(),
     });
@@ -74,6 +77,8 @@ describe("daily-record-service", () => {
       sleepHours: 6.8,
       weightKg: 64.1,
       waterMl: 2100,
+    }, {
+      isBackfilled: true,
     });
 
     expect(prisma.dailyRecord.upsert).toHaveBeenCalledWith({
@@ -89,15 +94,18 @@ describe("daily-record-service", () => {
         sleepHours: 6.8,
         weightKg: 64.1,
         waterMl: 2100,
+        isBackfilled: true,
       },
       update: {
         sleepHours: 6.8,
         weightKg: 64.1,
         waterMl: 2100,
+        isBackfilled: true,
       },
     });
     expect(record.sleepHours).toBe(6.8);
     expect(record.weightKg).toBe(64.1);
+    expect(record.isBackfilled).toBe(true);
   });
 
   it("loads records within a date range in ascending order", async () => {
@@ -109,6 +117,7 @@ describe("daily-record-service", () => {
         sleepHours: new Prisma.Decimal("7.1"),
         weightKg: null,
         waterMl: 1800,
+        isBackfilled: false,
         createdAt: new Date(),
         updatedAt: new Date(),
       },
@@ -119,6 +128,7 @@ describe("daily-record-service", () => {
         sleepHours: null,
         weightKg: new Prisma.Decimal("63.10"),
         waterMl: 2000,
+        isBackfilled: true,
         createdAt: new Date(),
         updatedAt: new Date(),
       },
@@ -147,6 +157,7 @@ describe("daily-record-service", () => {
         sleepHours: 7.1,
         weightKg: null,
         waterMl: 1800,
+        isBackfilled: false,
       },
       {
         id: "record_2",
@@ -154,6 +165,7 @@ describe("daily-record-service", () => {
         sleepHours: null,
         weightKg: 63.1,
         waterMl: 2000,
+        isBackfilled: true,
       },
     ]);
   });
@@ -167,6 +179,7 @@ describe("daily-record-service", () => {
         sleepHours: new Prisma.Decimal("7.1"),
         weightKg: null,
         waterMl: 1800,
+        isBackfilled: false,
         createdAt: new Date(),
         updatedAt: new Date(),
       },
@@ -177,6 +190,7 @@ describe("daily-record-service", () => {
         sleepHours: new Prisma.Decimal("7.4"),
         weightKg: new Prisma.Decimal("63.10"),
         waterMl: 2000,
+        isBackfilled: false,
         createdAt: new Date(),
         updatedAt: new Date(),
       },
@@ -228,6 +242,7 @@ describe("daily-record-service", () => {
         sleepHours: null,
         weightKg: new Prisma.Decimal("63.00"),
         waterMl: null,
+        isBackfilled: false,
         createdAt: new Date(),
         updatedAt: new Date(),
       },
@@ -238,6 +253,7 @@ describe("daily-record-service", () => {
         sleepHours: new Prisma.Decimal("7.2"),
         weightKg: null,
         waterMl: 2200,
+        isBackfilled: false,
         createdAt: new Date(),
         updatedAt: new Date(),
       },

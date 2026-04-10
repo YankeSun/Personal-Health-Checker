@@ -77,7 +77,9 @@ describe("record-by-date route", () => {
       sleepHours: null,
       weightKg: null,
       waterMl: null,
+      isBackfilled: false,
     });
+    expect(data.qualityWarnings).toEqual([]);
   });
 
   it("updates one historical record by date", async () => {
@@ -97,6 +99,7 @@ describe("record-by-date route", () => {
       sleepHours: 7.1,
       weightKg: 63.2,
       waterMl: 1800,
+      isBackfilled: true,
     });
 
     const { PUT } = await import("@/app/api/records/[date]/route");
@@ -126,9 +129,63 @@ describe("record-by-date route", () => {
       sleepHours: 7.1,
       weightKg: 63.2,
       waterMl: 1800,
+    }, {
+      isBackfilled: true,
     });
     expect(trackProductEventSafely).toHaveBeenCalledTimes(3);
     expect(data.record.date).toBe("2026-04-02");
+    expect(data.record.isBackfilled).toBe(true);
+    expect(data.qualityWarnings).toEqual([]);
+  });
+
+  it("returns non-blocking quality warnings for obvious outliers", async () => {
+    getCurrentUser.mockResolvedValue({
+      id: "user_1",
+      profile: {
+        timezone: "Asia/Shanghai",
+      },
+    });
+    getDailyRecordMilestonesByUserId.mockResolvedValue({
+      hasAnyRecord: true,
+      hasCompleteRecord: true,
+    });
+    upsertDailyRecordByUserId.mockResolvedValue({
+      id: "record_2",
+      date: "2026-04-03",
+      sleepHours: 13.2,
+      weightKg: 31.5,
+      waterMl: 7000,
+      isBackfilled: false,
+    });
+
+    const { PUT } = await import("@/app/api/records/[date]/route");
+    const response = await PUT(
+      new Request("http://localhost:3000/api/records/2026-04-03", {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          sleepHours: 13.2,
+          weightKg: 31.5,
+          waterMl: 7000,
+        }),
+      }),
+      {
+        params: Promise.resolve({
+          date: "2026-04-03",
+        }),
+      },
+    );
+    const data = await response.json();
+
+    expect(response.status).toBe(200);
+    expect(data.qualityWarnings).toHaveLength(3);
+    expect(data.qualityWarnings.map((warning: { id: string }) => warning.id)).toEqual([
+      "sleep-outlier",
+      "weight-outlier",
+      "water-outlier",
+    ]);
   });
 
   it("rejects future dates", async () => {

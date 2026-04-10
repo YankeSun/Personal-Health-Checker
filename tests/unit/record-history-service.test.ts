@@ -21,6 +21,7 @@ describe("record-history-service", () => {
         sleepHours: 7.5,
         weightKg: 63.2,
         waterMl: 1800,
+        isBackfilled: false,
       },
       {
         id: "record_2",
@@ -28,6 +29,7 @@ describe("record-history-service", () => {
         sleepHours: null,
         weightKg: 63.1,
         waterMl: 2000,
+        isBackfilled: true,
       },
     ]);
 
@@ -59,6 +61,7 @@ describe("record-history-service", () => {
       waterDisplay: "1800",
       completedMetrics: 3,
       isComplete: true,
+      isBackfilled: false,
     });
     expect(history.rows[1]).toMatchObject({
       date: "2026-04-03",
@@ -68,6 +71,7 @@ describe("record-history-service", () => {
       completedMetrics: 2,
       hasAnyRecord: true,
       isComplete: false,
+      isBackfilled: true,
     });
   });
 });

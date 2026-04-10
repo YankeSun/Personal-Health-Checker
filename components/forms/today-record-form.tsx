@@ -8,6 +8,10 @@ import { ReminderPanel } from "@/components/shared/reminder-panel";
 import type { DailyRecordSummaryView } from "@/lib/services/daily-record-service";
 import type { ReminderFeed } from "@/lib/services/reminder-service";
 import { getApiErrorMessage } from "@/lib/utils/client-api";
+import {
+  getRecordQualityWarnings,
+  type RecordQualityWarning,
+} from "@/lib/utils/record-quality";
 import { getRecordCompletionSummary } from "@/lib/utils/today-record";
 import {
   fromDisplaySleep,
@@ -26,6 +30,7 @@ type TodayRecordFormProps = {
     weightUnit: "KG" | "LB";
     waterUnit: "ML" | "OZ";
     reminderEnabled: boolean;
+    isBackfilled?: boolean;
   };
   reminderFeed: ReminderFeed;
   hasExistingRecord?: boolean;
@@ -81,7 +86,15 @@ export function TodayRecordForm({
   const [hasRecord, setHasRecord] = useState(hasExistingRecord);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
+  const [savedQualityWarnings, setSavedQualityWarnings] = useState<RecordQualityWarning[]>([]);
   const completion = getRecordCompletionSummary(form);
+  const currentQualityWarnings = getRecordQualityWarnings({
+    sleepHours: fromDisplaySleep(form.sleepHours),
+    weightKg: fromDisplayWeight(form.weight, initialValues.weightUnit),
+    waterMl: fromDisplayWater(form.water, initialValues.waterUnit),
+  });
+  const qualityWarnings =
+    currentQualityWarnings.length > 0 ? currentQualityWarnings : savedQualityWarnings;
   const shouldShowOnboarding =
     Boolean(onboarding) &&
     dateControls?.isToday !== false &&
@@ -142,6 +155,13 @@ export function TodayRecordForm({
     setHasRecord(hasExistingRecord);
     setError("");
     setSuccess("");
+    setSavedQualityWarnings(
+      getRecordQualityWarnings({
+        sleepHours: fromDisplaySleep(initialValues.sleepHours),
+        weightKg: fromDisplayWeight(initialValues.weight, initialValues.weightUnit),
+        waterMl: fromDisplayWater(initialValues.water, initialValues.waterUnit),
+      }),
+    );
   }, [hasExistingRecord, initialValues]);
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
@@ -152,6 +172,7 @@ export function TodayRecordForm({
     const nextSummary = getRecordCompletionSummary(form);
 
     if (previewMode) {
+      setSavedQualityWarnings(currentQualityWarnings);
       setSuccess(
         nextSummary.isComplete
           ? "三项记录已完成。"
@@ -179,12 +200,24 @@ export function TodayRecordForm({
         return;
       }
 
+      const payload = (await response.json().catch(() => null)) as
+        | {
+            record?: {
+              isBackfilled?: boolean;
+            };
+            qualityWarnings?: RecordQualityWarning[];
+          }
+        | null;
+
       setHasRecord(true);
+      setSavedQualityWarnings(payload?.qualityWarnings ?? currentQualityWarnings);
       setSuccess(
         nextSummary.isComplete
           ? initialValues.date === dateControls?.maxDate
             ? "今日三项已记录完成"
-            : "该日三项已记录完成"
+            : payload?.record?.isBackfilled
+              ? "这次补录已保存完成"
+              : "该日三项已记录完成"
           : `已保存，还差 ${nextSummary.missingMetrics.join("、")}`,
       );
       startTransition(() => {
@@ -209,6 +242,7 @@ export function TodayRecordForm({
         water: "",
       });
       setHasRecord(false);
+      setSavedQualityWarnings([]);
       setSuccess("记录已清空。");
       setIsClearing(false);
       return;
@@ -230,6 +264,7 @@ export function TodayRecordForm({
         water: "",
       });
       setHasRecord(false);
+      setSavedQualityWarnings([]);
       setSuccess("该日记录已清空");
       startTransition(() => {
         router.refresh();
@@ -334,6 +369,19 @@ export function TodayRecordForm({
             </p>
           </div>
         )}
+
+        {!dateControls?.isToday ? (
+          <div className="mt-4 rounded-2xl border border-sky-200 bg-sky-50 px-4 py-4 text-sm text-sky-900">
+            <p className="font-medium">
+              {hasRecord || initialValues.isBackfilled
+                ? "这一天的记录已按补录处理。"
+                : "这一天的记录会按补录处理。"}
+            </p>
+            <p className="mt-1 text-sky-800">
+              趋势里会保留这条日期，但会标记为补录，方便后续回看时区分当日记录和回填记录。
+            </p>
+          </div>
+        ) : null}
 
         <section className="mt-6 rounded-3xl border border-slate-200 bg-slate-50/80 p-5">
           {shouldShowOnboarding ? (
@@ -464,6 +512,19 @@ export function TodayRecordForm({
           <p className="mt-4 rounded-2xl bg-rose-50 px-4 py-3 text-sm text-rose-600">
             {error}
           </p>
+        ) : null}
+        {qualityWarnings.length > 0 ? (
+          <div className="mt-4 rounded-2xl border border-amber-200 bg-amber-50 px-4 py-4 text-sm text-amber-950">
+            <p className="font-medium">请再确认一下这条记录</p>
+            <ul className="mt-2 space-y-2 text-amber-900">
+              {qualityWarnings.map((warning) => (
+                <li key={warning.id}>
+                  <span className="font-medium">{warning.title}</span>
+                  <span className="ml-2">{warning.description}</span>
+                </li>
+              ))}
+            </ul>
+          </div>
         ) : null}
         {success ? (
           <div className="mt-4 rounded-2xl bg-emerald-50 px-4 py-4 text-sm text-emerald-800">

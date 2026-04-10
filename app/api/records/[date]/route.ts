@@ -13,6 +13,7 @@ import {
 } from "@/lib/services/observability-service";
 import { getZodErrorMessage, jsonError } from "@/lib/utils/api";
 import { getDateStringInTimezone } from "@/lib/utils/dates";
+import { getRecordQualityWarnings } from "@/lib/utils/record-quality";
 import { dailyRecordFieldsSchema } from "@/lib/validations/daily-record";
 import {
   getRecordDateValidationError,
@@ -79,7 +80,15 @@ export async function GET(_: Request, context: RouteContext) {
       sleepHours: null,
       weightKg: null,
       waterMl: null,
+      isBackfilled: false,
     },
+    qualityWarnings: record
+      ? getRecordQualityWarnings({
+          sleepHours: record.sleepHours,
+          weightKg: record.weightKg,
+          waterMl: record.waterMl,
+        })
+      : [],
   });
 }
 
@@ -103,15 +112,22 @@ export async function PUT(request: Request, context: RouteContext) {
   try {
     const body = dailyRecordFieldsSchema.parse(await request.json());
     const milestones = await getDailyRecordMilestonesByUserId(user.id);
+    const todayDate = getDateStringInTimezone(user.profile.timezone);
+    const isToday = parsedDate.date === todayDate;
     const record = await upsertDailyRecordByUserId(user.id, {
       date: parsedDate.date,
       ...body,
+    }, {
+      isBackfilled: !isToday,
     });
     const completedMetrics = [record.sleepHours, record.weightKg, record.waterMl].filter(
       (value) => value !== null,
     ).length;
-    const todayDate = getDateStringInTimezone(user.profile.timezone);
-    const isToday = parsedDate.date === todayDate;
+    const qualityWarnings = getRecordQualityWarnings({
+      sleepHours: record.sleepHours,
+      weightKg: record.weightKg,
+      waterMl: record.waterMl,
+    });
 
     await trackProductEventSafely({
       userId: user.id,
@@ -121,6 +137,7 @@ export async function PUT(request: Request, context: RouteContext) {
         date: parsedDate.date,
         completedMetrics,
         isToday,
+        isBackfilled: record.isBackfilled,
       },
     });
 
@@ -146,7 +163,7 @@ export async function PUT(request: Request, context: RouteContext) {
       });
     }
 
-    return Response.json({ record });
+    return Response.json({ record, qualityWarnings });
   } catch (error) {
     if (error instanceof ZodError) {
       return jsonError(getZodErrorMessage(error), 400);

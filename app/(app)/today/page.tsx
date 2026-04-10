@@ -69,6 +69,7 @@ export default async function TodayPage({ searchParams }: TodayPageProps) {
         weightUnit: profile.weightUnit,
         waterUnit: profile.waterUnit,
         reminderEnabled: profile.reminderEnabled,
+        isBackfilled: record?.isBackfilled ?? false,
       }}
       onboarding={
         showWelcome

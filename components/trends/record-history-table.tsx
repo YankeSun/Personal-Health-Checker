@@ -75,7 +75,14 @@ export function RecordHistoryTable({ history }: RecordHistoryTableProps) {
                 <tr className="align-top" key={row.date}>
                   <td className="py-4 pr-4">
                     <div className="space-y-1">
-                      <p className="font-medium text-slate-900">{formatDateLabel(row.date)}</p>
+                      <div className="flex flex-wrap items-center gap-2">
+                        <p className="font-medium text-slate-900">{formatDateLabel(row.date)}</p>
+                        {row.isBackfilled ? (
+                          <span className="inline-flex rounded-full bg-sky-100 px-2.5 py-1 text-[11px] font-medium text-sky-900">
+                            补录
+                          </span>
+                        ) : null}
+                      </div>
                       <p className="text-xs text-slate-500">{row.date}</p>
                     </div>
                   </td>
