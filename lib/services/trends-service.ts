@@ -265,6 +265,25 @@ function getMeaningfulChangeThreshold(metric: Metric) {
   return 200;
 }
 
+function calculateFluctuation(rawValues: number[]): number {
+  if (rawValues.length < 2) {
+    return 0;
+  }
+  const mean = rawValues.reduce((sum, v) => sum + v, 0) / rawValues.length;
+  const variance = rawValues.reduce((sum, v) => sum + (v - mean) ** 2, 0) / rawValues.length;
+  return Math.sqrt(variance);
+}
+
+function getFluctuationThreshold(metric: Metric): number {
+  if (metric === Metric.SLEEP) {
+    return 0.5;
+  }
+  if (metric === Metric.WEIGHT) {
+    return 0.8;
+  }
+  return 400;
+}
+
 function buildTrendInsight({
   metricLabel,
   days,
@@ -273,6 +292,9 @@ function buildTrendInsight({
   attainmentRate,
   averageDeltaRaw,
   averageDeltaDisplay,
+  fluctuation,
+  fluctuationDisplay,
+  isFluctuating,
 }: {
   metricLabel: string;
   days: SupportedTrendWindow;
@@ -281,6 +303,9 @@ function buildTrendInsight({
   attainmentRate: number | null;
   averageDeltaRaw: number | null;
   averageDeltaDisplay: string | null;
+  fluctuation: number | null;
+  fluctuationDisplay: string | null;
+  isFluctuating: boolean;
 }): TrendInsight {
   if (completionRate < 50) {
     return {
@@ -295,6 +320,14 @@ function buildTrendInsight({
       tone: "warning",
       title: `${metricLabel}最近值得多看一眼`,
       description: `最近 ${days} 天达标率只有 ${attainmentRate}% ，可以先观察这项是不是最近最难保持。`,
+    };
+  }
+
+  if (isFluctuating && fluctuationDisplay) {
+    return {
+      tone: "info",
+      title: `${metricLabel}波动有点大`,
+      description: `最近 ${days} 天的标准差是 ${fluctuationDisplay}。可以回顾一下，最近是不是这项的日常节奏被打乱了。`,
     };
   }
 
@@ -390,6 +423,11 @@ export async function getTrendOverviewByUserId(
     rawValues.length === 0
       ? null
       : rawValues.reduce((sum, value) => sum + value, 0) / rawValues.length;
+  const fluctuation = rawValues.length < 2 ? null : calculateFluctuation(rawValues);
+  const fluctuationThreshold = getFluctuationThreshold(metric);
+  const isFluctuating = fluctuation !== null && fluctuation > fluctuationThreshold;
+  const fluctuationDisplay =
+    fluctuation === null ? null : formatMetricDisplay(metric, fluctuation, profile);
   const metDays = goal.isActive
     ? dates.filter((date) =>
         evaluateGoal(getMetricRawValue(metric, recordMap.get(date) ?? null), goal) === true,
@@ -453,6 +491,9 @@ export async function getTrendOverviewByUserId(
       averageDeltaRaw:
         averageDeltaDisplay === null ? null : averageDeltaRaw,
       averageDeltaDisplay,
+      fluctuation,
+      fluctuationDisplay,
+      isFluctuating,
     }),
     comparison: {
       previousStartDate,
