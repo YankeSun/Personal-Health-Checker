@@ -529,6 +529,7 @@ function buildTrend(metricParam: TrendMetricParam, daysParam: TrendDaysParam): T
       goalTarget: formatMetricChartValue(metric, goal.targetValue),
       goalMin: formatMetricChartValue(metric, goal.minValue),
       goalMax: formatMetricChartValue(metric, goal.maxValue),
+      isBackfilled: false,
     })),
   };
 }

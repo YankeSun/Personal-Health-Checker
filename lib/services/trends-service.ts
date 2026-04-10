@@ -35,6 +35,7 @@ export type TrendPoint = {
   goalTarget: number | null;
   goalMin: number | null;
   goalMax: number | null;
+  isBackfilled: boolean;
 };
 
 export type TrendOverview = {
@@ -355,12 +356,14 @@ export async function getTrendOverviewByUserId(
         sleepHours: record.sleepHours === null ? null : Number(record.sleepHours),
         weightKg: record.weightKg === null ? null : Number(record.weightKg),
         waterMl: record.waterMl,
+        isBackfilled: record.isBackfilled,
       },
     ]),
   );
 
   const points = dates.map((date) => {
-    const rawValue = getMetricRawValue(metric, recordMap.get(date) ?? null);
+    const record = recordMap.get(date) ?? null;
+    const rawValue = getMetricRawValue(metric, record);
 
     return {
       date,
@@ -369,6 +372,7 @@ export async function getTrendOverviewByUserId(
       goalTarget: getGoalLineValue(metric, goal.targetValue, profile),
       goalMin: getGoalLineValue(metric, goal.minValue, profile),
       goalMax: getGoalLineValue(metric, goal.maxValue, profile),
+      isBackfilled: record?.isBackfilled ?? false,
     } satisfies TrendPoint;
   });
 
