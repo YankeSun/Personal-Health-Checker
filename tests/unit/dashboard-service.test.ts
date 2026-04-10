@@ -155,6 +155,14 @@ describe("dashboard-service", () => {
     expect(overview.todayDate).toBe("2026-04-03");
     expect(overview.streakDays).toBe(4);
     expect(overview.todayCompletedMetrics).toBe(3);
+    expect(overview.insights[0]).toMatchObject({
+      id: "streak-momentum",
+      title: "连续记录已经到 4 天",
+    });
+    expect(overview.insights[1]).toMatchObject({
+      id: "weekly-focus-goal",
+      title: "这周最该先看的是睡眠",
+    });
     expect(overview.windows[0].days).toBe(7);
     expect(overview.windows[0].completeRecordDays).toBe(4);
     expect(overview.windows[0].metrics[0]).toMatchObject({
@@ -207,6 +215,10 @@ describe("dashboard-service", () => {
 
     expect(overview.streakDays).toBe(0);
     expect(overview.todayCompletedMetrics).toBe(2);
+    expect(overview.insights[0]).toMatchObject({
+      id: "today-focus",
+      title: "今天先补体重",
+    });
     expect(overview.windows[0].completionRate).toBe(14.3);
   });
 

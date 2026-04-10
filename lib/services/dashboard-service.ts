@@ -9,6 +9,7 @@ import {
   storageDateToDateString,
 } from "@/lib/utils/dates";
 import { GoalView, METRIC_ORDER } from "@/lib/utils/goals";
+import { getStreakMomentum } from "@/lib/utils/streak";
 import { toDisplaySleep, toDisplayWater, toDisplayWeight } from "@/lib/utils/units";
 
 type SupportedDashboardWindow = 7 | 30;
@@ -76,7 +77,17 @@ export type DashboardOverview = {
   todayCompletedMetrics: number;
   totalTrackedMetrics: number;
   todayMetrics: DashboardTodayMetric[];
+  insights: DashboardInsight[];
   windows: DashboardWindowSummary[];
+};
+
+export type DashboardInsight = {
+  id: string;
+  tone: "warning" | "info" | "success";
+  title: string;
+  description: string;
+  actionHref: string;
+  actionLabel: string;
 };
 
 type MetricSummaryComputation = DashboardWindowMetric & {
@@ -370,6 +381,116 @@ function buildWindowSummary(
   } satisfies DashboardWindowSummary;
 }
 
+function buildTodayInsight(
+  todayRecord: { sleepHours: number | null; weightKg: number | null; waterMl: number | null } | null,
+  streakDays: number,
+): DashboardInsight {
+  const missingMetrics = METRIC_ORDER.filter(
+    (metric) => getMetricValue(metric, todayRecord) === null,
+  );
+
+  if (missingMetrics.length > 0) {
+    const firstMissingMetric = missingMetrics[0];
+    const missingLabels = missingMetrics.map((metric) => metricLabels[metric]).join("、");
+
+    return {
+      id: "today-focus",
+      tone: "warning",
+      title: `今天先补${metricLabels[firstMissingMetric]}`,
+      description:
+        missingMetrics.length === 1
+          ? "只差这一项，今天这组就完整了。"
+          : `还差 ${missingLabels}，先补齐今天这组，连续记录和趋势都会更完整。`,
+      actionHref: "/today",
+      actionLabel: "回到今日记录",
+    };
+  }
+
+  const streakMomentum = getStreakMomentum(streakDays);
+
+  if (streakMomentum.nextMilestone) {
+    return {
+      id: "streak-momentum",
+      tone: "success",
+      title: `连续记录已经到 ${streakDays} 天`,
+      description: `再坚持 ${streakMomentum.daysRemaining} 天，就会到 ${streakMomentum.nextMilestone} 天连续记录。`,
+      actionHref: "/today",
+      actionLabel: "保持今天这组",
+    };
+  }
+
+  return {
+    id: "streak-stable",
+    tone: "success",
+    title: "连续记录已经比较稳定",
+    description: "继续保持这套节奏，最近的变化会更容易被看出来。",
+    actionHref: "/trends",
+    actionLabel: "去看最近趋势",
+  };
+}
+
+function buildWeeklyFocusInsight(
+  windowSummary: DashboardWindowSummary | undefined,
+): DashboardInsight | null {
+  if (!windowSummary) {
+    return null;
+  }
+
+  const lowestRecordedMetric = [...windowSummary.metrics].sort(
+    (left, right) => left.recordedDays - right.recordedDays,
+  )[0];
+  const highestRecordedDays = Math.max(
+    ...windowSummary.metrics.map((metric) => metric.recordedDays),
+  );
+
+  if (
+    lowestRecordedMetric &&
+    lowestRecordedMetric.recordedDays <= Math.floor(windowSummary.days * 0.65) &&
+    highestRecordedDays - lowestRecordedMetric.recordedDays >= 2
+  ) {
+    return {
+      id: "weekly-focus-recording",
+      tone: "info",
+      title: `这周最容易断的是${lowestRecordedMetric.label}`,
+      description: `最近 ${windowSummary.days} 天只记录了 ${lowestRecordedMetric.recordedDays}/${windowSummary.days} 天，先把这项补稳，趋势会更有参考价值。`,
+      actionHref: `/trends?metric=${lowestRecordedMetric.metric.toLowerCase()}&days=7`,
+      actionLabel: "查看这项趋势",
+    };
+  }
+
+  const weakestGoalMetric = [...windowSummary.metrics]
+    .filter((metric) => metric.attainmentRate !== null)
+    .sort((left, right) => (left.attainmentRate ?? 0) - (right.attainmentRate ?? 0))[0];
+
+  if (weakestGoalMetric && (weakestGoalMetric.attainmentRate ?? 0) < 50) {
+    return {
+      id: "weekly-focus-goal",
+      tone: "warning",
+      title: `这周最该先看的是${weakestGoalMetric.label}`,
+      description: `最近 ${windowSummary.days} 天达标率只有 ${weakestGoalMetric.attainmentRate}% ，可以先观察这项是不是最近最难保持。`,
+      actionHref: `/trends?metric=${weakestGoalMetric.metric.toLowerCase()}&days=7`,
+      actionLabel: "查看最近 7 天",
+    };
+  }
+
+  const strongestMetric = [...windowSummary.metrics]
+    .filter((metric) => metric.attainmentRate !== null)
+    .sort((left, right) => (right.attainmentRate ?? 0) - (left.attainmentRate ?? 0))[0];
+
+  if (strongestMetric) {
+    return {
+      id: "weekly-focus-stable",
+      tone: "success",
+      title: `这周最稳定的是${strongestMetric.label}`,
+      description: `最近 ${windowSummary.days} 天达标率 ${strongestMetric.attainmentRate}% ，这是你当前最容易保持的一项。`,
+      actionHref: `/trends?metric=${strongestMetric.metric.toLowerCase()}&days=7`,
+      actionLabel: "看看这项变化",
+    };
+  }
+
+  return null;
+}
+
 export async function getDashboardOverviewByUserId(
   userId: string,
   profile: DashboardProfile,
@@ -400,10 +521,19 @@ export async function getDashboardOverviewByUserId(
   );
 
   const todayRecord = recordMap.get(todayDate) ?? null;
+  const streakDays = calculateStreak(todayDate, recordMap);
+  const windowSummaries = [...new Set(windows)]
+    .sort((left, right) => left - right)
+    .map((days) => buildWindowSummary(days, todayDate, recordMap, goals, profile));
+  const summary7 = windowSummaries.find((window) => window.days === 7);
+  const insights = [
+    buildTodayInsight(todayRecord, streakDays),
+    buildWeeklyFocusInsight(summary7),
+  ].filter((item): item is DashboardInsight => Boolean(item));
 
   return {
     todayDate,
-    streakDays: calculateStreak(todayDate, recordMap),
+    streakDays,
     todayCompletedMetrics: METRIC_ORDER.filter(
       (metric) => getMetricValue(metric, todayRecord) !== null,
     ).length,
@@ -422,8 +552,7 @@ export async function getDashboardOverviewByUserId(
         goalMet: evaluateGoal(value, goal),
       } satisfies DashboardTodayMetric;
     }),
-    windows: [...new Set(windows)]
-      .sort((left, right) => left - right)
-      .map((days) => buildWindowSummary(days, todayDate, recordMap, goals, profile)),
+    insights,
+    windows: windowSummaries,
   } satisfies DashboardOverview;
 }

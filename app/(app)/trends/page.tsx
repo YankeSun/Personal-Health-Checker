@@ -25,6 +25,12 @@ const dayTabs = [
   { value: "30", label: "最近 30 天" },
 ] as const;
 
+const insightToneStyles = {
+  warning: "border-amber-200 bg-amber-50",
+  info: "border-sky-200 bg-sky-50",
+  success: "border-emerald-200 bg-emerald-50",
+} as const;
+
 type TrendsPageProps = {
   searchParams: Promise<{
     metric?: string;
@@ -146,6 +152,45 @@ export default async function TrendsPage({ searchParams }: TrendsPageProps) {
           <p className="mt-2 text-sm text-slate-600">
             {trend.goalDescription ?? "先去设置页配置目标"}
           </p>
+        </article>
+      </section>
+
+      <section className="grid gap-4 lg:grid-cols-[minmax(0,1.3fr)_minmax(0,1fr)]">
+        <article className={`rounded-3xl border p-6 shadow-sm ${insightToneStyles[trend.insight.tone]}`}>
+          <p className="text-sm font-semibold text-slate-900">{trend.insight.title}</p>
+          <p className="mt-2 text-sm leading-6 text-slate-700">{trend.insight.description}</p>
+        </article>
+
+        <article className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
+          <div className="space-y-1">
+            <p className="text-sm font-semibold text-slate-900">与上一周期对比</p>
+            <p className="text-sm text-slate-500">
+              {trend.comparison.previousStartDate} 至 {trend.comparison.previousEndDate}
+            </p>
+          </div>
+          <dl className="mt-4 space-y-3 text-sm text-slate-600">
+            <div className="flex items-center justify-between gap-4">
+              <dt>记录率变化</dt>
+              <dd className="font-medium text-slate-900">
+                {trend.comparison.completionRateChange > 0 ? "+" : ""}
+                {trend.comparison.completionRateChange}%
+              </dd>
+            </div>
+            <div className="flex items-center justify-between gap-4">
+              <dt>平均值变化</dt>
+              <dd className="font-medium text-slate-900">
+                {trend.comparison.averageDeltaDisplay ?? "变化不明显"}
+              </dd>
+            </div>
+            <div className="flex items-center justify-between gap-4">
+              <dt>达标率变化</dt>
+              <dd className="font-medium text-slate-900">
+                {trend.comparison.attainmentRateChange === null
+                  ? "未设置目标"
+                  : `${trend.comparison.attainmentRateChange > 0 ? "+" : ""}${trend.comparison.attainmentRateChange}%`}
+              </dd>
+            </div>
+          </dl>
         </article>
       </section>
 

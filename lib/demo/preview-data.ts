@@ -345,6 +345,24 @@ export const previewDashboardOverview: DashboardOverview = {
       goalMet: evaluateGoal(metric, todayValue),
     };
   }),
+  insights: [
+    {
+      id: "today-focus",
+      tone: "warning",
+      title: "今天先补饮水",
+      description: "只差这一项，今天这组就完整了。",
+      actionHref: "/experience?screen=today",
+      actionLabel: "回到今日记录",
+    },
+    {
+      id: "weekly-focus-goal",
+      tone: "warning",
+      title: "这周最该先看的是饮水",
+      description: "最近 7 天饮水目标完成得最不稳定，先把这项拉回稳定节奏更划算。",
+      actionHref: "/experience?screen=trends&metric=water&days=7",
+      actionLabel: "查看最近 7 天",
+    },
+  ],
   windows: [buildWindowSummary(7), buildWindowSummary(30)],
 };
 
@@ -409,12 +427,33 @@ export const previewGoalsValues = {
 function buildTrend(metricParam: TrendMetricParam, daysParam: TrendDaysParam): TrendOverview {
   const days = Number(daysParam) as SupportedPreviewWindow;
   const dates = dates30.slice(-days);
+  const previousDates = allDates.slice(-(days * 2), -days);
   const metric =
     metricParam === "sleep" ? Metric.SLEEP : metricParam === "weight" ? Metric.WEIGHT : Metric.WATER;
   const values = dates.map((date) => getMetricRawValue(metric, date));
   const validValues = values.filter((value): value is number => value !== null);
   const metDays = dates.filter((date) => evaluateGoal(metric, getMetricRawValue(metric, date)) === true).length;
   const goal = getGoalByMetric(metric);
+  const previousValues = previousDates.map((date) => getMetricRawValue(metric, date));
+  const previousValidValues = previousValues.filter((value): value is number => value !== null);
+  const previousAverage =
+    previousValidValues.length === 0
+      ? null
+      : previousValidValues.reduce((sum, value) => sum + value, 0) / previousValidValues.length;
+  const currentAverage =
+    validValues.length === 0
+      ? null
+      : validValues.reduce((sum, value) => sum + value, 0) / validValues.length;
+  const averageDelta =
+    currentAverage === null || previousAverage === null
+      ? null
+      : roundTo(currentAverage - previousAverage, 2);
+  const averageDeltaDisplay = averageDelta === null ? null : formatSignedDelta(metric, averageDelta);
+  const previousMetDays = previousDates.filter(
+    (date) => evaluateGoal(metric, getMetricRawValue(metric, date)) === true,
+  ).length;
+  const completionRate = roundTo((validValues.length / days) * 100, 1);
+  const attainmentRate = roundTo((metDays / days) * 100, 1);
 
   return {
     metric: metricParam,
@@ -424,8 +463,8 @@ function buildTrend(metricParam: TrendMetricParam, daysParam: TrendDaysParam): T
     startDate: dates[0],
     endDate: dates[dates.length - 1],
     recordedDays: validValues.length,
-    completionRate: roundTo((validValues.length / days) * 100, 1),
-    attainmentRate: roundTo((metDays / days) * 100, 1),
+    completionRate,
+    attainmentRate,
     averageDisplay:
       validValues.length === 0
         ? null
@@ -441,6 +480,48 @@ function buildTrend(metricParam: TrendMetricParam, daysParam: TrendDaysParam): T
     minDisplay: formatMetricDisplay(metric, validValues.length ? Math.min(...validValues) : null) || null,
     maxDisplay: formatMetricDisplay(metric, validValues.length ? Math.max(...validValues) : null) || null,
     goalDescription: getGoalDescription(metric),
+    insight:
+      completionRate < 50
+        ? {
+            tone: "warning",
+            title: `先把${metricLabels[metricParam]}记录补齐`,
+            description: `最近 ${days} 天只记录了 ${validValues.length}/${days} 天，这项趋势更容易被缺口打断。`,
+          }
+        : attainmentRate < 50
+          ? {
+              tone: "warning",
+              title: `${metricLabels[metricParam]}最近值得多看一眼`,
+              description: `最近 ${days} 天达标率只有 ${attainmentRate}% ，可以先观察这项最近为什么更难保持。`,
+            }
+          : averageDeltaDisplay
+            ? {
+                tone: "info",
+                title: `${metricLabels[metricParam]}最近出现了明显变化`,
+                description: `相比上一周期，平均值变化了 ${averageDeltaDisplay}。`,
+              }
+            : {
+                tone: "success",
+                title: `${metricLabels[metricParam]}最近比较稳定`,
+                description: `最近 ${days} 天的记录频率和整体波动都比较平稳。`,
+              },
+    comparison: {
+      previousStartDate: previousDates[0],
+      previousEndDate: previousDates[previousDates.length - 1],
+      previousCompletionRate: roundTo((previousValidValues.length / days) * 100, 1),
+      completionRateChange: roundTo(completionRate - roundTo((previousValidValues.length / days) * 100, 1), 1),
+      previousAverageDisplay: formatMetricDisplay(metric, previousAverage) || null,
+      averageDeltaDisplay,
+      averageDeltaDirection:
+        averageDelta === null
+          ? "none"
+          : Math.abs(averageDelta) < 0.01
+            ? "flat"
+            : averageDelta > 0
+              ? "up"
+              : "down",
+      previousAttainmentRate: roundTo((previousMetDays / days) * 100, 1),
+      attainmentRateChange: roundTo(attainmentRate - roundTo((previousMetDays / days) * 100, 1), 1),
+    },
     points: dates.map((date) => ({
       date,
       label: formatShortDateLabel(date),

@@ -1,7 +1,7 @@
 import { ReminderPanel } from "@/components/shared/reminder-panel";
+import { AppLink } from "@/components/shared/app-link";
 import type { DashboardOverview } from "@/lib/services/dashboard-service";
 import type { ReminderFeed } from "@/lib/services/reminder-service";
-import { getStreakMomentum } from "@/lib/utils/streak";
 
 type DashboardOverviewProps = {
   overview: DashboardOverview;
@@ -54,15 +54,6 @@ function getComparisonLabel(direction: "up" | "down" | "flat" | "none") {
 
 export function DashboardOverviewPanel({ overview, reminderFeed }: DashboardOverviewProps) {
   const summary30 = overview.windows.find((window) => window.days === 30) ?? overview.windows[0];
-  const streakMomentum = getStreakMomentum(overview.streakDays);
-  const streakDescription =
-    overview.streakDays === 0
-      ? overview.todayCompletedMetrics === overview.totalTrackedMetrics
-        ? "今天已经重新开始，明天继续就会形成新的连续记录。"
-        : "先把今天三项补齐，连续记录会从 1 天重新开始。"
-      : streakMomentum.nextMilestone === null
-        ? "已经进入比较稳定的连续记录节奏。"
-        : `距离 ${streakMomentum.nextMilestone} 天连续还差 ${streakMomentum.daysRemaining} 天。`;
 
   return (
     <div className="space-y-6">
@@ -73,7 +64,7 @@ export function DashboardOverviewPanel({ overview, reminderFeed }: DashboardOver
             {overview.streakDays}
           </p>
           <p className="mt-2 text-sm text-slate-600">
-            {streakDescription}
+            只有睡眠、体重、饮水三项都填写，才会计入连续记录。
           </p>
         </article>
 
@@ -96,6 +87,30 @@ export function DashboardOverviewPanel({ overview, reminderFeed }: DashboardOver
             {summary30.completeRecordDays} / 30 天完成了三项记录。
           </p>
         </article>
+      </section>
+
+      <section className="grid gap-4 md:grid-cols-2">
+        {overview.insights.map((insight) => (
+          <article
+            className={`rounded-3xl border p-6 shadow-sm ${
+              insight.tone === "warning"
+                ? "border-amber-200 bg-amber-50"
+                : insight.tone === "success"
+                  ? "border-emerald-200 bg-emerald-50"
+                  : "border-sky-200 bg-sky-50"
+            }`}
+            key={insight.id}
+          >
+            <p className="text-sm font-semibold text-slate-900">{insight.title}</p>
+            <p className="mt-2 text-sm leading-6 text-slate-700">{insight.description}</p>
+            <AppLink
+              className="mt-4 inline-flex rounded-full border border-current/15 bg-white/70 px-4 py-2 text-sm font-medium text-slate-900 transition hover:bg-white"
+              href={insight.actionHref}
+            >
+              {insight.actionLabel}
+            </AppLink>
+          </article>
+        ))}
       </section>
 
       <ReminderPanel

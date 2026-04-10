@@ -7,6 +7,7 @@ import {
   formatShortDateLabel,
   getDateRange,
   getDateStringInTimezone,
+  shiftDateString,
 } from "@/lib/utils/dates";
 import { GoalView } from "@/lib/utils/goals";
 import {
@@ -51,7 +52,27 @@ export type TrendOverview = {
   minDisplay: string | null;
   maxDisplay: string | null;
   goalDescription: string | null;
+  insight: TrendInsight;
+  comparison: TrendComparison;
   points: TrendPoint[];
+};
+
+export type TrendInsight = {
+  tone: "warning" | "info" | "success";
+  title: string;
+  description: string;
+};
+
+export type TrendComparison = {
+  previousStartDate: string;
+  previousEndDate: string;
+  previousCompletionRate: number;
+  completionRateChange: number;
+  previousAverageDisplay: string | null;
+  averageDeltaDisplay: string | null;
+  averageDeltaDirection: "up" | "down" | "flat" | "none";
+  previousAttainmentRate: number | null;
+  attainmentRateChange: number | null;
 };
 
 const metricMap: Record<TrendMetricParam, Metric> = {
@@ -204,6 +225,97 @@ function getGoalLineValue(
   return getMetricDisplayValue(metric, rawValue, profile);
 }
 
+function formatSignedDelta(
+  metric: Metric,
+  rawValue: number,
+  profile: TrendProfile,
+) {
+  const absoluteValue = Math.abs(rawValue);
+  const display = formatMetricDisplay(metric, absoluteValue, profile);
+
+  if (!display) {
+    return null;
+  }
+
+  return `${rawValue > 0 ? "+" : "-"}${display}`;
+}
+
+function getDeltaDirection(value: number | null) {
+  if (value === null) {
+    return "none" as const;
+  }
+
+  if (Math.abs(value) < 0.01) {
+    return "flat" as const;
+  }
+
+  return value > 0 ? ("up" as const) : ("down" as const);
+}
+
+function getMeaningfulChangeThreshold(metric: Metric) {
+  if (metric === Metric.SLEEP) {
+    return 0.3;
+  }
+
+  if (metric === Metric.WEIGHT) {
+    return 0.4;
+  }
+
+  return 200;
+}
+
+function buildTrendInsight({
+  metricLabel,
+  days,
+  recordedDays,
+  completionRate,
+  attainmentRate,
+  averageDeltaRaw,
+  averageDeltaDisplay,
+}: {
+  metricLabel: string;
+  days: SupportedTrendWindow;
+  recordedDays: number;
+  completionRate: number;
+  attainmentRate: number | null;
+  averageDeltaRaw: number | null;
+  averageDeltaDisplay: string | null;
+}): TrendInsight {
+  if (completionRate < 50) {
+    return {
+      tone: "warning",
+      title: `先把${metricLabel}记录补齐`,
+      description: `最近 ${days} 天只记录了 ${recordedDays}/${days} 天，这项趋势更容易被缺口打断。`,
+    };
+  }
+
+  if (attainmentRate !== null && attainmentRate < 50) {
+    return {
+      tone: "warning",
+      title: `${metricLabel}最近值得多看一眼`,
+      description: `最近 ${days} 天达标率只有 ${attainmentRate}% ，可以先观察这项是不是最近最难保持。`,
+    };
+  }
+
+  if (
+    averageDeltaRaw !== null &&
+    averageDeltaDisplay !== null &&
+    Math.abs(averageDeltaRaw) >= 0.01
+  ) {
+    return {
+      tone: "info",
+      title: `${metricLabel}最近出现了明显变化`,
+      description: `相比上一周期，平均值变化了 ${averageDeltaDisplay}。`,
+    };
+  }
+
+  return {
+    tone: "success",
+    title: `${metricLabel}最近比较稳定`,
+    description: `最近 ${days} 天的记录频率和整体波动都比较平稳，可以继续保持现在的节奏。`,
+  };
+}
+
 export async function getTrendOverviewByUserId(
   userId: string,
   profile: TrendProfile,
@@ -215,13 +327,16 @@ export async function getTrendOverviewByUserId(
   const dates = getDateRange(todayDate, days);
   const startDate = dates[0];
   const endDate = dates[dates.length - 1];
+  const previousEndDate = shiftDateString(startDate, -1);
+  const previousDates = getDateRange(previousEndDate, days);
+  const previousStartDate = previousDates[0];
 
   const [records, goals] = await Promise.all([
     prisma.dailyRecord.findMany({
       where: {
         userId,
         date: {
-          gte: dateStringToStorageDate(startDate),
+          gte: dateStringToStorageDate(previousStartDate),
           lte: dateStringToStorageDate(endDate),
         },
       },
@@ -276,6 +391,39 @@ export async function getTrendOverviewByUserId(
         evaluateGoal(getMetricRawValue(metric, recordMap.get(date) ?? null), goal) === true,
       ).length
     : null;
+  const previousRawValues = previousDates
+    .map((date) => getMetricRawValue(metric, recordMap.get(date) ?? null))
+    .filter((value): value is number => value !== null);
+  const previousAverageRawValue =
+    previousRawValues.length === 0
+      ? null
+      : previousRawValues.reduce((sum, value) => sum + value, 0) / previousRawValues.length;
+  const previousCompletionRate = roundTo((previousRawValues.length / days) * 100, 1);
+  const previousMetDays = goal.isActive
+    ? previousDates.filter((date) =>
+        evaluateGoal(getMetricRawValue(metric, recordMap.get(date) ?? null), goal) === true,
+      ).length
+    : null;
+  const previousAttainmentRate =
+    previousMetDays === null ? null : roundTo((previousMetDays / days) * 100, 1);
+  const averageDeltaRaw =
+    averageRawValue === null || previousAverageRawValue === null
+      ? null
+      : roundTo(averageRawValue - previousAverageRawValue, 2);
+  const averageDeltaDirection = getDeltaDirection(averageDeltaRaw);
+  const meaningfulChangeThreshold = getMeaningfulChangeThreshold(metric);
+  const averageDeltaDisplay =
+    averageDeltaRaw === null || Math.abs(averageDeltaRaw) < meaningfulChangeThreshold
+      ? null
+      : formatSignedDelta(metric, averageDeltaRaw, profile);
+  const completionRateChange = roundTo(
+    roundTo((rawValues.length / days) * 100, 1) - previousCompletionRate,
+    1,
+  );
+  const attainmentRateChange =
+    metDays === null || previousAttainmentRate === null
+      ? null
+      : roundTo(roundTo((metDays / days) * 100, 1) - previousAttainmentRate, 1);
 
   return {
     metric: metricParam,
@@ -292,6 +440,27 @@ export async function getTrendOverviewByUserId(
     minDisplay: formatMetricDisplay(metric, minRawValue, profile),
     maxDisplay: formatMetricDisplay(metric, maxRawValue, profile),
     goalDescription: formatGoalDescription(metric, goal, profile),
+    insight: buildTrendInsight({
+      metricLabel: metricLabels[metricParam],
+      days,
+      recordedDays: rawValues.length,
+      completionRate: roundTo((rawValues.length / days) * 100, 1),
+      attainmentRate: metDays === null ? null : roundTo((metDays / days) * 100, 1),
+      averageDeltaRaw:
+        averageDeltaDisplay === null ? null : averageDeltaRaw,
+      averageDeltaDisplay,
+    }),
+    comparison: {
+      previousStartDate,
+      previousEndDate,
+      previousCompletionRate,
+      completionRateChange,
+      previousAverageDisplay: formatMetricDisplay(metric, previousAverageRawValue, profile),
+      averageDeltaDisplay,
+      averageDeltaDirection,
+      previousAttainmentRate,
+      attainmentRateChange,
+    },
     points,
   } satisfies TrendOverview;
 }

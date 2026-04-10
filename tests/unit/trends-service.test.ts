@@ -98,6 +98,14 @@ describe("trends-service", () => {
     expect(trend.attainmentRate).toBe(28.6);
     expect(trend.latestDisplay).toBe("8.2");
     expect(trend.averageDisplay).toBe("7.6");
+    expect(trend.insight).toMatchObject({
+      tone: "warning",
+      title: "先把睡眠记录补齐",
+    });
+    expect(trend.comparison).toMatchObject({
+      previousStartDate: "2026-03-21",
+      previousEndDate: "2026-03-27",
+    });
     expect(trend.points).toHaveLength(7);
     expect(trend.points[0].label).toBeDefined();
   });
@@ -130,6 +138,7 @@ describe("trends-service", () => {
 
     expect(trend.unitLabel).toBe("lb");
     expect(trend.latestDisplay).toBe("140");
+    expect(trend.insight.title).toContain("体重");
     expect(trend.points[6].value).toBe(140);
   });
 });
