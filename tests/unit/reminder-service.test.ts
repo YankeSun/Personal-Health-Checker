@@ -309,6 +309,36 @@ describe("reminder-service", () => {
     );
   });
 
+  it("uses a return-focused reminder when the user has been away for several days", async () => {
+    vi.mocked(prisma.dailyRecord.findMany).mockResolvedValue([
+      buildRecord({
+        id: "r1",
+        date: "2026-03-30",
+        sleepHours: 7.4,
+        weightKg: 62.2,
+        waterMl: 1800,
+      }),
+    ]);
+    vi.mocked(getGoalsByUserId).mockResolvedValue([]);
+
+    const feed = await getReminderFeedByUserId("user_1", {
+      timezone: "Asia/Shanghai",
+      reminderEnabled: true,
+      weightUnit: "KG",
+      waterUnit: "ML",
+    });
+
+    expect(feed.reminders).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          id: "inactive-return",
+          title: "已经 4 天没有回来记录",
+          actionLabel: "先记今天",
+        }),
+      ]),
+    );
+  });
+
   it("adds a reminder when an active goal has been missed for multiple consecutive days", async () => {
     vi.mocked(prisma.dailyRecord.findMany).mockResolvedValue([
       buildRecord({
@@ -500,6 +530,43 @@ describe("reminder-service", () => {
         }),
         expect.objectContaining({
           id: "consistency-streak",
+        }),
+      ]),
+    );
+  });
+
+  it("encourages early streak building when today has been completed", async () => {
+    vi.mocked(prisma.dailyRecord.findMany).mockResolvedValue([
+      buildRecord({
+        id: "r1",
+        date: "2026-04-02",
+        sleepHours: 7.5,
+        weightKg: 62.1,
+        waterMl: 1900,
+      }),
+      buildRecord({
+        id: "r2",
+        date: "2026-04-03",
+        sleepHours: 7.4,
+        weightKg: 62.0,
+        waterMl: 2000,
+      }),
+    ]);
+    vi.mocked(getGoalsByUserId).mockResolvedValue([]);
+
+    const feed = await getReminderFeedByUserId("user_1", {
+      timezone: "Asia/Shanghai",
+      reminderEnabled: true,
+      weightUnit: "KG",
+      waterUnit: "ML",
+    });
+
+    expect(feed.reminders).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          id: "streak-building",
+          title: "今天这组已经完成",
+          description: expect.stringContaining("再坚持 1 天"),
         }),
       ]),
     );

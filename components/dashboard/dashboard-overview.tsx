@@ -1,6 +1,7 @@
 import { ReminderPanel } from "@/components/shared/reminder-panel";
 import type { DashboardOverview } from "@/lib/services/dashboard-service";
 import type { ReminderFeed } from "@/lib/services/reminder-service";
+import { getStreakMomentum } from "@/lib/utils/streak";
 
 type DashboardOverviewProps = {
   overview: DashboardOverview;
@@ -53,6 +54,15 @@ function getComparisonLabel(direction: "up" | "down" | "flat" | "none") {
 
 export function DashboardOverviewPanel({ overview, reminderFeed }: DashboardOverviewProps) {
   const summary30 = overview.windows.find((window) => window.days === 30) ?? overview.windows[0];
+  const streakMomentum = getStreakMomentum(overview.streakDays);
+  const streakDescription =
+    overview.streakDays === 0
+      ? overview.todayCompletedMetrics === overview.totalTrackedMetrics
+        ? "今天已经重新开始，明天继续就会形成新的连续记录。"
+        : "先把今天三项补齐，连续记录会从 1 天重新开始。"
+      : streakMomentum.nextMilestone === null
+        ? "已经进入比较稳定的连续记录节奏。"
+        : `距离 ${streakMomentum.nextMilestone} 天连续还差 ${streakMomentum.daysRemaining} 天。`;
 
   return (
     <div className="space-y-6">
@@ -63,7 +73,7 @@ export function DashboardOverviewPanel({ overview, reminderFeed }: DashboardOver
             {overview.streakDays}
           </p>
           <p className="mt-2 text-sm text-slate-600">
-            只有睡眠、体重、饮水三项都填写，才会计入连续记录。
+            {streakDescription}
           </p>
         </article>
 

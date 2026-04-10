@@ -4,6 +4,7 @@ import { prisma } from "@/lib/db";
 import { getGoalByMetric, getGoalsByUserId } from "@/lib/services/goals-service";
 import { dateStringToStorageDate, getDateRange, getDateStringInTimezone } from "@/lib/utils/dates";
 import { GoalView, METRIC_ORDER } from "@/lib/utils/goals";
+import { getStreakMomentum } from "@/lib/utils/streak";
 import { toDisplaySleep, toDisplayWater, toDisplayWeight } from "@/lib/utils/units";
 
 type ReminderProfile = {
@@ -225,6 +226,21 @@ function listMissingMetrics(record: RecordLike | null) {
   return METRIC_ORDER.filter((metric) => getMetricValue(metric, record) === null);
 }
 
+function getLastRecordedDate(dates: string[], recordMap: Map<string, RecordLike>) {
+  return [...dates]
+    .reverse()
+    .find((date) => {
+      const record = recordMap.get(date) ?? null;
+      return listMissingMetrics(record).length < METRIC_ORDER.length;
+    }) ?? null;
+}
+
+function getDateGapInDays(fromDate: string, toDate: string) {
+  const from = dateStringToStorageDate(fromDate).getTime();
+  const to = dateStringToStorageDate(toDate).getTime();
+  return Math.round((to - from) / (24 * 60 * 60 * 1000));
+}
+
 export async function getReminderFeedByUserId(
   userId: string,
   profile: ReminderProfile,
@@ -272,16 +288,39 @@ export async function getReminderFeedByUserId(
   const reminders: ReminderItem[] = [];
   const todayRecord = recordMap.get(todayDate) ?? null;
   const missingMetrics = listMissingMetrics(todayRecord);
+  const lastRecordedDate = getLastRecordedDate(dates, recordMap);
+  const inactivityDays =
+    lastRecordedDate === null ? null : getDateGapInDays(lastRecordedDate, todayDate);
 
   if (missingMetrics.length === METRIC_ORDER.length) {
-    reminders.push({
-      id: "missing-all-today",
-      tone: "warning",
-      title: "今天还没有开始记录",
-      description: "先补上睡眠、体重和饮水，后面的趋势、达标率和连续记录才会更有参考意义。",
-      actionHref: "/today",
-      actionLabel: "去补录今天的数据",
-    });
+    if (inactivityDays !== null && inactivityDays >= 4) {
+      reminders.push({
+        id: "inactive-return",
+        tone: "warning",
+        title: `已经 ${inactivityDays} 天没有回来记录`,
+        description: "先把今天这组记下来，再决定要不要回补前几天。重新开始比一次补齐更重要。",
+        actionHref: "/today",
+        actionLabel: "先记今天",
+      });
+    } else if (inactivityDays === 1) {
+      reminders.push({
+        id: "missing-all-today-soft",
+        tone: "info",
+        title: "今天还没开始，但节奏还在",
+        description: "先把今天这组补上，连续记录就不会断掉。",
+        actionHref: "/today",
+        actionLabel: "继续今天这组",
+      });
+    } else {
+      reminders.push({
+        id: "missing-all-today",
+        tone: "warning",
+        title: "今天还没有开始记录",
+        description: "先补上睡眠、体重和饮水，后面的趋势、达标率和连续记录才会更有参考意义。",
+        actionHref: "/today",
+        actionLabel: "去补录今天的数据",
+      });
+    }
   } else if (missingMetrics.length > 0) {
     reminders.push({
       id: "missing-some-today",
@@ -394,13 +433,26 @@ export async function getReminderFeedByUserId(
   }
 
   const streakDays = calculateStreak(todayDate, recordMap);
+  const streakMomentum = getStreakMomentum(streakDays);
 
-  if (streakDays >= 3) {
+  if (streakDays > 0 && streakDays < 3 && isCompleteRecord(todayRecord)) {
+    reminders.push({
+      id: "streak-building",
+      tone: "success",
+      title: "今天这组已经完成",
+      description: `再坚持 ${streakMomentum.daysRemaining} 天，就会形成 ${streakMomentum.nextMilestone} 天连续记录。`,
+      actionHref: "/dashboard",
+      actionLabel: "看连续记录进展",
+    });
+  } else if (streakDays >= 3) {
     reminders.push({
       id: "consistency-streak",
       tone: "success",
       title: `你已经连续完整记录 ${streakDays} 天`,
-      description: "继续保持现在的节奏，连续数据会让趋势判断更稳定，也更容易看出行为变化带来的影响。",
+      description:
+        streakMomentum.nextMilestone === null
+          ? "继续保持现在的节奏，连续数据会让趋势判断更稳定，也更容易看出行为变化带来的影响。"
+          : `继续保持现在的节奏，再坚持 ${streakMomentum.daysRemaining} 天，就到 ${streakMomentum.nextMilestone} 天连续记录。`,
       actionHref: "/dashboard",
       actionLabel: "查看仪表盘",
     });
