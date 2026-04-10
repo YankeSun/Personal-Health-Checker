@@ -36,18 +36,36 @@ type GoalFormState = {
 const goalMeta = {
   [Metric.SLEEP]: {
     title: "睡眠目标",
-    description: "设置你希望每天达到的睡眠时长。",
+    description: "每天睡够这个时长，身体的恢复效果会更好。",
     unitLabel: "小时",
+    recommendedMode: GoalMode.AT_LEAST,
+    modeLabels: {
+      [GoalMode.AT_LEAST]: "每天至少睡够",
+      [GoalMode.AT_MOST]: "每天不超过",
+      [GoalMode.IN_RANGE]: "保持在这个区间",
+    },
   },
   [Metric.WEIGHT]: {
     title: "体重目标",
-    description: "可以设置单值目标，也可以设定目标区间。",
+    description: "用一个稳定的区间来观察体重变化，比单值更容易判断趋势。",
     unitLabel: "",
+    recommendedMode: GoalMode.IN_RANGE,
+    modeLabels: {
+      [GoalMode.AT_LEAST]: "至少保持",
+      [GoalMode.AT_MOST]: "每天不超过",
+      [GoalMode.IN_RANGE]: "保持在这个区间",
+    },
   },
   [Metric.WATER]: {
     title: "饮水目标",
-    description: "用每天累计饮水量来作为达标基准。",
+    description: "每天累计喝够这个量，帮助身体保持水分平衡。",
     unitLabel: "",
+    recommendedMode: GoalMode.AT_LEAST,
+    modeLabels: {
+      [GoalMode.AT_LEAST]: "每天至少喝够",
+      [GoalMode.AT_MOST]: "每天不超过",
+      [GoalMode.IN_RANGE]: "保持在这个区间",
+    },
   },
 } as const;
 
@@ -250,27 +268,43 @@ export function GoalsForm({ initialValues, previewMode = false }: GoalsFormProps
                   </label>
                 </div>
 
-                <div className="mt-5 grid gap-4 md:grid-cols-3">
-                  <label className="block space-y-2">
-                    <span className="text-sm font-medium text-slate-700">目标模式</span>
-                    <select
-                      className="w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-900 outline-none transition focus:border-emerald-500"
-                      value={goal.mode}
-                      onChange={(event) =>
-                        setForm((current) => ({
-                          ...current,
-                          [metric]: {
-                            ...current[metric],
-                            mode: event.target.value as GoalMode,
-                          },
-                        }))
-                      }
-                    >
-                      <option value={GoalMode.AT_LEAST}>至少达到</option>
-                      <option value={GoalMode.AT_MOST}>不超过</option>
-                      <option value={GoalMode.IN_RANGE}>保持区间</option>
-                    </select>
-                  </label>
+                <div className="mt-5 space-y-4">
+                  <div className="flex flex-wrap gap-2">
+                    {([GoalMode.AT_LEAST, GoalMode.AT_MOST, GoalMode.IN_RANGE] as GoalMode[]).map(
+                      (mode) => {
+                        const isSelected = goal.mode === mode;
+                        const isRecommended = mode === goalMeta[metric].recommendedMode;
+
+                        return (
+                          <button
+                            key={mode}
+                            type="button"
+                            className={`rounded-full px-4 py-2 text-sm font-medium transition ${
+                              isSelected
+                                ? "bg-slate-900 text-white"
+                                : "bg-white text-slate-700 border border-slate-200 hover:bg-slate-100"
+                            }`}
+                            onClick={() =>
+                              setForm((current) => ({
+                                ...current,
+                                [metric]: {
+                                  ...current[metric],
+                                  mode,
+                                },
+                              }))
+                            }
+                          >
+                            {goalMeta[metric].modeLabels[mode]}
+                            {isRecommended && !isSelected && (
+                              <span className="ml-1.5 text-[10px] uppercase tracking-wider opacity-70">
+                                推荐
+                              </span>
+                            )}
+                          </button>
+                        );
+                      },
+                    )}
+                  </div>
 
                   {goal.mode === GoalMode.IN_RANGE ? (
                     <>
