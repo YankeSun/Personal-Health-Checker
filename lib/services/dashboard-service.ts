@@ -429,6 +429,78 @@ function buildTodayInsight(
   };
 }
 
+function buildPeriodChangeInsight(
+  windowSummary: DashboardWindowSummary | undefined,
+  profile: DashboardProfile,
+): DashboardInsight | null {
+  if (!windowSummary || windowSummary.comparison.metrics.length === 0) {
+    return null;
+  }
+
+  const metricsWithChange = windowSummary.comparison.metrics
+    .map((m) => {
+      const metricDelta = windowSummary.metrics.find((s) => s.metric === m.metric);
+      return {
+        metric: m.metric,
+        label: m.label,
+        currentAverageDisplay: m.currentAverageDisplay,
+        previousAverageDisplay: m.previousAverageDisplay,
+        averageDeltaDisplay: m.averageDeltaDisplay,
+        averageDeltaDirection: m.averageDeltaDirection,
+        attainmentRateChange: m.attainmentRateChange,
+        currentAttainmentRate: metricDelta?.attainmentRate ?? null,
+      };
+    })
+    .filter((m) => m.averageDeltaDisplay !== null && m.averageDeltaDirection !== "none");
+
+  if (metricsWithChange.length === 0) {
+    return null;
+  }
+
+  const mostImproved = [...metricsWithChange]
+    .filter((m) => m.attainmentRateChange !== null && m.attainmentRateChange > 0)
+    .sort((a, b) => (b.attainmentRateChange ?? 0) - (a.attainmentRateChange ?? 0))[0];
+
+  const mostDeclined = [...metricsWithChange]
+    .filter((m) => m.attainmentRateChange !== null && m.attainmentRateChange < 0)
+    .sort((a, b) => (a.attainmentRateChange ?? 0) - (b.attainmentRateChange ?? 0))[0];
+
+  if (mostImproved && mostDeclined) {
+    return {
+      id: "period-change-summary",
+      tone: "info",
+      title: `最近 ${windowSummary.days} 天变化小结`,
+      description: `${mostImproved.label}进步最明显（达标率 +${mostImproved.attainmentRateChange}%），${mostDeclined.label}需要多关注（达标率 ${mostDeclined.attainmentRateChange}%）。可以优先把注意力放在${mostDeclined.label}上。`,
+      actionHref: `/trends?metric=${mostDeclined.metric.toLowerCase()}&days=${windowSummary.days}`,
+      actionLabel: `查看${mostDeclined.label}趋势`,
+    };
+  }
+
+  if (mostImproved) {
+    return {
+      id: "period-improvement",
+      tone: "success",
+      title: `最近 ${windowSummary.days} 天${mostImproved.label}进步明显`,
+      description: `${mostImproved.label}达标率提升了 +${mostImproved.attainmentRateChange}%，继续保持这个节奏。`,
+      actionHref: `/trends?metric=${mostImproved.metric.toLowerCase()}&days=${windowSummary.days}`,
+      actionLabel: `查看${mostImproved.label}趋势`,
+    };
+  }
+
+  if (mostDeclined) {
+    return {
+      id: "period-decline",
+      tone: "warning",
+      title: `最近 ${windowSummary.days} 天${mostDeclined.label}需要关注`,
+      description: `${mostDeclined.label}达标率下降了 ${mostDeclined.attainmentRateChange}%，可以先回顾一下最近这项的日常节奏。`,
+      actionHref: `/trends?metric=${mostDeclined.metric.toLowerCase()}&days=${windowSummary.days}`,
+      actionLabel: `查看${mostDeclined.label}趋势`,
+    };
+  }
+
+  return null;
+}
+
 function buildWeeklyFocusInsight(
   windowSummary: DashboardWindowSummary | undefined,
 ): DashboardInsight | null {
@@ -526,9 +598,11 @@ export async function getDashboardOverviewByUserId(
     .sort((left, right) => left - right)
     .map((days) => buildWindowSummary(days, todayDate, recordMap, goals, profile));
   const summary7 = windowSummaries.find((window) => window.days === 7);
+  const summary30 = windowSummaries.find((window) => window.days === 30);
   const insights = [
     buildTodayInsight(todayRecord, streakDays),
     buildWeeklyFocusInsight(summary7),
+    buildPeriodChangeInsight(summary30, profile),
   ].filter((item): item is DashboardInsight => Boolean(item));
 
   return {
