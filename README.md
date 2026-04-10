@@ -51,6 +51,7 @@ npm run dev
 ```bash
 npm test
 npm run smoke
+npm run analytics:report -- --days=30
 ```
 
 本地启动后，可以直接打开：
@@ -132,6 +133,11 @@ npm run deploy:prod -- "这次版本相比上一个版本的改动说明"
 ```
 
 每次部署后，说明会同步追加到 [DEPLOYMENTS.md](./DEPLOYMENTS.md)。
+
+## Progress Notes
+
+- 开发推进日志见 [PROGRESS_LOG.md](./PROGRESS_LOG.md)
+- 项目整体总结见 [PROJECT_SUMMARY.md](./PROJECT_SUMMARY.md)
 
 ## CI
 

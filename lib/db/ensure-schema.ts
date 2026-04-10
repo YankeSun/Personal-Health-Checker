@@ -170,6 +170,27 @@ const schemaStatements = [
   `
   CREATE INDEX IF NOT EXISTS "Goal_userId_idx" ON "Goal"("userId");
   `,
+  `
+  CREATE TABLE IF NOT EXISTS "ProductEvent" (
+    "id" TEXT NOT NULL,
+    "userId" TEXT,
+    "eventName" TEXT NOT NULL,
+    "path" TEXT,
+    "metadata" JSONB,
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT "ProductEvent_pkey" PRIMARY KEY ("id"),
+    CONSTRAINT "ProductEvent_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE SET NULL ON UPDATE CASCADE
+  );
+  `,
+  `
+  CREATE INDEX IF NOT EXISTS "ProductEvent_eventName_createdAt_idx" ON "ProductEvent"("eventName", "createdAt");
+  `,
+  `
+  CREATE INDEX IF NOT EXISTS "ProductEvent_userId_createdAt_idx" ON "ProductEvent"("userId", "createdAt");
+  `,
+  `
+  CREATE INDEX IF NOT EXISTS "ProductEvent_path_createdAt_idx" ON "ProductEvent"("path", "createdAt");
+  `,
 ] as const;
 
 export async function ensureDatabaseSchema() {

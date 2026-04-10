@@ -1,6 +1,7 @@
 import { requireUser } from "@/lib/auth/guards";
 import { HistoryMonthView } from "@/components/history/history-month-view";
 import { getHistoryMonthOverviewByUserId } from "@/lib/services/history-service";
+import { trackProductPageViewSafely } from "@/lib/services/observability-service";
 import { normalizeHistoryMonthForTimezone } from "@/lib/validations/history";
 
 type HistoryPageProps = {
@@ -27,6 +28,7 @@ export default async function HistoryPage({ searchParams }: HistoryPageProps) {
     profile,
     month,
   );
+  await trackProductPageViewSafely(user.id, "/history", { month });
 
   return <HistoryMonthView overview={overview} />;
 }

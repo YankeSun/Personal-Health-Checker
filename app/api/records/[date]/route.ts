@@ -3,10 +3,16 @@ import { ZodError } from "zod";
 import { getCurrentUser } from "@/lib/auth/session";
 import {
   deleteDailyRecordByUserAndDate,
+  getDailyRecordMilestonesByUserId,
   getDailyRecordByUserAndDate,
   upsertDailyRecordByUserId,
 } from "@/lib/services/daily-record-service";
+import {
+  PRODUCT_EVENT_NAMES,
+  trackProductEventSafely,
+} from "@/lib/services/observability-service";
 import { getZodErrorMessage, jsonError } from "@/lib/utils/api";
+import { getDateStringInTimezone } from "@/lib/utils/dates";
 import { dailyRecordFieldsSchema } from "@/lib/validations/daily-record";
 import {
   getRecordDateValidationError,
@@ -96,10 +102,49 @@ export async function PUT(request: Request, context: RouteContext) {
 
   try {
     const body = dailyRecordFieldsSchema.parse(await request.json());
+    const milestones = await getDailyRecordMilestonesByUserId(user.id);
     const record = await upsertDailyRecordByUserId(user.id, {
       date: parsedDate.date,
       ...body,
     });
+    const completedMetrics = [record.sleepHours, record.weightKg, record.waterMl].filter(
+      (value) => value !== null,
+    ).length;
+    const todayDate = getDateStringInTimezone(user.profile.timezone);
+    const isToday = parsedDate.date === todayDate;
+
+    await trackProductEventSafely({
+      userId: user.id,
+      eventName: PRODUCT_EVENT_NAMES.dailyRecordSaved,
+      path: isToday ? "/today" : "/history",
+      metadata: {
+        date: parsedDate.date,
+        completedMetrics,
+        isToday,
+      },
+    });
+
+    if (!milestones.hasAnyRecord) {
+      await trackProductEventSafely({
+        userId: user.id,
+        eventName: PRODUCT_EVENT_NAMES.firstRecordSaved,
+        path: "/today",
+        metadata: {
+          date: parsedDate.date,
+        },
+      });
+    }
+
+    if (!milestones.hasCompleteRecord && completedMetrics === 3) {
+      await trackProductEventSafely({
+        userId: user.id,
+        eventName: PRODUCT_EVENT_NAMES.firstCompleteRecordSaved,
+        path: "/today",
+        metadata: {
+          date: parsedDate.date,
+        },
+      });
+    }
 
     return Response.json({ record });
   } catch (error) {

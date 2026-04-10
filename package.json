@@ -11,6 +11,7 @@
     "test": "vitest run",
     "test:watch": "vitest",
     "smoke": "bash scripts/smoke.sh",
+    "analytics:report": "tsx scripts/usage-report.ts",
     "deploy:preview": "bash scripts/deploy-vercel.sh preview",
     "deploy:prod": "bash scripts/deploy-vercel.sh production",
     "prisma:generate": "prisma generate",

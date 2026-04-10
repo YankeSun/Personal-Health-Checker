@@ -2,6 +2,10 @@ import { ZodError } from "zod";
 
 import { createSession } from "@/lib/auth/session";
 import { loginUser, AuthError } from "@/lib/services/auth-service";
+import {
+  PRODUCT_EVENT_NAMES,
+  trackProductEventSafely,
+} from "@/lib/services/observability-service";
 import { jsonError, getZodErrorMessage } from "@/lib/utils/api";
 import { loginSchema } from "@/lib/validations/auth";
 
@@ -11,6 +15,11 @@ export async function POST(request: Request) {
     const user = await loginUser(body);
 
     await createSession(user.id);
+    await trackProductEventSafely({
+      userId: user.id,
+      eventName: PRODUCT_EVENT_NAMES.loginCompleted,
+      path: "/login",
+    });
 
     return Response.json({
       user: {

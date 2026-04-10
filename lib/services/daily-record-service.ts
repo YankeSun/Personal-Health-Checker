@@ -34,6 +34,11 @@ export type LatestMetricDefaultsView = {
   waterMl: number | null;
 };
 
+export type DailyRecordMilestonesView = {
+  hasAnyRecord: boolean;
+  hasCompleteRecord: boolean;
+};
+
 function getCompletedMetricCount(record: Pick<
   DailyRecordView,
   "sleepHours" | "weightKg" | "waterMl"
@@ -185,6 +190,43 @@ export async function getLatestMetricDefaultsByUserId(
   }
 
   return defaults;
+}
+
+export async function getDailyRecordMilestonesByUserId(
+  userId: string,
+): Promise<DailyRecordMilestonesView> {
+  const [anyRecord, completeRecord] = await Promise.all([
+    prisma.dailyRecord.findFirst({
+      where: {
+        userId,
+      },
+      select: {
+        id: true,
+      },
+    }),
+    prisma.dailyRecord.findFirst({
+      where: {
+        userId,
+        sleepHours: {
+          not: null,
+        },
+        weightKg: {
+          not: null,
+        },
+        waterMl: {
+          not: null,
+        },
+      },
+      select: {
+        id: true,
+      },
+    }),
+  ]);
+
+  return {
+    hasAnyRecord: Boolean(anyRecord),
+    hasCompleteRecord: Boolean(completeRecord),
+  };
 }
 
 export async function upsertDailyRecordByUserId(

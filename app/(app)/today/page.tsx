@@ -5,6 +5,7 @@ import {
   getLatestMetricDefaultsByUserId,
   getRecentDailyRecordSummariesByUserId,
 } from "@/lib/services/daily-record-service";
+import { trackProductPageViewSafely } from "@/lib/services/observability-service";
 import { getReminderFeedByUserId } from "@/lib/services/reminder-service";
 import {
   formatDateLabel,
@@ -38,13 +39,17 @@ export default async function TodayPage({ searchParams }: TodayPageProps) {
     profile.timezone,
   );
   const bounds = getEditableRecordDateBounds(profile.timezone);
+  const isToday = selectedDate === todayDate;
   const [record, reminderFeed, recentRecords, latestDefaults] = await Promise.all([
     getDailyRecordByUserAndDate(user.id, selectedDate),
     getReminderFeedByUserId(user.id, profile),
     getRecentDailyRecordSummariesByUserId(user.id, selectedDate, 14),
     getLatestMetricDefaultsByUserId(user.id, selectedDate),
+    trackProductPageViewSafely(user.id, "/today", {
+      selectedDate,
+      isToday,
+      }),
   ]);
-  const isToday = selectedDate === todayDate;
   const previousDate =
     selectedDate > bounds.minDate ? shiftDateString(selectedDate, -1) : null;
   const nextDate =

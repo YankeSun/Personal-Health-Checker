@@ -4,6 +4,8 @@ const getCurrentUser = vi.fn();
 const getDailyRecordByUserAndDate = vi.fn();
 const upsertDailyRecordByUserId = vi.fn();
 const deleteDailyRecordByUserAndDate = vi.fn();
+const getDailyRecordMilestonesByUserId = vi.fn();
+const trackProductEventSafely = vi.fn();
 
 vi.mock("@/lib/auth/session", () => ({
   getCurrentUser,
@@ -11,8 +13,18 @@ vi.mock("@/lib/auth/session", () => ({
 
 vi.mock("@/lib/services/daily-record-service", () => ({
   getDailyRecordByUserAndDate,
+  getDailyRecordMilestonesByUserId,
   upsertDailyRecordByUserId,
   deleteDailyRecordByUserAndDate,
+}));
+
+vi.mock("@/lib/services/observability-service", () => ({
+  PRODUCT_EVENT_NAMES: {
+    dailyRecordSaved: "DAILY_RECORD_SAVED",
+    firstRecordSaved: "FIRST_RECORD_SAVED",
+    firstCompleteRecordSaved: "FIRST_COMPLETE_RECORD_SAVED",
+  },
+  trackProductEventSafely,
 }));
 
 describe("record-by-date route", () => {
@@ -75,6 +87,10 @@ describe("record-by-date route", () => {
         timezone: "Asia/Shanghai",
       },
     });
+    getDailyRecordMilestonesByUserId.mockResolvedValue({
+      hasAnyRecord: false,
+      hasCompleteRecord: false,
+    });
     upsertDailyRecordByUserId.mockResolvedValue({
       id: "record_1",
       date: "2026-04-02",
@@ -111,6 +127,7 @@ describe("record-by-date route", () => {
       weightKg: 63.2,
       waterMl: 1800,
     });
+    expect(trackProductEventSafely).toHaveBeenCalledTimes(3);
     expect(data.record.date).toBe("2026-04-02");
   });
 

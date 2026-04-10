@@ -4,6 +4,7 @@ import { AppLink } from "@/components/shared/app-link";
 import { TrendChart } from "@/components/charts/trend-chart";
 import { RecordHistoryTable } from "@/components/trends/record-history-table";
 import { requireUser } from "@/lib/auth/guards";
+import { trackProductPageViewSafely } from "@/lib/services/observability-service";
 import { getRecordHistoryWindowByUserId } from "@/lib/services/record-history-service";
 import { getTrendOverviewByUserId } from "@/lib/services/trends-service";
 import { trendDaysSchema, trendMetricSchema } from "@/lib/validations/trends";
@@ -60,6 +61,7 @@ export default async function TrendsPage({ searchParams }: TrendsPageProps) {
       profile,
       windowDays,
     ),
+    trackProductPageViewSafely(user.id, "/trends", { metric, days: windowDays }),
   ]);
 
   return (

@@ -42,6 +42,7 @@ model User {
   sessions                Session[]
   emailVerificationTokens EmailVerificationToken[]
   passwordResetTokens     PasswordResetToken[]
+  productEvents           ProductEvent[]
 }
 
 model UserProfile {
@@ -124,4 +125,18 @@ model Goal {
 
   @@unique([userId, metric])
   @@index([userId])
+}
+
+model ProductEvent {
+  id        String   @id @default(cuid())
+  userId    String?
+  eventName String
+  path      String?
+  metadata  Json?
+  createdAt DateTime @default(now())
+  user      User?    @relation(fields: [userId], references: [id], onDelete: SetNull)
+
+  @@index([eventName, createdAt])
+  @@index([userId, createdAt])
+  @@index([path, createdAt])
 }

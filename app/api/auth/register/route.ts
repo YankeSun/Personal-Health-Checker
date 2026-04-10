@@ -3,6 +3,10 @@ import { ZodError } from "zod";
 import { createSession } from "@/lib/auth/session";
 import { issueEmailVerification } from "@/lib/services/account-security-service";
 import { registerUser, AuthError } from "@/lib/services/auth-service";
+import {
+  PRODUCT_EVENT_NAMES,
+  trackProductEventSafely,
+} from "@/lib/services/observability-service";
 import { jsonError, getZodErrorMessage } from "@/lib/utils/api";
 import { registerSchema } from "@/lib/validations/auth";
 
@@ -12,6 +16,11 @@ export async function POST(request: Request) {
     const user = await registerUser(body);
 
     await createSession(user.id);
+    await trackProductEventSafely({
+      userId: user.id,
+      eventName: PRODUCT_EVENT_NAMES.signUpCompleted,
+      path: "/register",
+    });
     try {
       await issueEmailVerification(user.id, new URL(request.url).origin);
     } catch (emailError) {
