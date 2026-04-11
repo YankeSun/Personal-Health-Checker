@@ -101,10 +101,44 @@ export function HistoryMonthView({ overview }: HistoryMonthViewProps) {
         <article className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
           <p className="text-sm font-medium text-slate-500">记录密度</p>
           <p className="mt-3 text-3xl font-semibold text-slate-900">
-            {Math.round(((overview.completeDays + overview.partialDays) / overview.rows.length) * 100)}%
+            {overview.recordDensity}%
           </p>
           <p className="mt-2 text-sm text-slate-600">本月有记录的自然日占比</p>
         </article>
+      </section>
+
+      <section className="grid gap-4 lg:grid-cols-2">
+        {overview.insights.map((insight) => {
+          const toneClass =
+            insight.tone === "success"
+              ? "border-emerald-200 bg-emerald-50"
+              : insight.tone === "warning"
+                ? "border-amber-200 bg-amber-50"
+                : "border-sky-200 bg-sky-50";
+          const badgeClass =
+            insight.tone === "success"
+              ? "bg-emerald-100 text-emerald-800"
+              : insight.tone === "warning"
+                ? "bg-amber-100 text-amber-800"
+                : "bg-sky-100 text-sky-800";
+
+          return (
+            <article
+              className={`rounded-3xl border p-6 shadow-sm ${toneClass}`}
+              key={insight.title}
+            >
+              <div className="flex items-center justify-between gap-3">
+                <h2 className="text-base font-semibold text-slate-900">{insight.title}</h2>
+                <span
+                  className={`rounded-full px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.16em] ${badgeClass}`}
+                >
+                  月度小结
+                </span>
+              </div>
+              <p className="mt-3 text-sm leading-6 text-slate-700">{insight.description}</p>
+            </article>
+          );
+        })}
       </section>
 
       <section className="rounded-3xl border border-slate-200 bg-white p-8 shadow-sm">
