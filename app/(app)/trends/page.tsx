@@ -152,6 +152,11 @@ export default async function TrendsPage({ searchParams }: TrendsPageProps) {
           <p className="mt-2 text-sm text-slate-600">
             {trend.goalDescription ?? "先去设置页配置目标"}
           </p>
+          {trend.goalDeviationDescription ? (
+            <p className="mt-3 text-sm font-medium text-slate-900">
+              {trend.goalDeviationDescription}
+            </p>
+          ) : null}
         </article>
       </section>
 

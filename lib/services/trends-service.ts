@@ -9,7 +9,11 @@ import {
   getDateStringInTimezone,
   shiftDateString,
 } from "@/lib/utils/dates";
-import { formatGoalRuleDescription, getGoalUnitLabel } from "@/lib/utils/goal-copy";
+import {
+  formatGoalDeviationDescription,
+  formatGoalRuleDescription,
+  getGoalUnitLabel,
+} from "@/lib/utils/goal-copy";
 import { GoalView } from "@/lib/utils/goals";
 import {
   toDisplaySleep,
@@ -54,6 +58,7 @@ export type TrendOverview = {
   minDisplay: string | null;
   maxDisplay: string | null;
   goalDescription: string | null;
+  goalDeviationDescription: string | null;
   insight: TrendInsight;
   comparison: TrendComparison;
   points: TrendPoint[];
@@ -445,6 +450,12 @@ export async function getTrendOverviewByUserId(
     minDisplay: formatMetricDisplay(metric, minRawValue, profile),
     maxDisplay: formatMetricDisplay(metric, maxRawValue, profile),
     goalDescription: formatGoalRuleDescription(metric, goal, profile),
+    goalDeviationDescription: formatGoalDeviationDescription(
+      metric,
+      goal,
+      latestRawValue,
+      profile,
+    ),
     insight: buildTrendInsight({
       metricLabel: metricLabels[metricParam],
       days,

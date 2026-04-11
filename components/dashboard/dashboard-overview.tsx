@@ -156,6 +156,11 @@ export function DashboardOverviewPanel({ overview, reminderFeed }: DashboardOver
                 >
                   {getGoalStatusLabel(metric.goalMet, metric.recorded)}
                 </p>
+                {metric.goalDeviationDescription ? (
+                  <p className="mt-3 text-sm text-slate-600">
+                    {metric.goalDeviationDescription}
+                  </p>
+                ) : null}
               </article>
             ))}
           </div>

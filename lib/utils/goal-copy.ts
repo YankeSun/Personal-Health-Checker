@@ -147,3 +147,56 @@ export function formatGoalRuleDescription(
 
   return `${metricLabel}记录达到 ${target} ${unitLabel} 及以上时，会算作当日达标。`;
 }
+
+export function formatGoalDeviationDescription(
+  metric: Metric,
+  goal: GoalView,
+  value: number | null,
+  profile: GoalCopyProfile,
+) {
+  if (!goal.isActive || value === null) {
+    return null;
+  }
+
+  const formatDelta = (delta: number) => `${formatGoalValue(metric, delta, profile)} ${getGoalUnitLabel(metric, profile)}`;
+
+  if (goal.mode === GoalMode.IN_RANGE) {
+    if (goal.minValue === null || goal.maxValue === null) {
+      return null;
+    }
+
+    if (value < goal.minValue) {
+      return `距离目标区间还差 ${formatDelta(goal.minValue - value)}`;
+    }
+
+    if (value > goal.maxValue) {
+      return `高出目标区间 ${formatDelta(value - goal.maxValue)}`;
+    }
+
+    return "当前落在目标区间内";
+  }
+
+  if (goal.targetValue === null) {
+    return null;
+  }
+
+  if (goal.mode === GoalMode.AT_MOST) {
+    if (value > goal.targetValue) {
+      return `超出上限 ${formatDelta(value - goal.targetValue)}`;
+    }
+
+    return `距离上限还剩 ${formatDelta(goal.targetValue - value)}`;
+  }
+
+  if (value < goal.targetValue) {
+    return `距离目标还差 ${formatDelta(goal.targetValue - value)}`;
+  }
+
+  const delta = value - goal.targetValue;
+
+  if (delta < 0.01) {
+    return "刚好达到目标";
+  }
+
+  return `超过目标 ${formatDelta(delta)}`;
+}

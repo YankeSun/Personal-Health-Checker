@@ -8,7 +8,11 @@ import {
   shiftDateString,
   storageDateToDateString,
 } from "@/lib/utils/dates";
-import { formatGoalRuleDescription, getGoalUnitLabel } from "@/lib/utils/goal-copy";
+import {
+  formatGoalDeviationDescription,
+  formatGoalRuleDescription,
+  getGoalUnitLabel,
+} from "@/lib/utils/goal-copy";
 import { GoalView, METRIC_ORDER } from "@/lib/utils/goals";
 import { getStreakMomentum } from "@/lib/utils/streak";
 import { toDisplaySleep, toDisplayWater, toDisplayWeight } from "@/lib/utils/units";
@@ -28,6 +32,7 @@ type DashboardTodayMetric = {
   displayValue: string | null;
   recorded: boolean;
   goalDescription: string | null;
+  goalDeviationDescription: string | null;
   goalMet: boolean | null;
 };
 
@@ -581,6 +586,7 @@ export async function getDashboardOverviewByUserId(
         displayValue: getDisplayValue(metric, value, profile),
         recorded: value !== null,
         goalDescription: formatGoalRuleDescription(metric, goal, profile),
+        goalDeviationDescription: formatGoalDeviationDescription(metric, goal, value, profile),
         goalMet: evaluateGoal(value, goal),
       } satisfies DashboardTodayMetric;
     }),

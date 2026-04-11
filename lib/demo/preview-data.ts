@@ -4,7 +4,11 @@ import type { DashboardOverview } from "@/lib/services/dashboard-service";
 import type { ReminderFeed } from "@/lib/services/reminder-service";
 import type { TrendOverview } from "@/lib/services/trends-service";
 import { formatDateLabel, formatShortDateLabel, getDateRange } from "@/lib/utils/dates";
-import { formatGoalRuleDescription, formatGoalShortLabel } from "@/lib/utils/goal-copy";
+import {
+  formatGoalDeviationDescription,
+  formatGoalRuleDescription,
+  formatGoalShortLabel,
+} from "@/lib/utils/goal-copy";
 import type { GoalView } from "@/lib/utils/goals";
 import {
   toDisplaySleep,
@@ -35,6 +39,7 @@ type PreviewMetricSummary = {
   averageDisplay: string | null;
   latestDisplay: string | null;
   goalDescription: string;
+  goalDeviationDescription: string | null;
 };
 
 const metricLabels: Record<TrendMetricParam, string> = {
@@ -249,6 +254,12 @@ function buildMetricSummary(metric: Metric, dates: string[]): PreviewMetricSumma
     averageDisplay: averageValue === null ? null : formatMetricDisplay(metric, averageValue),
     latestDisplay: formatMetricDisplay(metric, latestValue),
     goalDescription: getGoalDescription(metric),
+    goalDeviationDescription: formatGoalDeviationDescription(
+      metric,
+      getGoalByMetric(metric),
+      latestValue,
+      { weightUnit, waterUnit },
+    ),
   };
 }
 
@@ -342,6 +353,12 @@ export const previewDashboardOverview: DashboardOverview = {
       displayValue: formatMetricDisplay(metric, todayValue) || null,
       recorded: todayValue !== null,
       goalDescription: getGoalDescription(metric),
+      goalDeviationDescription: formatGoalDeviationDescription(
+        metric,
+        getGoalByMetric(metric),
+        todayValue,
+        { weightUnit, waterUnit },
+      ),
       goalMet: evaluateGoal(metric, todayValue),
     };
   }),
@@ -480,6 +497,15 @@ function buildTrend(metricParam: TrendMetricParam, daysParam: TrendDaysParam): T
     minDisplay: formatMetricDisplay(metric, validValues.length ? Math.min(...validValues) : null) || null,
     maxDisplay: formatMetricDisplay(metric, validValues.length ? Math.max(...validValues) : null) || null,
     goalDescription: getGoalDescription(metric),
+    goalDeviationDescription: formatGoalDeviationDescription(
+      metric,
+      goal,
+      [...dates]
+        .reverse()
+        .map((date) => getMetricRawValue(metric, date))
+        .find((value): value is number => value !== null) ?? null,
+      { weightUnit, waterUnit },
+    ),
     insight:
       completionRate < 50
         ? {
