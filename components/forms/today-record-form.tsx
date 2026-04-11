@@ -8,11 +8,16 @@ import { ReminderPanel } from "@/components/shared/reminder-panel";
 import type { DailyRecordSummaryView } from "@/lib/services/daily-record-service";
 import type { ReminderFeed } from "@/lib/services/reminder-service";
 import { getApiErrorMessage } from "@/lib/utils/client-api";
+import type { GoalView } from "@/lib/utils/goals";
 import {
   getRecordQualityWarnings,
   type RecordQualityWarning,
 } from "@/lib/utils/record-quality";
-import { getRecordCompletionSummary } from "@/lib/utils/today-record";
+import {
+  getRecordCompletionSummary,
+  getTodayGoalInsights,
+  type TodayGoalInsight,
+} from "@/lib/utils/today-record";
 import {
   fromDisplaySleep,
   fromDisplayWater,
@@ -33,6 +38,7 @@ type TodayRecordFormProps = {
     isBackfilled?: boolean;
   };
   reminderFeed: ReminderFeed;
+  goals?: GoalView[];
   hasExistingRecord?: boolean;
   onboarding?: {
     title: string;
@@ -67,6 +73,7 @@ type FormState = {
 export function TodayRecordForm({
   initialValues,
   reminderFeed,
+  goals = [],
   hasExistingRecord = false,
   onboarding,
   quickFillDefaults,
@@ -100,6 +107,11 @@ export function TodayRecordForm({
     dateControls?.isToday !== false &&
     !hasRecord &&
     !completion.hasAnyValue;
+  const goalInsights = getTodayGoalInsights(form, goals, {
+    weightUnit: initialValues.weightUnit,
+    waterUnit: initialValues.waterUnit,
+  });
+  const goalInsightsByMetric = new Map(goalInsights.map((insight) => [insight.metric, insight]));
 
   const sleepQuickOptions = buildQuickOptions([
     quickFillDefaults?.sleepHours
@@ -451,6 +463,7 @@ export function TodayRecordForm({
                 ))}
               </div>
             ) : null}
+            <GoalInsightPanel insight={goalInsightsByMetric.get("SLEEP")} />
           </label>
 
           <label className="block space-y-2">
@@ -478,6 +491,7 @@ export function TodayRecordForm({
                 ))}
               </div>
             ) : null}
+            <GoalInsightPanel insight={goalInsightsByMetric.get("WEIGHT")} />
           </label>
 
           <label className="block space-y-2">
@@ -505,6 +519,7 @@ export function TodayRecordForm({
                 ))}
               </div>
             ) : null}
+            <GoalInsightPanel insight={goalInsightsByMetric.get("WATER")} />
           </label>
         </div>
 
@@ -715,5 +730,39 @@ function StatusPill({ label, active }: { label: string; active: boolean }) {
     >
       {active ? "已记" : "待记"} {label}
     </span>
+  );
+}
+
+function GoalInsightPanel({ insight }: { insight: TodayGoalInsight | undefined }) {
+  if (!insight) {
+    return null;
+  }
+
+  const toneClass =
+    insight.tone === "success"
+      ? "border-emerald-200 bg-emerald-50 text-emerald-900"
+      : insight.tone === "warning"
+        ? "border-amber-200 bg-amber-50 text-amber-950"
+        : "border-slate-200 bg-slate-50 text-slate-700";
+
+  const badgeClass =
+    insight.tone === "success"
+      ? "bg-emerald-100 text-emerald-800"
+      : insight.tone === "warning"
+        ? "bg-amber-100 text-amber-800"
+        : "bg-white text-slate-500 ring-1 ring-slate-200";
+
+  return (
+    <div className={`rounded-2xl border px-4 py-3 ${toneClass}`}>
+      <div className="flex items-center justify-between gap-3">
+        <p className="text-xs font-semibold tracking-[0.18em] text-current/75">
+          {insight.title}
+        </p>
+        <span className={`rounded-full px-3 py-1 text-[11px] font-semibold ${badgeClass}`}>
+          {insight.statusLabel}
+        </span>
+      </div>
+      <p className="mt-2 text-sm leading-6">{insight.detail}</p>
+    </div>
   );
 }

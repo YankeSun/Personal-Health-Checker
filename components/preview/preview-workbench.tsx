@@ -343,6 +343,7 @@ export function PreviewWorkbench({ screen, metric, days }: PreviewWorkbenchProps
           <TodayRecordForm
             initialValues={previewTodayValues}
             reminderFeed={previewReminderFeed}
+            goals={previewGoalsValues.goals}
             previewMode
           />
         ) : null}

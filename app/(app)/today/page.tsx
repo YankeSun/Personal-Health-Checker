@@ -5,6 +5,7 @@ import {
   getLatestMetricDefaultsByUserId,
   getRecentDailyRecordSummariesByUserId,
 } from "@/lib/services/daily-record-service";
+import { getGoalsByUserId } from "@/lib/services/goals-service";
 import { trackProductPageViewSafely } from "@/lib/services/observability-service";
 import { getReminderFeedByUserId } from "@/lib/services/reminder-service";
 import {
@@ -40,11 +41,12 @@ export default async function TodayPage({ searchParams }: TodayPageProps) {
   );
   const bounds = getEditableRecordDateBounds(profile.timezone);
   const isToday = selectedDate === todayDate;
-  const [record, reminderFeed, recentRecords, latestDefaults] = await Promise.all([
+  const [record, reminderFeed, recentRecords, latestDefaults, goals] = await Promise.all([
     getDailyRecordByUserAndDate(user.id, selectedDate),
     getReminderFeedByUserId(user.id, profile),
     getRecentDailyRecordSummariesByUserId(user.id, selectedDate, 14),
     getLatestMetricDefaultsByUserId(user.id, selectedDate),
+    getGoalsByUserId(user.id),
     trackProductPageViewSafely(user.id, "/today", {
       selectedDate,
       isToday,
@@ -84,6 +86,7 @@ export default async function TodayPage({ searchParams }: TodayPageProps) {
         weight: toDisplayWeight(latestDefaults.weightKg, profile.weightUnit),
         water: toDisplayWater(latestDefaults.waterMl, profile.waterUnit),
       }}
+      goals={goals}
       hasExistingRecord={Boolean(record)}
       dateControls={{
         isToday,
