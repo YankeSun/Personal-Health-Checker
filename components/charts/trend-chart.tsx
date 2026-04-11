@@ -22,6 +22,8 @@ function CustomTooltip({
   active,
   payload,
   label,
+  metricLabel,
+  unitLabel,
 }: {
   active?: boolean;
   payload?: Array<{
@@ -30,6 +32,8 @@ function CustomTooltip({
     name?: string;
   }>;
   label?: string;
+  metricLabel: string;
+  unitLabel: string;
 }) {
   if (!active || !payload?.length) {
     return null;
@@ -41,7 +45,7 @@ function CustomTooltip({
     <div className="rounded-xl border border-slate-200 bg-white p-3 shadow-md">
       <p className="text-sm font-medium text-slate-900">{label}</p>
       <p className="mt-1 text-sm text-slate-700">
-        {point.value} {point.value !== null ? "单位" : "--"}
+        {metricLabel}：{point.value ?? "--"} {point.value !== null ? unitLabel : ""}
       </p>
       {point.isBackfilled && (
         <p className="mt-1 text-xs text-sky-600">此为补录记录</p>
@@ -99,7 +103,12 @@ export function TrendChart({ trend }: TrendChartProps) {
             width={48}
           />
           <Tooltip
-            content={<CustomTooltip />}
+            content={
+              <CustomTooltip
+                metricLabel={trend.metricLabel}
+                unitLabel={trend.unitLabel}
+              />
+            }
           />
           {firstPoint?.goalTarget !== null ? (
             <ReferenceLine
