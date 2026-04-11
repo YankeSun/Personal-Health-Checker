@@ -8,6 +8,7 @@ import {
   shiftDateString,
   storageDateToDateString,
 } from "@/lib/utils/dates";
+import { formatGoalRuleDescription, getGoalUnitLabel } from "@/lib/utils/goal-copy";
 import { GoalView, METRIC_ORDER } from "@/lib/utils/goals";
 import { getStreakMomentum } from "@/lib/utils/streak";
 import { toDisplaySleep, toDisplayWater, toDisplayWeight } from "@/lib/utils/units";
@@ -128,21 +129,6 @@ function getMetricValue(
   return record.waterMl;
 }
 
-function getMetricUnitLabel(
-  metric: Metric,
-  profile: DashboardProfile,
-) {
-  if (metric === Metric.SLEEP) {
-    return "小时";
-  }
-
-  if (metric === Metric.WEIGHT) {
-    return profile.weightUnit === WeightUnit.KG ? "kg" : "lb";
-  }
-
-  return profile.waterUnit === WaterUnit.ML ? "ml" : "oz";
-}
-
 function getDisplayValue(
   metric: Metric,
   value: number | null,
@@ -161,34 +147,6 @@ function getDisplayValue(
   }
 
   return toDisplayWater(value, profile.waterUnit);
-}
-
-function formatGoalDescription(
-  metric: Metric,
-  goal: GoalView,
-  profile: DashboardProfile,
-) {
-  if (!goal.isActive) {
-    return null;
-  }
-
-  const unitLabel = getMetricUnitLabel(metric, profile);
-  const target =
-    goal.targetValue === null ? null : getDisplayValue(metric, goal.targetValue, profile);
-  const min =
-    goal.minValue === null ? null : getDisplayValue(metric, goal.minValue, profile);
-  const max =
-    goal.maxValue === null ? null : getDisplayValue(metric, goal.maxValue, profile);
-
-  if (goal.mode === GoalMode.IN_RANGE) {
-    return `${min} - ${max} ${unitLabel}`;
-  }
-
-  if (goal.mode === GoalMode.AT_MOST) {
-    return `不超过 ${target} ${unitLabel}`;
-  }
-
-  return `至少 ${target} ${unitLabel}`;
 }
 
 function evaluateGoal(value: number | null, goal: GoalView) {
@@ -294,7 +252,7 @@ function buildMetricSummary(
   return {
     metric,
     label: metricLabels[metric],
-    unitLabel: getMetricUnitLabel(metric, profile),
+    unitLabel: getGoalUnitLabel(metric, profile),
     recordedDays: values.length,
     metDays,
     attainmentRate:
@@ -302,7 +260,7 @@ function buildMetricSummary(
     averageValue,
     averageDisplay: averageValue === null ? null : getDisplayValue(metric, averageValue, profile),
     latestDisplay: getDisplayValue(metric, latestValue, profile),
-    goalDescription: formatGoalDescription(metric, goal, profile),
+    goalDescription: formatGoalRuleDescription(metric, goal, profile),
   } satisfies MetricSummaryComputation;
 }
 
@@ -619,10 +577,10 @@ export async function getDashboardOverviewByUserId(
       return {
         metric,
         label: metricLabels[metric],
-        unitLabel: getMetricUnitLabel(metric, profile),
+        unitLabel: getGoalUnitLabel(metric, profile),
         displayValue: getDisplayValue(metric, value, profile),
         recorded: value !== null,
-        goalDescription: formatGoalDescription(metric, goal, profile),
+        goalDescription: formatGoalRuleDescription(metric, goal, profile),
         goalMet: evaluateGoal(value, goal),
       } satisfies DashboardTodayMetric;
     }),

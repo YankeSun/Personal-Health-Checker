@@ -4,6 +4,7 @@ import type { DashboardOverview } from "@/lib/services/dashboard-service";
 import type { ReminderFeed } from "@/lib/services/reminder-service";
 import type { TrendOverview } from "@/lib/services/trends-service";
 import { formatDateLabel, formatShortDateLabel, getDateRange } from "@/lib/utils/dates";
+import { formatGoalRuleDescription, formatGoalShortLabel } from "@/lib/utils/goal-copy";
 import type { GoalView } from "@/lib/utils/goals";
 import {
   toDisplaySleep,
@@ -195,18 +196,17 @@ function evaluateGoal(metric: Metric, value: number | null) {
 function getGoalDescription(metric: Metric) {
   const goal = getGoalByMetric(metric);
 
-  if (goal.mode === GoalMode.IN_RANGE) {
-    return `${formatMetricDisplay(metric, goal.minValue)} - ${formatMetricDisplay(
-      metric,
-      goal.maxValue,
-    )} ${dashboardMetricMeta[metric].unitLabel}`;
-  }
-
-  if (goal.mode === GoalMode.AT_MOST) {
-    return `不超过 ${formatMetricDisplay(metric, goal.targetValue)} ${dashboardMetricMeta[metric].unitLabel}`;
-  }
-
-  return `至少 ${formatMetricDisplay(metric, goal.targetValue)} ${dashboardMetricMeta[metric].unitLabel}`;
+  return (
+    formatGoalRuleDescription(metric, goal, {
+      weightUnit,
+      waterUnit,
+    }) ??
+    formatGoalShortLabel(metric, goal, {
+      weightUnit,
+      waterUnit,
+    }) ??
+    ""
+  );
 }
 
 function formatSignedDelta(metric: Metric, value: number) {

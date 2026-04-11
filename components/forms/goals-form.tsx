@@ -6,6 +6,11 @@ import { FormEvent, useState } from "react";
 
 import { getApiErrorMessage } from "@/lib/utils/client-api";
 import {
+  formatGoalRuleDescription,
+  getGoalMeta,
+  getGoalUnitLabel,
+} from "@/lib/utils/goal-copy";
+import {
   fromDisplaySleep,
   fromDisplayWater,
   fromDisplayWeight,
@@ -32,42 +37,6 @@ type GoalFormState = {
   minValue: string;
   maxValue: string;
 };
-
-const goalMeta = {
-  [Metric.SLEEP]: {
-    title: "睡眠目标",
-    description: "每天睡够这个时长，身体的恢复效果会更好。",
-    unitLabel: "小时",
-    recommendedMode: GoalMode.AT_LEAST,
-    modeLabels: {
-      [GoalMode.AT_LEAST]: "每天至少睡够",
-      [GoalMode.AT_MOST]: "每天不超过",
-      [GoalMode.IN_RANGE]: "保持在这个区间",
-    },
-  },
-  [Metric.WEIGHT]: {
-    title: "体重目标",
-    description: "用一个稳定的区间来观察体重变化，比单值更容易判断趋势。",
-    unitLabel: "",
-    recommendedMode: GoalMode.IN_RANGE,
-    modeLabels: {
-      [GoalMode.AT_LEAST]: "至少保持",
-      [GoalMode.AT_MOST]: "每天不超过",
-      [GoalMode.IN_RANGE]: "保持在这个区间",
-    },
-  },
-  [Metric.WATER]: {
-    title: "饮水目标",
-    description: "每天累计喝够这个量，帮助身体保持水分平衡。",
-    unitLabel: "",
-    recommendedMode: GoalMode.AT_LEAST,
-    modeLabels: {
-      [GoalMode.AT_LEAST]: "每天至少喝够",
-      [GoalMode.AT_MOST]: "每天不超过",
-      [GoalMode.IN_RANGE]: "保持在这个区间",
-    },
-  },
-} as const;
 
 function toGoalFormState(
   goal: GoalView,
@@ -125,15 +94,10 @@ function getUnitLabel(
   weightUnit: "KG" | "LB",
   waterUnit: "ML" | "OZ",
 ) {
-  if (metric === Metric.SLEEP) {
-    return goalMeta[metric].unitLabel;
-  }
-
-  if (metric === Metric.WEIGHT) {
-    return weightUnit === "KG" ? "kg" : "lb";
-  }
-
-  return waterUnit === "ML" ? "ml" : "oz";
+  return getGoalUnitLabel(metric, {
+    weightUnit,
+    waterUnit,
+  });
 }
 
 export function GoalsForm({ initialValues, previewMode = false }: GoalsFormProps) {
@@ -229,11 +193,38 @@ export function GoalsForm({ initialValues, previewMode = false }: GoalsFormProps
         <div className="mt-8 space-y-6">
           {METRIC_ORDER.map((metric) => {
             const goal = form[metric];
+            const meta = getGoalMeta(metric);
             const unitLabel = getUnitLabel(
               metric,
               initialValues.weightUnit,
               initialValues.waterUnit,
             );
+            const goalRuleDescription = formatGoalRuleDescription(metric, {
+              metric,
+              mode: goal.mode,
+              isActive: goal.isActive,
+              targetValue: convertGoalValue(
+                metric,
+                goal.targetValue,
+                initialValues.weightUnit,
+                initialValues.waterUnit,
+              ),
+              minValue: convertGoalValue(
+                metric,
+                goal.minValue,
+                initialValues.weightUnit,
+                initialValues.waterUnit,
+              ),
+              maxValue: convertGoalValue(
+                metric,
+                goal.maxValue,
+                initialValues.weightUnit,
+                initialValues.waterUnit,
+              ),
+            }, {
+              weightUnit: initialValues.weightUnit,
+              waterUnit: initialValues.waterUnit,
+            });
 
             return (
               <section
@@ -243,10 +234,10 @@ export function GoalsForm({ initialValues, previewMode = false }: GoalsFormProps
                 <div className="flex flex-col gap-4 md:flex-row md:items-start md:justify-between">
                   <div className="space-y-1">
                     <h3 className="text-lg font-semibold text-slate-900">
-                      {goalMeta[metric].title}
+                      {meta.title}
                     </h3>
                     <p className="text-sm leading-6 text-slate-600">
-                      {goalMeta[metric].description}
+                      {meta.description}
                     </p>
                   </div>
 
@@ -273,7 +264,7 @@ export function GoalsForm({ initialValues, previewMode = false }: GoalsFormProps
                     {([GoalMode.AT_LEAST, GoalMode.AT_MOST, GoalMode.IN_RANGE] as GoalMode[]).map(
                       (mode) => {
                         const isSelected = goal.mode === mode;
-                        const isRecommended = mode === goalMeta[metric].recommendedMode;
+                        const isRecommended = mode === meta.recommendedMode;
 
                         return (
                           <button
@@ -294,7 +285,7 @@ export function GoalsForm({ initialValues, previewMode = false }: GoalsFormProps
                               }))
                             }
                           >
-                            {goalMeta[metric].modeLabels[mode]}
+                            {meta.modeLabels[mode]}
                             {isRecommended && !isSelected && (
                               <span className="ml-1.5 text-[10px] uppercase tracking-wider opacity-70">
                                 推荐
@@ -374,6 +365,15 @@ export function GoalsForm({ initialValues, previewMode = false }: GoalsFormProps
                       />
                     </label>
                   )}
+
+                  <div className="rounded-2xl border border-slate-200 bg-white px-4 py-4">
+                    <p className="text-sm font-medium text-slate-900">系统会这样判断</p>
+                    <p className="mt-2 text-sm leading-6 text-slate-600">
+                      {goal.isActive
+                        ? (goalRuleDescription ?? "先把目标值填好，系统才会开始判断这项是否达标。")
+                        : "关闭后，这项不会参与达标率、提醒和趋势线判断。"}
+                    </p>
+                  </div>
                 </div>
               </section>
             );
@@ -404,11 +404,11 @@ export function GoalsForm({ initialValues, previewMode = false }: GoalsFormProps
 
       <aside className="space-y-6">
         <section className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
-          <h3 className="text-base font-semibold text-slate-900">目标模式说明</h3>
+          <h3 className="text-base font-semibold text-slate-900">目标怎么选更自然</h3>
           <ul className="mt-4 space-y-3 text-sm leading-6 text-slate-600">
-            <li>至少达到：适合睡眠时长、饮水量这类越多越接近目标的指标。</li>
-            <li>不超过：适合你想设上限控制的指标。</li>
-            <li>保持区间：适合体重这类更常用区间判断的指标。</li>
+            <li>睡眠和饮水更适合用“至少”，因为日常更像是在追一个下限。</li>
+            <li>体重更适合用“区间”，因为长期观察时通常看稳定范围，不看单点命中。</li>
+            <li>只有你明确想控制上限时，才需要用“不超过”。</li>
           </ul>
         </section>
 

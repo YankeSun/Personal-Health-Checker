@@ -9,6 +9,7 @@ import {
   getDateStringInTimezone,
   shiftDateString,
 } from "@/lib/utils/dates";
+import { formatGoalRuleDescription, getGoalUnitLabel } from "@/lib/utils/goal-copy";
 import { GoalView } from "@/lib/utils/goals";
 import {
   toDisplaySleep,
@@ -156,18 +157,6 @@ function formatMetricDisplay(
   return toDisplayWater(rawValue, profile.waterUnit);
 }
 
-function getMetricUnitLabel(metric: Metric, profile: TrendProfile) {
-  if (metric === Metric.SLEEP) {
-    return "小时";
-  }
-
-  if (metric === Metric.WEIGHT) {
-    return profile.weightUnit === WeightUnit.KG ? "kg" : "lb";
-  }
-
-  return profile.waterUnit === WaterUnit.ML ? "ml" : "oz";
-}
-
 function evaluateGoal(value: number | null, goal: GoalView) {
   if (!goal.isActive || value === null) {
     return null;
@@ -190,32 +179,6 @@ function evaluateGoal(value: number | null, goal: GoalView) {
   }
 
   return value >= goal.targetValue;
-}
-
-function formatGoalDescription(
-  metric: Metric,
-  goal: GoalView,
-  profile: TrendProfile,
-) {
-  if (!goal.isActive) {
-    return null;
-  }
-
-  const unitLabel = getMetricUnitLabel(metric, profile);
-
-  if (goal.mode === GoalMode.IN_RANGE) {
-    return `${formatMetricDisplay(metric, goal.minValue, profile)} - ${formatMetricDisplay(
-      metric,
-      goal.maxValue,
-      profile,
-    )} ${unitLabel}`;
-  }
-
-  if (goal.mode === GoalMode.AT_MOST) {
-    return `不超过 ${formatMetricDisplay(metric, goal.targetValue, profile)} ${unitLabel}`;
-  }
-
-  return `至少 ${formatMetricDisplay(metric, goal.targetValue, profile)} ${unitLabel}`;
 }
 
 function getGoalLineValue(
@@ -470,7 +433,7 @@ export async function getTrendOverviewByUserId(
   return {
     metric: metricParam,
     metricLabel: metricLabels[metricParam],
-    unitLabel: getMetricUnitLabel(metric, profile),
+    unitLabel: getGoalUnitLabel(metric, profile),
     days,
     startDate,
     endDate,
@@ -481,7 +444,7 @@ export async function getTrendOverviewByUserId(
     latestDisplay: formatMetricDisplay(metric, latestRawValue, profile),
     minDisplay: formatMetricDisplay(metric, minRawValue, profile),
     maxDisplay: formatMetricDisplay(metric, maxRawValue, profile),
-    goalDescription: formatGoalDescription(metric, goal, profile),
+    goalDescription: formatGoalRuleDescription(metric, goal, profile),
     insight: buildTrendInsight({
       metricLabel: metricLabels[metricParam],
       days,

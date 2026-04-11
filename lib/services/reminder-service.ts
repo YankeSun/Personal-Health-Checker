@@ -3,9 +3,9 @@ import { GoalMode, Metric, WaterUnit, WeightUnit } from "@prisma/client";
 import { prisma } from "@/lib/db";
 import { getGoalByMetric, getGoalsByUserId } from "@/lib/services/goals-service";
 import { dateStringToStorageDate, getDateRange, getDateStringInTimezone } from "@/lib/utils/dates";
+import { formatGoalShortLabel } from "@/lib/utils/goal-copy";
 import { GoalView, METRIC_ORDER } from "@/lib/utils/goals";
 import { getStreakMomentum } from "@/lib/utils/streak";
-import { toDisplaySleep, toDisplayWater, toDisplayWeight } from "@/lib/utils/units";
 
 type ReminderProfile = {
   timezone: string;
@@ -163,63 +163,6 @@ function evaluateGoal(value: number | null, goal: GoalView) {
   }
 
   return value >= goal.targetValue;
-}
-
-function getMetricUnitLabel(metric: Metric, profile: ReminderProfile) {
-  if (metric === Metric.SLEEP) {
-    return "小时";
-  }
-
-  if (metric === Metric.WEIGHT) {
-    return profile.weightUnit === WeightUnit.KG ? "kg" : "lb";
-  }
-
-  return profile.waterUnit === WaterUnit.ML ? "ml" : "oz";
-}
-
-function formatMetricValue(
-  metric: Metric,
-  value: number | null,
-  profile: ReminderProfile,
-) {
-  if (value === null) {
-    return null;
-  }
-
-  if (metric === Metric.SLEEP) {
-    return toDisplaySleep(value);
-  }
-
-  if (metric === Metric.WEIGHT) {
-    return toDisplayWeight(value, profile.weightUnit);
-  }
-
-  return toDisplayWater(value, profile.waterUnit);
-}
-
-function formatGoalDescription(
-  metric: Metric,
-  goal: GoalView,
-  profile: ReminderProfile,
-) {
-  if (!goal.isActive) {
-    return null;
-  }
-
-  const unitLabel = getMetricUnitLabel(metric, profile);
-  const target = formatMetricValue(metric, goal.targetValue, profile);
-  const min = formatMetricValue(metric, goal.minValue, profile);
-  const max = formatMetricValue(metric, goal.maxValue, profile);
-
-  if (goal.mode === GoalMode.IN_RANGE) {
-    return `${min} - ${max} ${unitLabel}`;
-  }
-
-  if (goal.mode === GoalMode.AT_MOST) {
-    return `不超过 ${target} ${unitLabel}`;
-  }
-
-  return `至少 ${target} ${unitLabel}`;
 }
 
 function listMissingMetrics(record: RecordLike | null) {
@@ -397,7 +340,7 @@ export async function getReminderFeedByUserId(
       id: `goal-underperforming-${weakestGoal.goal.metric.toLowerCase()}`,
       tone: "warning",
       title: `最近 7 天${metricLabels[weakestGoal.goal.metric]}达标率偏低`,
-      description: `最近 7 天只有 ${weakestGoal.metDays}/7 天达到“${formatGoalDescription(
+      description: `最近 7 天只有 ${weakestGoal.metDays}/7 天达到“${formatGoalShortLabel(
         weakestGoal.goal.metric,
         weakestGoal.goal,
         profile,
@@ -422,7 +365,7 @@ export async function getReminderFeedByUserId(
       id: `goal-miss-streak-${longestGoalMiss.goal.metric.toLowerCase()}`,
       tone: "info",
       title: `${metricLabels[longestGoalMiss.goal.metric]}已经连续 ${longestGoalMiss.streak} 天未达标`,
-      description: `最近几天这项指标都没有达到“${formatGoalDescription(
+      description: `最近几天这项指标都没有达到“${formatGoalShortLabel(
         longestGoalMiss.goal.metric,
         longestGoalMiss.goal,
         profile,
@@ -479,7 +422,7 @@ export async function getReminderFeedByUserId(
         id: `weekly-highpoint-${bestGoal.goal.metric.toLowerCase()}`,
         tone: "success",
         title: `最近 7 天最稳定的是${metricLabels[bestGoal.goal.metric]}`,
-        description: `${bestGoal.metDays}/7 天达到“${formatGoalDescription(
+        description: `${bestGoal.metDays}/7 天达到“${formatGoalShortLabel(
           bestGoal.goal.metric,
           bestGoal.goal,
           profile,
