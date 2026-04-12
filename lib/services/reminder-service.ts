@@ -433,9 +433,23 @@ export async function getReminderFeedByUserId(
     }
   }
 
+  const getReminderPriority = (reminder: ReminderItem): number => {
+    const id = reminder.id;
+    if (id === "inactive-return" || id === "missing-all-today-soft" || id === "missing-all-today") return 1;
+    if (id === "missing-some-today") return 2;
+    if (id.startsWith("missing-streak-")) return 3;
+    if (id === "goal-underperforming-sleep" || id === "goal-underperforming-weight" || id === "goal-underperforming-water") return 4;
+    if (id.startsWith("goal-miss-streak-")) return 4;
+    if (id === "goals-not-configured" || id === "goals-partial") return 5;
+    if (id === "streak-building" || id === "consistency-streak" || id.startsWith("weekly-highpoint-")) return 6;
+    return 99;
+  };
+
+  const sortedReminders = [...reminders].sort((a, b) => getReminderPriority(a) - getReminderPriority(b));
+
   return {
     enabled: true,
     todayDate,
-    reminders: reminders.slice(0, 3),
+    reminders: sortedReminders.slice(0, 2),
   };
 }
