@@ -544,53 +544,49 @@ export function TodayRecordForm({
         {success ? (
           <div className="mt-4 rounded-2xl bg-emerald-50 px-4 py-4 text-sm text-emerald-800">
             <p>{success}</p>
-            {completion.isComplete && !previewMode ? (
-              <div className="mt-3 flex flex-wrap gap-2">
+            {!previewMode && (
+              <div className="mt-3">
                 <AppLink
-                  className="inline-flex rounded-full border border-emerald-300 bg-white px-4 py-2 text-sm font-medium text-emerald-900 transition hover:bg-emerald-100"
+                  className="inline-flex rounded-full bg-slate-900 px-5 py-2.5 text-sm font-medium text-white transition hover:bg-slate-800"
                   href="/dashboard"
                 >
                   查看仪表盘
                 </AppLink>
-                <AppLink
-                  className="inline-flex rounded-full border border-emerald-300 bg-white px-4 py-2 text-sm font-medium text-emerald-900 transition hover:bg-emerald-100"
-                  href="/trends"
-                >
-                  查看趋势
-                </AppLink>
               </div>
-            ) : null}
+            )}
           </div>
         ) : null}
 
-        <div className="mt-6 flex flex-wrap items-center justify-end gap-3">
-          <button
-            className="rounded-2xl border border-slate-200 px-5 py-3 text-sm font-medium text-slate-700 transition hover:border-slate-300 hover:bg-slate-100 disabled:cursor-not-allowed disabled:opacity-60"
-            type="button"
-            disabled={isPending || isRefreshing || isClearing || !hasRecord}
-            onClick={handleClear}
-          >
-            {isClearing ? "清空中..." : "清空该日记录"}
-          </button>
-          <button
-            className="rounded-2xl bg-slate-900 px-5 py-3 text-sm font-medium text-white transition hover:bg-slate-800 disabled:cursor-not-allowed disabled:opacity-60"
-            type="submit"
-            disabled={isPending || isRefreshing || isClearing}
-          >
-          {previewMode
-              ? "更新当前视图"
-              : isPending
-                ? "保存中..."
-                : isRefreshing
-                  ? "刷新中..."
-                  : completion.isComplete && !hasRecord
-                    ? initialValues.date === dateControls?.maxDate
-                      ? "完成今日记录"
-                      : "完成该日记录"
-                    : initialValues.date === dateControls?.maxDate
-                      ? "保存今日记录"
-                      : "保存该日记录"}
-          </button>
+        <div className="sticky bottom-0 -mx-8 -mb-8 mt-6 border-t border-slate-100 bg-white/95 px-8 py-4 backdrop-blur">
+          <div className="flex flex-wrap items-center justify-end gap-3">
+            <button
+              className="rounded-2xl border border-slate-200 px-5 py-3 text-sm font-medium text-slate-700 transition hover:border-slate-300 hover:bg-slate-100 disabled:cursor-not-allowed disabled:opacity-60"
+              type="button"
+              disabled={isPending || isRefreshing || isClearing || !hasRecord}
+              onClick={handleClear}
+            >
+              {isClearing ? "清空中..." : "清空该日记录"}
+            </button>
+            <button
+              className="rounded-2xl bg-slate-900 px-5 py-3 text-sm font-medium text-white transition hover:bg-slate-800 disabled:cursor-not-allowed disabled:opacity-60"
+              type="submit"
+              disabled={isPending || isRefreshing || isClearing}
+            >
+            {previewMode
+                ? "更新当前视图"
+                : isPending
+                  ? "保存中..."
+                  : isRefreshing
+                    ? "刷新中..."
+                    : completion.isComplete && !hasRecord
+                      ? initialValues.date === dateControls?.maxDate
+                        ? "完成今日记录"
+                        : "完成该日记录"
+                      : initialValues.date === dateControls?.maxDate
+                        ? "保存今日记录"
+                        : "保存该日记录"}
+            </button>
+          </div>
         </div>
       </form>
 
