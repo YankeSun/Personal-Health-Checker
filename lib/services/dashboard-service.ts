@@ -557,16 +557,51 @@ export async function getDashboardOverviewByUserId(
 
   const todayRecord = recordMap.get(todayDate) ?? null;
   const streakDays = calculateStreak(todayDate, recordMap);
+  const hasAnyCompleteRecord = records.some(
+    (record) =>
+      record.sleepHours !== null && record.weightKg !== null && record.waterMl !== null,
+  );
+  const activeGoals = goals.filter((goal) => goal.isActive);
+  const hasGoals = activeGoals.length > 0;
+
   const windowSummaries = [...new Set(windows)]
     .sort((left, right) => left - right)
     .map((days) => buildWindowSummary(days, todayDate, recordMap, goals, profile));
   const summary7 = windowSummaries.find((window) => window.days === 7);
   const summary30 = windowSummaries.find((window) => window.days === 30);
-  const insights = [
-    buildTodayInsight(todayRecord, streakDays),
-    buildWeeklyFocusInsight(summary7),
-    buildPeriodChangeInsight(summary30, profile),
-  ].filter((item): item is DashboardInsight => Boolean(item));
+
+  const insights: DashboardInsight[] = [buildTodayInsight(todayRecord, streakDays)];
+
+  if (!hasAnyCompleteRecord) {
+    if (summary7) {
+      const weeklyFocus = buildWeeklyFocusInsight(summary7);
+      if (weeklyFocus) {
+        insights.push(weeklyFocus);
+      }
+    }
+  } else if (!hasGoals) {
+    insights.push({
+      id: "dashboard-goals-cta",
+      tone: "info",
+      title: "设置目标后，这里会显示达标率",
+      description: "目标不是必须的，但有了目标你能更清楚每天的记录是否在预期范围内。",
+      actionHref: "/settings",
+      actionLabel: "去设置目标",
+    });
+  } else {
+    if (summary7) {
+      const weeklyFocus = buildWeeklyFocusInsight(summary7);
+      if (weeklyFocus) {
+        insights.push(weeklyFocus);
+      }
+    }
+    if (summary30) {
+      const periodChange = buildPeriodChangeInsight(summary30, profile);
+      if (periodChange) {
+        insights.push(periodChange);
+      }
+    }
+  }
 
   return {
     todayDate,
