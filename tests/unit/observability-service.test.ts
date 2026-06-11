@@ -109,6 +109,11 @@ describe("observability-service", () => {
       .mockResolvedValueOnce([
         {
           userId: "user_1",
+        },
+      ] as never)
+      .mockResolvedValueOnce([
+        {
+          userId: "user_1",
           path: "/today",
         },
         {
@@ -134,6 +139,9 @@ describe("observability-service", () => {
       nextDayReturnUsers: 2,
       nextDayReturnRate: 100,
       averageRecordedDaysInFirst7Days: 1.5,
+      payIntentClicks: 1,
+      payIntentUsers: 1,
+      payIntentRate: 50,
     });
     expect(snapshot.pageViews[0]).toEqual({
       path: "/today",

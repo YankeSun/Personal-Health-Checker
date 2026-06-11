@@ -11,6 +11,7 @@ export const PRODUCT_EVENT_NAMES = {
   firstRecordSaved: "FIRST_RECORD_SAVED",
   firstCompleteRecordSaved: "FIRST_COMPLETE_RECORD_SAVED",
   contextTagsSaved: "CONTEXT_TAGS_SAVED",
+  payIntentClicked: "PAY_INTENT_CLICKED",
 } as const;
 
 type ProductEventName =
@@ -36,6 +37,9 @@ export type ObservationSnapshot = {
   nextDayReturnUsers: number;
   nextDayReturnRate: number;
   averageRecordedDaysInFirst7Days: number;
+  payIntentClicks: number;
+  payIntentUsers: number;
+  payIntentRate: number;
   pageViews: Array<{
     path: string;
     views: number;
@@ -107,7 +111,7 @@ export async function getObservationSnapshot(days = 30) {
   const userIds = signUps.map((user) => user.id);
   const earliestSignupAt = signUps[0]?.createdAt ?? startDate;
 
-  const [successfulLogins, recordRows, observationEvents, pageViewRows] =
+  const [successfulLogins, recordRows, observationEvents, payIntentRows, pageViewRows] =
     await Promise.all([
       prisma.productEvent.count({
         where: {
@@ -150,6 +154,7 @@ export async function getObservationSnapshot(days = 30) {
                   PRODUCT_EVENT_NAMES.firstRecordSaved,
                   PRODUCT_EVENT_NAMES.firstCompleteRecordSaved,
                   PRODUCT_EVENT_NAMES.contextTagsSaved,
+                  PRODUCT_EVENT_NAMES.payIntentClicked,
                 ],
               },
             },
@@ -159,6 +164,17 @@ export async function getObservationSnapshot(days = 30) {
             },
           })
         : Promise.resolve([]),
+      prisma.productEvent.findMany({
+        where: {
+          eventName: PRODUCT_EVENT_NAMES.payIntentClicked,
+          createdAt: {
+            gte: startDate,
+          },
+        },
+        select: {
+          userId: true,
+        },
+      }),
       prisma.productEvent.findMany({
         where: {
           eventName: PRODUCT_EVENT_NAMES.pageView,
@@ -211,6 +227,11 @@ export async function getObservationSnapshot(days = 30) {
           }, 0) / signUps.length,
           2,
         );
+  const payIntentUserIds = new Set(
+    payIntentRows
+      .map((event) => event.userId)
+      .filter((userId): userId is string => Boolean(userId)),
+  );
 
   const pageViewMap = new Map<
     string,
@@ -260,6 +281,10 @@ export async function getObservationSnapshot(days = 30) {
     nextDayReturnRate:
       signUps.length === 0 ? 0 : roundTo((nextDayReturnUsers / signUps.length) * 100, 1),
     averageRecordedDaysInFirst7Days,
+    payIntentClicks: payIntentRows.length,
+    payIntentUsers: payIntentUserIds.size,
+    payIntentRate:
+      signUps.length === 0 ? 0 : roundTo((payIntentUserIds.size / signUps.length) * 100, 1),
     pageViews: [...pageViewMap.entries()]
       .map(([path, value]) => ({
         path,

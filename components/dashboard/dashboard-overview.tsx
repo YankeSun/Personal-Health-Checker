@@ -1,5 +1,6 @@
 import { ReminderPanel } from "@/components/shared/reminder-panel";
 import { AppLink } from "@/components/shared/app-link";
+import { PayIntentButton } from "@/components/shared/pay-intent-button";
 import type { DashboardOverview } from "@/lib/services/dashboard-service";
 import type { ReminderFeed } from "@/lib/services/reminder-service";
 
@@ -150,6 +151,23 @@ export function DashboardOverviewPanel({ overview, reminderFeed }: DashboardOver
             ))}
           </div>
         ) : null}
+      </section>
+
+      <section className="rounded-3xl border border-slate-900 bg-[#172033] p-6 text-white shadow-sm">
+        <div className="flex flex-col gap-5 lg:flex-row lg:items-center lg:justify-between">
+          <div className="max-w-2xl">
+            <p className="text-sm font-semibold tracking-[0.18em] text-amber-200">
+              REPORT BETA
+            </p>
+            <h2 className="mt-2 text-2xl font-semibold">30 天体重观察报告</h2>
+            <p className="mt-3 text-sm leading-6 text-slate-200">
+              把体重变化、记录密度、目标进度和日常背景整理成一份月度回看。当前开放内测意向，不收取费用。
+            </p>
+          </div>
+          <div className="rounded-3xl bg-white p-4 text-slate-900">
+            <PayIntentButton offer="WEIGHT_REPORT_30D" source="/dashboard" />
+          </div>
+        </div>
       </section>
 
       <section className="grid gap-4 md:grid-cols-2">

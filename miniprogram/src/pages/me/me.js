@@ -6,6 +6,7 @@ Page({
     goals: [],
     exporting: false,
     deleting: false,
+    joiningReportBeta: false,
     message: "",
     error: "",
   },
@@ -38,6 +39,37 @@ Page({
     } catch (error) {
       this.setData({
         error: error.message,
+      });
+    }
+  },
+
+  async joinReportBeta() {
+    this.setData({
+      joiningReportBeta: true,
+      message: "",
+      error: "",
+    });
+
+    try {
+      const payload = await request({
+        url: "/api/intent/pay",
+        method: "POST",
+        data: {
+          offer: "WEIGHT_REPORT_30D",
+          source: "wechat_mp/me",
+        },
+      });
+
+      this.setData({
+        message: payload.message || "已记录你的内测意向。",
+      });
+    } catch (error) {
+      this.setData({
+        error: error.message,
+      });
+    } finally {
+      this.setData({
+        joiningReportBeta: false,
       });
     }
   },

@@ -14,6 +14,12 @@
     </view>
   </view>
 
+  <view class="card block beta-card">
+    <text class="section-title">30 天体重观察报告</text>
+    <text class="muted beta-copy">体重变化、目标进度和日常背景会整理成月度回看。当前仅记录内测意向，不收取费用。</text>
+    <button class="primary-button action-button" loading="{{joiningReportBeta}}" bindtap="joinReportBeta">加入报告内测</button>
+  </view>
+
   <view class="card block">
     <text class="section-title">数据与账号</text>
     <button class="ghost-button action-button" loading="{{exporting}}" bindtap="exportAccount">导出个人数据</button>

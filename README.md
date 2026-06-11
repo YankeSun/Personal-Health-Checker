@@ -9,6 +9,7 @@
 - HttpOnly Cookie + 服务端 Session
 - 微信小程序 Alpha 壳 + Bearer Session
 - 账号数据导出与账号删除 API
+- 30 天观察报告内测意向入口（仅记录意向，不接支付）
 - `/dashboard`、`/today`、`/trends`、`/settings` 受保护
 - 设置页支持读取和保存个人资料（昵称、时区、单位、提醒开关）
 - 今日记录页支持读取和保存睡眠、体重、饮水的当日手动录入
@@ -83,6 +84,7 @@ npm run analytics:report -- --days=30
 - `POST /api/mp/auth/wechat-login`
 - `GET /api/account/export`
 - `DELETE /api/account`
+- `POST /api/intent/pay`
 - `GET /api/profile`
 - `PATCH /api/profile`
 - `GET /api/goals`
@@ -101,6 +103,7 @@ npm run analytics:report -- --days=30
 - 页面：登录、今日记录、简版 Dashboard、体重趋势、我的 / 设置
 - 认证：`wx.login` -> `POST /api/mp/auth/wechat-login` -> 服务端 Bearer token
 - 合规底座：我的页可触发个人数据导出和账号删除
+- 商业验证：我的页可记录 30 天观察报告内测意向，不创建订单、不收款
 
 本地或体验版调试步骤：
 

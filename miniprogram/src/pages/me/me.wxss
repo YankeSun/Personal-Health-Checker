@@ -21,6 +21,24 @@
   margin-top: 24rpx;
 }
 
+.beta-card {
+  background: #172033;
+  color: #ffffff;
+}
+
+.beta-card .section-title,
+.beta-card .muted {
+  color: #ffffff;
+}
+
+.beta-copy {
+  display: block;
+  margin-top: 16rpx;
+  font-size: 26rpx;
+  line-height: 1.6;
+  opacity: 0.82;
+}
+
 .goal-row {
   display: flex;
   justify-content: space-between;

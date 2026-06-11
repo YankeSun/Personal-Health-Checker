@@ -62,6 +62,7 @@ describe("miniprogram structure", () => {
     expect(loginPage).toContain("/api/mp/auth/wechat-login");
     expect(todayPage).toContain("/api/records/today");
     expect(todayPage).toContain("/api/records/${date}");
+    expect(mePage).toContain("/api/intent/pay");
     expect(mePage).toContain("/api/account/export");
     expect(mePage).toContain("/api/account");
   });

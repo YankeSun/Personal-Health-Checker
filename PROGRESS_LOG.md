@@ -244,6 +244,7 @@ npm run analytics:report -- --days=30
 
 ## 2026-06-12
 
+- 增加轻付费意愿验证：新增 `POST /api/intent/pay` 和 `PAY_INTENT_CLICKED` 埋点，Dashboard 与小程序“我的”页提供“30 天体重观察报告”内测入口；仅记录等待/意向，不创建订单、不接微信支付，analytics report 已支持输出点击量、点击用户数和点击率。
 - 补齐小程序上线前合规底座第一步：新增 `GET /api/account/export` 和 `DELETE /api/account`，支持导出个人资料、目标、记录、上下文标签和微信身份映射，并可删除账号及关联数据；小程序“我的”页已接入导出与删除入口。
 - 推进小程序最小前端壳：新增 `miniprogram/`，可导入微信开发者工具，覆盖登录、今日记录、简版 Dashboard、体重趋势、我的 / 设置 5 个页面；前端通过 `wx.login` 和 Bearer token 复用现有后端，当前仍不包含支付、订阅消息、设备接入或正式审核材料。
 - 扩大小程序 alpha API 兼容面：`profile/goals/trends/export` 也改为支持 `Authorization: Bearer`，加上上一轮的 `records/dashboard` 后，最小小程序壳需要的主要数据接口已可复用现有后端；Web Cookie 路径保持不变。
