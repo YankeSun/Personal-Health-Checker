@@ -35,3 +35,9 @@ If the report cannot reach the database, run:
 ```bash
 npm run db:doctor -- --timeout-ms 5000
 ```
+
+Preview the markdown layout without database access:
+
+```bash
+npm run analytics:miniprogram -- --sample --format=markdown --out /tmp/alpha-sample.md
+```
