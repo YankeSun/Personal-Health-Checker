@@ -24,6 +24,7 @@ describe("research materials", () => {
     expect(checkScript).toContain("ALPHA_BATCH_CONTROL.md");
     expect(checkScript).toContain("ALPHA_USER_EVIDENCE.md");
     expect(checkScript).toContain("PHONE_TEST_SESSION_TEMPLATE.md");
+    expect(checkScript).toContain("MINIPROGRAM_ALPHA_EXECUTION_BRIEF.md");
     expect(checkScript).toContain("至少 8 个");
   });
 
@@ -71,6 +72,10 @@ describe("research materials", () => {
       path.join(projectRoot, "research", "alpha", "PHONE_TEST_SESSION_TEMPLATE.md"),
       "utf8",
     );
+    const alphaExecutionBrief = readFileSync(
+      path.join(projectRoot, "MINIPROGRAM_ALPHA_EXECUTION_BRIEF.md"),
+      "utf8",
+    );
 
     expect(evidenceGuide).toContain("01-search.png");
     expect(evidenceGuide).toContain("03-first-record.mov");
@@ -94,6 +99,11 @@ describe("research materials", () => {
     expect(gitignore).toContain("research/alpha/phone-sessions/**");
     expect(gitignore).toContain("research/alpha/reports/**");
     expect(evidenceGuide).toContain("本地私有证据");
+    expect(alphaExecutionBrief).toContain("微信小程序 Alpha 发放前配置与验收阶段");
+    expect(alphaExecutionBrief).toContain("当前 P0 Blockers");
+    expect(alphaExecutionBrief).toContain("未来 7 天最短路径");
+    expect(alphaExecutionBrief).toContain("没有截图、录屏和 notes 时");
+    expect(alphaExecutionBrief).toContain("只允许再做 3 个代码改动");
   });
 
   it("links fieldwork to the mini program validation plan", () => {
@@ -103,5 +113,6 @@ describe("research materials", () => {
     );
 
     expect(validationPlan).toContain("research/WECHAT_COMPETITOR_FIELDWORK.md");
+    expect(validationPlan).toContain("MINIPROGRAM_ALPHA_EXECUTION_BRIEF.md");
   });
 });

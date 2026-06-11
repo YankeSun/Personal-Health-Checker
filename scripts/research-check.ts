@@ -14,6 +14,7 @@ const sampleTemplatePath = path.join(projectRoot, "research", "templates", "wech
 const alphaBatchControlPath = path.join(projectRoot, "research", "alpha", "ALPHA_BATCH_CONTROL.md");
 const alphaEvidencePath = path.join(projectRoot, "research", "alpha", "ALPHA_USER_EVIDENCE.md");
 const phoneTestTemplatePath = path.join(projectRoot, "research", "alpha", "PHONE_TEST_SESSION_TEMPLATE.md");
+const alphaExecutionBriefPath = path.join(projectRoot, "MINIPROGRAM_ALPHA_EXECUTION_BRIEF.md");
 const validationPlanPath = path.join(projectRoot, "WECHAT_MINI_PROGRAM_VALIDATION_PLAN.md");
 const progressLogPath = path.join(projectRoot, "PROGRESS_LOG.md");
 const packageJsonPath = path.join(projectRoot, "package.json");
@@ -35,6 +36,7 @@ const sampleTemplate = readText(sampleTemplatePath);
 const alphaBatchControl = readText(alphaBatchControlPath);
 const alphaEvidence = readText(alphaEvidencePath);
 const phoneTestTemplate = readText(phoneTestTemplatePath);
+const alphaExecutionBrief = readText(alphaExecutionBriefPath);
 const validationPlan = readText(validationPlanPath);
 const progressLog = readText(progressLogPath);
 const packageJson = readText(packageJsonPath);
@@ -48,6 +50,7 @@ check("research/templates/wechat-competitor-sample.md exists", existsSync(sample
 check("research/alpha/ALPHA_BATCH_CONTROL.md exists", existsSync(alphaBatchControlPath));
 check("research/alpha/ALPHA_USER_EVIDENCE.md exists", existsSync(alphaEvidencePath));
 check("research/alpha/PHONE_TEST_SESSION_TEMPLATE.md exists", existsSync(phoneTestTemplatePath));
+check("MINIPROGRAM_ALPHA_EXECUTION_BRIEF.md exists", existsSync(alphaExecutionBriefPath));
 check("fieldwork kit keeps 至少 8 个 sample slots", sampleCount >= 8);
 
 for (const snippet of [
@@ -102,6 +105,16 @@ for (const snippet of [
   "beta_candidate",
 ]) {
   check(`alpha batch control includes ${snippet}`, alphaBatchControl.includes(snippet));
+}
+
+for (const snippet of [
+  "微信小程序 Alpha 发放前配置与验收阶段",
+  "当前 P0 Blockers",
+  "未来 7 天最短路径",
+  "没有截图、录屏和 notes 时",
+  "只允许再做 3 个代码改动",
+]) {
+  check(`alpha execution brief includes ${snippet}`, alphaExecutionBrief.includes(snippet));
 }
 
 check(

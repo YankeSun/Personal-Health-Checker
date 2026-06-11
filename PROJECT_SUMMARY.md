@@ -159,6 +159,7 @@
 ### 3.16 中国大陆小程序验证材料
 
 - `WECHAT_MINI_PROGRAM_VALIDATION_PLAN.md` 记录中国大陆商业化、小程序 alpha、合规和继续/停止门槛
+- `MINIPROGRAM_ALPHA_EXECUTION_BRIEF.md` 记录当前小程序 Alpha 发放前阶段判断、P0 blocker、7 天最短路径和交接顺序
 - `miniprogram/ALPHA_RELEASE_PACK.md` 记录体验版发给 10-30 个真实用户前的发放闸门、邀请文案、7 天任务卡和复盘指标
 - `research/WECHAT_COMPETITOR_FIELDWORK.md`、`research/evidence/` 和 `research/templates/` 记录微信竞品真机实测的采集标准、8 类样本框架、证据文件规范、单样本模板、评分口径和路线结论模板
 - `research/alpha/` 记录真机测试 session 和 10-30 个 alpha 用户证据表

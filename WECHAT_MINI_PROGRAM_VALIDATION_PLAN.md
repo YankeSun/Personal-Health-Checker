@@ -490,8 +490,9 @@ npm run analytics:miniprogram -- --days=30
 2. `PROGRESS_LOG.md`
 3. `PROJECT_SUMMARY.md`
 4. 本文件
-5. `miniprogram/ALPHA_RELEASE_PACK.md`
-6. `research/WECHAT_COMPETITOR_FIELDWORK.md`
+5. `MINIPROGRAM_ALPHA_EXECUTION_BRIEF.md`
+6. `miniprogram/ALPHA_RELEASE_PACK.md`
+7. `research/WECHAT_COMPETITOR_FIELDWORK.md`
 
 默认不要直接进入小程序开发。
 
