@@ -100,9 +100,23 @@ function runSync(label: string, command: string, args: string[], env: NodeJS.Pro
     stdio: "pipe",
   });
   const spawnError = result.error instanceof Error ? result.error.message : "";
+  const spawnCode =
+    result.error && "code" in result.error ? String(result.error.code) : "";
   const output = [result.stdout, result.stderr].filter(Boolean).join("\n").trim();
 
   if (result.status !== 0) {
+    if (spawnCode === "ENOENT") {
+      throw new Error(
+        [
+          `${label} failed because command \`${command}\` was not found.`,
+          command === "docker"
+            ? "Install Docker Desktop / Docker CLI and make sure Docker is running before using `npm run miniprogram:smoke:docker`."
+            : `Install \`${command}\` or run the smoke against an already available service.`,
+          "If you already have a local API and database running, use `npm run miniprogram:smoke -- --base-url http://127.0.0.1:3000` instead.",
+        ].join("\n"),
+      );
+    }
+
     throw new Error(
       `${label} failed with exit=${result.status ?? "unknown"}${spawnError ? ` (${spawnError})` : ""}${output ? `\n${output}` : ""}`,
     );

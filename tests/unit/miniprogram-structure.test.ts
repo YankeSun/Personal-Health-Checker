@@ -248,6 +248,7 @@ describe("miniprogram structure", () => {
     expect(localSmokeScript).toContain("--docker-db");
     expect(localSmokeScript).toContain("docker");
     expect(localSmokeScript).toContain("compose");
+    expect(localSmokeScript).toContain("Docker Desktop / Docker CLI");
     expect(localSmokeScript).toContain("/api/health");
     expect(localSmokeScript).toContain("database=");
   });
