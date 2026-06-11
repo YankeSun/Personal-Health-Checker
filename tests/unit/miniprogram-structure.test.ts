@@ -154,6 +154,8 @@ describe("miniprogram structure", () => {
     expect(alphaReadinessScript).toContain("gateLabel");
     expect(alphaReadinessScript).toContain("Manual next actions");
     expect(alphaReadinessScript).toContain("extractLaunchNextActions");
+    expect(alphaReadinessScript).toContain("classifyLaunchReadiness");
+    expect(alphaReadinessScript).toContain("status: \"fail\"");
     expect(alphaReadinessScript).toContain("includeVercel");
     expect(alphaReadinessScript).toContain("--vercel");
     expect(alphaPreflightScript).toContain("Alpha Preflight Report");

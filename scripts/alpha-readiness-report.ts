@@ -56,15 +56,23 @@ function summarizeOutput(label: string, output: string, exitCode: number) {
   return finalLine || `exit=${exitCode}`;
 }
 
-function downgradeExpectedBlocker(check: ReadinessCheck): ReadinessCheck {
+function classifyLaunchReadiness(check: ReadinessCheck): ReadinessCheck {
   if (check.label !== "Launch readiness") {
     return check;
   }
 
   const match = check.summary.match(/^(\d+) blocker\(s\),\s*(\d+) warning\(s\)$/);
   const blockerCount = Number(match?.[1] ?? 0);
+  const warningCount = Number(match?.[2] ?? 0);
 
   if (blockerCount > 0) {
+    return {
+      ...check,
+      status: "fail",
+    };
+  }
+
+  if (warningCount > 0) {
     return {
       ...check,
       status: "warn",
@@ -162,7 +170,7 @@ if (includeVercel) {
 }
 
 const checks = [
-  downgradeExpectedBlocker(runCommand("Launch readiness", launchReadinessArgs)),
+  classifyLaunchReadiness(runCommand("Launch readiness", launchReadinessArgs)),
   runCommand("Mini program structure", ["run", "miniprogram:check"]),
   runCommand("Research evidence kit", ["run", "research:check"]),
   runCommand("Database connectivity", ["run", "db:doctor", "--", "--timeout-ms", "5000"]),
