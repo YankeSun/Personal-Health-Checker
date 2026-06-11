@@ -12,6 +12,7 @@ const projectRoot = process.cwd();
 const npmCommand = process.platform === "win32" ? "npm.cmd" : "npm";
 const batch = getArgValue("--batch") ?? "Alpha-001";
 const includeRemote = process.argv.includes("--remote");
+const includeVercel = process.argv.includes("--vercel");
 const testerOne = getArgValue("--tester-one") ?? "internal-01";
 const testerTwo = getArgValue("--tester-two") ?? "internal-02";
 
@@ -60,6 +61,7 @@ const commands: PackCommand[] = [
       "run",
       "alpha:preflight",
       "--",
+      ...(includeVercel ? ["--vercel"] : []),
       ...(includeRemote ? ["--remote"] : []),
       "--out",
       preflightPath,

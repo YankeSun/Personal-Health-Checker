@@ -92,7 +92,9 @@ Before uploading an Experience build, generate the Day 0 preflight report:
 
 ```bash
 npm run alpha:evidence-pack -- --batch Alpha-001
+npm run alpha:evidence-pack -- --batch Alpha-001 --vercel --remote
 npm run alpha:preflight -- --out research/alpha/preflight/Alpha-001.md
+npm run alpha:preflight -- --vercel --remote --out research/alpha/preflight/Alpha-001.md
 ```
 
 If you also want to include Vercel Production env names and remote API health in the same readiness gate, run `npm run alpha:readiness -- --vercel --remote`.

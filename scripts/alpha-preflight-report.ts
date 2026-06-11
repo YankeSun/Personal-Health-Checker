@@ -10,6 +10,7 @@ type CommandResult = {
 const projectRoot = process.cwd();
 const npmCommand = process.platform === "win32" ? "npm.cmd" : "npm";
 const includeRemote = process.argv.includes("--remote");
+const includeVercel = process.argv.includes("--vercel");
 const outPath = getArgValue("--out");
 
 function getArgValue(name: string) {
@@ -120,9 +121,15 @@ const projectConfig = readJson<{ appid?: string }>(
 const vercelProject = readJson<{ projectName?: string }>(
   path.join(projectRoot, ".vercel", "project.json"),
 );
-const readinessArgs = includeRemote
-  ? ["run", "alpha:readiness", "--", "--remote"]
-  : ["run", "alpha:readiness"];
+const readinessArgs = ["run", "alpha:readiness"];
+const readinessFlags = [
+  ...(includeVercel ? ["--vercel"] : []),
+  ...(includeRemote ? ["--remote"] : []),
+];
+
+if (readinessFlags.length > 0) {
+  readinessArgs.push("--", ...readinessFlags);
+}
 const readiness = run(npmCommand, readinessArgs);
 const readinessRows = extractReadinessRows(readiness.output);
 const manualActions = extractManualActions(readiness.output);
@@ -149,6 +156,7 @@ ${markdownTable([
   ["Vercel project", vercelProject?.projectName ?? "missing"],
   ["API domain", extractApiBaseUrl()],
   ["Mini program AppID state", appIdState],
+  ["Vercel env included", includeVercel ? "yes" : "no"],
   ["Remote API included", includeRemote ? "yes" : "no"],
 ])}
 

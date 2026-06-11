@@ -114,7 +114,7 @@ Web 端已经可体验：
 
 | 时间 | 目标 | 代码任务 | 人工 / 外部配置任务 |
 |---|---|---|---|
-| Day 0 | 清零体验版 P0 配置 blocker | 跑 `alpha:readiness`、`launch:check:*`、`miniprogram:check:*`，只修检查暴露出的真实问题 | 配 AppID / AppSecret、Vercel env、request 域名、隐私配置、类目 / 备案 / 客服入口 |
+| Day 0 | 清零体验版 P0 配置 blocker | 跑 `alpha:readiness -- --vercel --remote`、`alpha:preflight -- --vercel --remote`、`launch:check:*`、`miniprogram:check:*`，只修检查暴露出的真实问题 | 配 AppID / AppSecret、Vercel env、request 域名、隐私配置、类目 / 备案 / 客服入口 |
 | Day 1 | 体验版可测 | 只修登录、保存、Dashboard、Trends、我的页主路径 bug | 微信开发者工具导入、上传体验版、2 台真机完整验收并留证据 |
 | Day 2 | 发 10 人 Alpha | 不加新功能，只修 P0 崩溃或保存失败 | 邀请 10 个有体重管理动机的人，记录来源、设备、首次登录和首次记录 |
 | Day 3 | 判断首次回访 | 如漏斗缺事件，只补最小埋点 | 跟踪次日是否回来、是否完成体重记录、是否看 Dashboard |

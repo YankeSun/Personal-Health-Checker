@@ -29,15 +29,19 @@
 
 ```bash
 npm run alpha:evidence-pack -- --batch Alpha-001
+npm run alpha:evidence-pack -- --batch Alpha-001 --vercel --remote
 npm run alpha:readiness
 npm run alpha:readiness -- --vercel --remote
 npm run alpha:preflight -- --out research/alpha/preflight/Alpha-001.md
+npm run alpha:preflight -- --vercel --remote --out research/alpha/preflight/Alpha-001.md
 npm run alpha:phone-session -- --batch Alpha-001 --tester internal-01
 ```
 
 如果 `alpha:readiness` 输出了 `Manual next actions`，先按动作清单处理 AppID、Vercel env、request 合法域名、mock 开关、数据库可达性和发放材料，再进入严格闸门。
 
 `npm run alpha:readiness -- --vercel --remote` 是体验版上传前更接近真实环境的总览：它会在同一份红绿灯里纳入 Vercel Production 变量名和线上 API health。
+
+如果要一键生成本地私有证据包，使用 `npm run alpha:evidence-pack -- --batch Alpha-001 --vercel --remote`，生成的 preflight 会包含同一组完整闸门。
 
 `alpha:readiness` 顶部的 `Experience build gate` 必须是 `GREEN`，才可以继续进入体验版上传和真机证据收集；`YELLOW` 或 `RED` 都不要邀请外部 alpha 用户。
 

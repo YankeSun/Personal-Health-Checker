@@ -141,11 +141,14 @@ describe("miniprogram structure", () => {
     expect(alphaReadinessScript).toContain("--vercel");
     expect(alphaPreflightScript).toContain("Alpha Preflight Report");
     expect(alphaPreflightScript).toContain("alpha:readiness");
+    expect(alphaPreflightScript).toContain("includeVercel");
+    expect(alphaPreflightScript).toContain("Vercel env included");
     expect(alphaPreflightScript).toContain("--out");
     expect(alphaPhoneSessionScript).toContain("PHONE_TEST_SESSION_TEMPLATE.md");
     expect(alphaPhoneSessionScript).toContain("phone-sessions");
     expect(alphaPhoneSessionScript).toContain("Do not paste AppSecret");
     expect(alphaEvidencePackScript).toContain("alpha:preflight");
+    expect(alphaEvidencePackScript).toContain("includeVercel");
     expect(alphaEvidencePackScript).toContain("alpha:phone-session");
     expect(alphaEvidencePackScript).toContain("analytics:miniprogram");
     expect(alphaEvidencePackScript).toContain("local private evidence");
