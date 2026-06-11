@@ -244,6 +244,7 @@ npm run analytics:report -- --days=30
 
 ## 2026-06-12
 
+- 增加小程序 alpha 批次控制台：新增 `research/alpha/ALPHA_BATCH_CONTROL.md`，把 release gates、真实 AppID / Vercel env / request 域名、2 台真机证据、10 人 7 天跟踪、`analytics:miniprogram` 快照和 beta / 继续优化决策放到同一张操作台里，避免体验版发放后版本、证据和指标脱节。
 - 增加 alpha readiness 总览：新增 `npm run alpha:readiness`，聚合 `launch:check`、`miniprogram:check`、`research:check` 和 `db:doctor`，用于体验版前快速判断当前 blocker 集中在哪里；当前总览显示小程序结构和研究包通过，launch 仍有 3 个外部配置 blocker，数据库连接仍超时。
 - 收紧小程序账号删除后的会话清理：`clearSession` 现在支持传入 Request，Bearer 请求会删除对应 session token 而不读取 Web Cookie；`DELETE /api/account` 改为按当前请求清理登录态，让小程序账号删除闭环更清晰。
 - 增加小程序页面行为防回归测试：新增 `miniprogram-page-behavior` 单测，通过模拟 `wx`、`Page` 和 Bearer 请求覆盖 Today 完整保存反馈、空记录拦截、Me 页 alpha 反馈提交后清空状态、删除账号必须二次确认，减少真实体验版前的交互回归风险。

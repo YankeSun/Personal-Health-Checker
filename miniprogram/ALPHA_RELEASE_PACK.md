@@ -156,6 +156,8 @@ npm run miniprogram:check:remote
 
 建议同步填写 `research/alpha/ALPHA_USER_EVIDENCE.md`，把用户原话和 7 天行为证据留在同一处。
 
+每一批体验版还要同步更新 `research/alpha/ALPHA_BATCH_CONTROL.md`，确保 Git commit、API 域名、体验版版本号、真机验收和复盘指标都能对应到同一个批次。
+
 | 字段 | 记录内容 |
 |---|---|
 | 用户编号 | U001 / U002 / ... |
@@ -233,6 +235,8 @@ npm run analytics:miniprogram -- --days=30
 ## 8. 发放批次记录
 
 每一批体验版都记录一次：
+
+正式记录以 `research/alpha/ALPHA_BATCH_CONTROL.md` 为准；下面的表可以作为发放包内的快速摘要。
 
 | 字段 | 内容 |
 |---|---|

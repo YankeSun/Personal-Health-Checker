@@ -8,5 +8,6 @@ Use these files to collect evidence before changing product scope. Do not treat 
 - [WECHAT_COMPETITOR_SYNTHESIS.md](./WECHAT_COMPETITOR_SYNTHESIS.md): synthesis table for 8 verified competitor samples.
 - [templates/wechat-competitor-sample.md](./templates/wechat-competitor-sample.md): copyable notes template for one competitor sample.
 - [evidence/README.md](./evidence/README.md): required folder structure for screenshots, recordings, and sample notes.
+- [alpha/ALPHA_BATCH_CONTROL.md](./alpha/ALPHA_BATCH_CONTROL.md): batch control board for mini program alpha release gates, users, evidence, and decisions.
 - [alpha/ALPHA_USER_EVIDENCE.md](./alpha/ALPHA_USER_EVIDENCE.md): evidence table for 10-30 real alpha users.
 - [alpha/PHONE_TEST_SESSION_TEMPLATE.md](./alpha/PHONE_TEST_SESSION_TEMPLATE.md): phone test session template for internal and real-device checks.

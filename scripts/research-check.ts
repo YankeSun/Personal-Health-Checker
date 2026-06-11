@@ -11,6 +11,7 @@ const fieldworkPath = path.join(projectRoot, "research", "WECHAT_COMPETITOR_FIEL
 const synthesisPath = path.join(projectRoot, "research", "WECHAT_COMPETITOR_SYNTHESIS.md");
 const evidenceGuidePath = path.join(projectRoot, "research", "evidence", "README.md");
 const sampleTemplatePath = path.join(projectRoot, "research", "templates", "wechat-competitor-sample.md");
+const alphaBatchControlPath = path.join(projectRoot, "research", "alpha", "ALPHA_BATCH_CONTROL.md");
 const alphaEvidencePath = path.join(projectRoot, "research", "alpha", "ALPHA_USER_EVIDENCE.md");
 const phoneTestTemplatePath = path.join(projectRoot, "research", "alpha", "PHONE_TEST_SESSION_TEMPLATE.md");
 const validationPlanPath = path.join(projectRoot, "WECHAT_MINI_PROGRAM_VALIDATION_PLAN.md");
@@ -29,6 +30,7 @@ const fieldwork = readText(fieldworkPath);
 const synthesis = readText(synthesisPath);
 const evidenceGuide = readText(evidenceGuidePath);
 const sampleTemplate = readText(sampleTemplatePath);
+const alphaBatchControl = readText(alphaBatchControlPath);
 const alphaEvidence = readText(alphaEvidencePath);
 const phoneTestTemplate = readText(phoneTestTemplatePath);
 const validationPlan = readText(validationPlanPath);
@@ -39,6 +41,7 @@ check("research/WECHAT_COMPETITOR_FIELDWORK.md exists", existsSync(fieldworkPath
 check("research/WECHAT_COMPETITOR_SYNTHESIS.md exists", existsSync(synthesisPath));
 check("research/evidence/README.md exists", existsSync(evidenceGuidePath));
 check("research/templates/wechat-competitor-sample.md exists", existsSync(sampleTemplatePath));
+check("research/alpha/ALPHA_BATCH_CONTROL.md exists", existsSync(alphaBatchControlPath));
 check("research/alpha/ALPHA_USER_EVIDENCE.md exists", existsSync(alphaEvidencePath));
 check("research/alpha/PHONE_TEST_SESSION_TEMPLATE.md exists", existsSync(phoneTestTemplatePath));
 check("fieldwork kit keeps 至少 8 个 sample slots", sampleCount >= 8);
@@ -79,6 +82,18 @@ for (const snippet of ["needs_fieldwork", "Must Learn", "Do Not Learn Now", "Nee
 
 for (const snippet of ["needs_users", "First Weight Record Time", "Record Days In 7 Days", "Value Quote", "Friction Quote"]) {
   check(`alpha evidence template includes ${snippet}`, alphaEvidence.includes(snippet));
+}
+
+for (const snippet of [
+  "needs_config",
+  "Alpha-001",
+  "Release Gates",
+  "Real AppID configured",
+  "2 real-device sessions passed",
+  "npm run analytics:miniprogram -- --days=30",
+  "beta_candidate",
+]) {
+  check(`alpha batch control includes ${snippet}`, alphaBatchControl.includes(snippet));
 }
 
 for (const snippet of ["Login", "Today record", "Dashboard", "Trends", "Delete account guard"]) {

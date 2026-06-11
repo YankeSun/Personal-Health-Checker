@@ -1,0 +1,104 @@
+# Alpha Batch Control
+
+当前状态：`needs_config`。
+
+这份文件用于管理每一批微信小程序 alpha 体验版。它不是产品方案，而是发放前后的操作台：每一批都必须能追溯到同一个 Git commit、同一个 API 域名、同一组真机证据、同一组用户记录和同一次复盘结论。
+
+## 1. Batch Snapshot
+
+| Field | Alpha-001 |
+|---|---|
+| Batch status | needs_config / internal_testing / recruiting / running / review / closed |
+| Owner |  |
+| Planned start date |  |
+| Git commit |  |
+| API domain |  |
+| Mini program AppID |  |
+| Experience build version |  |
+| Target users | 10 |
+| Invited users |  |
+| Active alpha users |  |
+| Decision | needs_data / hold_and_improve / beta_candidate |
+
+## 2. Release Gates
+
+Do not invite external users until every P0 gate is green.
+
+| Gate | Evidence | Status | Owner | Notes |
+|---|---|---|---|---|
+| Alpha readiness summary reviewed | `npm run alpha:readiness` output | blocked / ready |  |  |
+| Strict launch check passed | `npm run launch:check:strict` | blocked / ready |  |  |
+| Remote API health passed | `npm run miniprogram:check:remote` | blocked / ready |  |  |
+| Real AppID configured | `miniprogram/project.config.json` is not `touristappid` | blocked / ready |  |  |
+| Vercel production env configured | Vercel env screenshot or CLI confirmation | blocked / ready |  |  |
+| Request domain configured | WeChat public platform screenshot | blocked / ready |  |  |
+| Privacy and legal entries configured | WeChat privacy setting screenshot | blocked / ready |  |  |
+| 2 real-device sessions passed | `PHONE_TEST_SESSION_TEMPLATE.md` copies with evidence | blocked / ready |  |  |
+
+## 3. Daily Operating Cadence
+
+| Day | Action | Required Evidence |
+|---|---|---|
+| Day 0 | Configure AppID, secrets, request domain, API domain | Release gates updated in this file |
+| Day 1 | Run internal real-device smoke on at least 2 phones | Phone test session notes and screenshots/recordings |
+| Day 2 | Invite first 10 users with the release copy | User rows added to `ALPHA_USER_EVIDENCE.md` |
+| Day 3-9 | Track whether users return and what blocks them | Daily record count, page views, feedback quotes |
+| Day 10 | Run alpha report and decide next move | `npm run analytics:miniprogram -- --days=30` output plus interview notes |
+
+## 4. Evidence Map
+
+| Evidence Type | Where To Store | Required Before Decision |
+|---|---|---|
+| Real-device smoke notes | `research/alpha/phone-sessions/` or copied from `PHONE_TEST_SESSION_TEMPLATE.md` | yes |
+| Alpha user table | `research/alpha/ALPHA_USER_EVIDENCE.md` | yes |
+| User quotes | `research/alpha/ALPHA_USER_EVIDENCE.md` | yes |
+| Analytics report output | Paste summary below or attach as dated notes | yes |
+| Competitor fieldwork | `research/WECHAT_COMPETITOR_FIELDWORK.md` and `research/evidence/` | before beta planning |
+
+## 5. Alpha-001 Daily Tracker
+
+| User | Day 1 | Day 2 | Day 3 | Day 4 | Day 5 | Day 6 | Day 7 | Feedback | Notes |
+|---|---|---|---|---|---|---|---|---|---|
+| U001 |  |  |  |  |  |  |  |  |  |
+| U002 |  |  |  |  |  |  |  |  |  |
+| U003 |  |  |  |  |  |  |  |  |  |
+| U004 |  |  |  |  |  |  |  |  |  |
+| U005 |  |  |  |  |  |  |  |  |  |
+| U006 |  |  |  |  |  |  |  |  |  |
+| U007 |  |  |  |  |  |  |  |  |  |
+| U008 |  |  |  |  |  |  |  |  |  |
+| U009 |  |  |  |  |  |  |  |  |  |
+| U010 |  |  |  |  |  |  |  |  |  |
+
+## 6. Analytics Snapshot
+
+Paste the Day 10 summary from:
+
+```bash
+npm run analytics:miniprogram -- --days=30
+```
+
+| Metric | Result |
+|---|---|
+| alphaUsers |  |
+| firstCompleteRecordRate |  |
+| nextDayReturnRate |  |
+| averageRecordDaysInFirst7Days |  |
+| weightRecordRate |  |
+| contextTagRate |  |
+| dashboardViewRate |  |
+| trendsViewRate |  |
+| payIntentRate |  |
+| feedbackRate |  |
+| decision |  |
+
+## 7. Decision Rule
+
+| Decision | Use When | Next Action |
+|---|---|---|
+| needs_data | Fewer than 10 users or missing real-device / user quote evidence | Continue the same alpha without changing scope |
+| hold_and_improve | Users can start, but retention, record speed, or value quotes are weak | Fix Today / Dashboard / Trends friction before inviting more users |
+| beta_candidate | Quantitative gates are met and users can repeat the value in their own words | Plan beta separately; do not jump directly to payment or device sync |
+
+Never treat `continue_candidate` or `beta_candidate` as permission to launch paid features. Payment, subscription messages, new health indicators, and device sync still require separate roadmap approval.
+

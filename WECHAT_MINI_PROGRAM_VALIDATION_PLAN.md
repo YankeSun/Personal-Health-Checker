@@ -370,6 +370,7 @@ npm run analytics:miniprogram -- --days=30
 | 数据权利闭环 | 已补齐 | `GET /api/account/export` 已包含与账号关联的 ProductEvent；`DELETE /api/account` 会先清理该用户 ProductEvent，再删除用户主体 |
 | 商业化验证入口 | 已具备最小版本 | 小程序“我的”页可记录 30 天观察报告内测意向和 alpha 反馈；当前不接支付 |
 | 体验版 Alpha 发放包 | 已补齐 | `miniprogram/ALPHA_RELEASE_PACK.md` 已固化发放闸门、邀请文案、7 天任务卡、观察记录、访谈问题和复盘指标 |
+| Alpha 批次控制台 | 已补齐 | `research/alpha/ALPHA_BATCH_CONTROL.md` 串联 release gates、真机证据、10 人 7 天跟踪、analytics 快照和 beta / 继续优化决策 |
 
 ### 6.2 体验版 P0 Blockers
 
@@ -406,8 +407,8 @@ npm run analytics:miniprogram -- --days=30
 | Day 0 配置日 | 补齐真实 AppID、后端密钥、Vercel env、request 合法域名 | `launch:check:strict`、`launch:check:vercel`、`miniprogram:check:strict` 通过 |
 | Day 1 内部验收 | 研发者本人和 1 个内部测试者完整跑通主路径 | `miniprogram:check:remote` 通过，测试清单至少 2 台设备通过，并填写 `research/alpha/PHONE_TEST_SESSION_TEMPLATE.md` |
 | Day 2 发 10 人 alpha | 按 `miniprogram/ALPHA_RELEASE_PACK.md` 邀请有体重管理意愿且愿意连续记录 7 天的真实用户 | 记录用户来源、设备、是否完成首次记录 |
-| Day 3-9 跟踪记录 | 观察是否回来记录，而不是只看首日反馈 | 每天查看 ProductEvent、DailyRecord 和反馈文本，并更新 `research/alpha/ALPHA_USER_EVIDENCE.md` |
-| Day 10 复盘 | 判断继续 Web 优化还是规划 beta | 运行 `npm run analytics:miniprogram -- --days=30`，并补 3-5 条用户访谈摘要 |
+| Day 3-9 跟踪记录 | 观察是否回来记录，而不是只看首日反馈 | 每天查看 ProductEvent、DailyRecord 和反馈文本，并更新 `research/alpha/ALPHA_BATCH_CONTROL.md` 与 `research/alpha/ALPHA_USER_EVIDENCE.md` |
+| Day 10 复盘 | 判断继续 Web 优化还是规划 beta | 运行 `npm run analytics:miniprogram -- --days=30`，把结果写入 `research/alpha/ALPHA_BATCH_CONTROL.md`，并补 3-5 条用户访谈摘要 |
 
 ### 6.6 本阶段不做
 

@@ -21,6 +21,7 @@ describe("research materials", () => {
     );
     expect(checkScript).toContain("WECHAT_COMPETITOR_FIELDWORK.md");
     expect(checkScript).toContain("WECHAT_COMPETITOR_SYNTHESIS.md");
+    expect(checkScript).toContain("ALPHA_BATCH_CONTROL.md");
     expect(checkScript).toContain("ALPHA_USER_EVIDENCE.md");
     expect(checkScript).toContain("PHONE_TEST_SESSION_TEMPLATE.md");
     expect(checkScript).toContain("至少 8 个");
@@ -61,6 +62,10 @@ describe("research materials", () => {
       path.join(projectRoot, "research", "alpha", "ALPHA_USER_EVIDENCE.md"),
       "utf8",
     );
+    const alphaBatchControl = readFileSync(
+      path.join(projectRoot, "research", "alpha", "ALPHA_BATCH_CONTROL.md"),
+      "utf8",
+    );
     const phoneTestTemplate = readFileSync(
       path.join(projectRoot, "research", "alpha", "PHONE_TEST_SESSION_TEMPLATE.md"),
       "utf8",
@@ -74,6 +79,10 @@ describe("research materials", () => {
     expect(synthesis).toContain("fieldwork_complete");
     expect(alphaEvidence).toContain("First Weight Record Time");
     expect(alphaEvidence).toContain("Value Quote");
+    expect(alphaBatchControl).toContain("Release Gates");
+    expect(alphaBatchControl).toContain("Alpha-001");
+    expect(alphaBatchControl).toContain("2 real-device sessions passed");
+    expect(alphaBatchControl).toContain("beta_candidate");
     expect(phoneTestTemplate).toContain("Today record");
     expect(phoneTestTemplate).toContain("Delete account guard");
   });
