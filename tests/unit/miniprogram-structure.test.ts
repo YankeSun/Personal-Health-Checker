@@ -174,6 +174,8 @@ describe("miniprogram structure", () => {
     expect(alphaPhoneSessionScript).toContain("phone-sessions");
     expect(alphaPhoneSessionScript).toContain("Do not paste AppSecret");
     expect(alphaEvidencePackScript).toContain("alpha:preflight");
+    expect(alphaEvidencePackScript).toContain("assertCleanWorkingTree");
+    expect(alphaEvidencePackScript).toContain("Git working tree is dirty");
     expect(alphaEvidencePackScript).toContain("includeVercel");
     expect(alphaEvidencePackScript).toContain("alpha:phone-session");
     expect(alphaEvidencePackScript).toContain("intentionally does not generate a Day 10 analytics report");

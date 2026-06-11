@@ -48,6 +48,34 @@ function runCommand(command: PackCommand) {
   }
 }
 
+function blockEvidencePack(message: string): never {
+  console.error(`[alpha-pack] Blocked: ${message}`);
+  process.exit(1);
+}
+
+function assertCleanWorkingTree() {
+  const result = spawnSync("git", ["status", "--short"], {
+    cwd: projectRoot,
+    encoding: "utf8",
+    maxBuffer: 1024 * 1024,
+  });
+  const output = [result.stdout, result.stderr].filter(Boolean).join("\n").trim();
+
+  if (result.status !== 0) {
+    blockEvidencePack(output || `git status failed with exit=${result.status ?? "unknown"}`);
+  }
+
+  const changedFiles = output.split(/\r?\n/).filter(Boolean);
+
+  if (changedFiles.length > 0) {
+    blockEvidencePack(
+      `Git working tree is dirty (${changedFiles.length} uncommitted change(s)). Commit and push intended changes before generating an alpha evidence pack.`,
+    );
+  }
+}
+
+assertCleanWorkingTree();
+
 const batchSlug = safeSlug(batch);
 const preflightPath = `research/alpha/preflight/${batchSlug}.md`;
 const phoneOnePath = `research/alpha/phone-sessions/${batchSlug}-${safeSlug(testerOne)}.md`;
