@@ -244,6 +244,7 @@ npm run analytics:report -- --days=30
 
 ## 2026-06-12
 
+- 改善 Vercel env readiness 失败诊断：`launch:check -- --vercel` 现在会把 Vercel CLI 失败归类成 `network_unreachable` 或 `auth_or_scope`，并给出对应下一步，避免 DNS / 代理问题被误读成单纯没登录。
 - 收口体验版远程闸门文档口径：README、环境就绪说明、Alpha 发放包和批次控制台现在都把发放前标准指向 `alpha:gate:experience` / `miniprogram:check:experience`，明确 `miniprogram:check:remote` 只用于定位 API / 数据库可达性，避免只凭 health 通过就邀请真实用户。
 - 增强 Day 0 preflight 证据口径：`alpha:preflight` 现在会从 `alpha:readiness` 中提取 `Experience build gate` 状态和 gate guidance，并把 `--remote` 标记为 remote experience check，避免私有预检报告只留下汇总数字却看不出体验版是否 GREEN / RED。
 - 收紧 `alpha:readiness --remote` 的远程验收口径：现在会调用体验版级 `miniprogram:check:experience`，把线上 API health、数据库状态、真实 AppID / AppSecret 和远程微信后端凭证状态纳入同一份红绿灯，避免只证明 API 可访问就误以为体验版远程链路可发。

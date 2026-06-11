@@ -108,6 +108,7 @@ npm run miniprogram:check:experience
 | `remote database check is ok` | 线上数据库不可达或未配置 | 检查 `DATABASE_URL` 和 Neon 状态 |
 | `remote API health endpoint responds` | API 域名不可访问或部署未更新 | 检查 Vercel deployment 和 `apiBaseUrl` |
 | `mock login` | 内部测试登录仍处于开启状态 | 正式体验版前关闭小程序配置和后端环境变量 |
+| `Vercel environment variables can be listed` | 当前终端无法读取 Vercel Production env，可能是 DNS / 代理 / 直连网络问题，也可能是登录账号或 scope 不对 | 先看输出里的 `network_unreachable` / `auth_or_scope`，再分别处理网络或重新 `vercel login` / 确认 scope |
 
 ## 5. 不要提交的内容
 

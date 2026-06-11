@@ -123,6 +123,16 @@ function nextActionFor(result: CheckResult) {
   }
 
   if (label === "Vercel environment variables can be listed") {
+    const detail = result.detail?.toLowerCase() ?? "";
+
+    if (detail.includes("network_unreachable")) {
+      return "Fix DNS/proxy/direct-network access to vercel.com and registry.npmjs.org, then rerun the Vercel env check. `vercel login` is not enough if the network cannot reach Vercel.";
+    }
+
+    if (detail.includes("auth_or_scope")) {
+      return "Run `vercel login`, confirm the `--scope` value, and make sure this account can access the linked Vercel project.";
+    }
+
     return "Run `vercel login`, confirm the scope, and retry from a network that can reach vercel.com.";
   }
 
@@ -252,6 +262,55 @@ function listVercelEnvKeys(environment: string) {
   );
 
   return collectKeys(JSON.parse(stdout));
+}
+
+function errorField(error: unknown, field: "message" | "stdout" | "stderr") {
+  if (!error || typeof error !== "object") {
+    return "";
+  }
+
+  const value = (error as Record<string, unknown>)[field];
+
+  if (Buffer.isBuffer(value)) {
+    return value.toString("utf8");
+  }
+
+  return typeof value === "string" ? value : "";
+}
+
+function describeVercelEnvListError(error: unknown) {
+  const raw = [
+    errorField(error, "message"),
+    errorField(error, "stderr"),
+    errorField(error, "stdout"),
+  ]
+    .filter(Boolean)
+    .join("\n");
+  const lower = raw.toLowerCase();
+  const reason =
+    /enotfound|econnreset|etimedout|eai_again|tls|ssl|network socket|request to .* failed/.test(lower)
+      ? "network_unreachable"
+      : /login|unauth|forbidden|permission|scope|not able to load user|token|401|403/.test(lower)
+        ? "auth_or_scope"
+        : "unknown";
+  const lines = raw
+    .split(/\r?\n/)
+    .map((line) => line.trim())
+    .filter(Boolean);
+  const networkLine = lines.find((line) =>
+    /enotfound|econnreset|etimedout|eai_again|network socket|request to .* failed/i.test(line),
+  );
+  const authLine = lines.find((line) =>
+    /not able to load user|forbidden|unauth|permission|token|401|403/i.test(line),
+  );
+  const usefulLine =
+    reason === "network_unreachable"
+      ? networkLine ?? authLine ?? lines[0] ?? "Vercel CLI returned no diagnostic output"
+      : reason === "auth_or_scope"
+        ? authLine ?? lines[0] ?? "Vercel CLI returned no diagnostic output"
+        : lines[0] ?? "Vercel CLI returned no diagnostic output";
+
+  return `${reason}: ${usefulLine.slice(0, 260)}`;
 }
 
 const projectConfig = readJson<ProjectConfig>(
@@ -403,7 +462,7 @@ if (checkVercel) {
     blocker(
       "Vercel environment variables can be listed",
       false,
-      error instanceof Error ? error.message : "unknown error",
+      describeVercelEnvListError(error),
     );
   }
 }

@@ -225,6 +225,9 @@ describe("miniprogram structure", () => {
     expect(readinessScript).toContain("SESSION_SECRET");
     expect(readinessScript).toContain("WECHAT_MINI_PROGRAM_MOCK_LOGIN_ENABLED");
     expect(readinessScript).toContain("nextActionFor");
+    expect(readinessScript).toContain("describeVercelEnvListError");
+    expect(readinessScript).toContain("network_unreachable");
+    expect(readinessScript).toContain("auth_or_scope");
     expect(readinessScript).toContain("Next actions");
     expect(readinessScript).toContain("findCompliancePlaceholders");
     expect(readinessScript).toContain("privacy policy subject/contact placeholders resolved");
