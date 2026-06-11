@@ -244,6 +244,7 @@ npm run analytics:report -- --days=30
 
 ## 2026-06-12
 
+- 收紧 alpha 证据安全边界：`.gitignore` 现在默认忽略竞品截图 / 录屏、alpha preflight、phone session、Day 10 report 和 private 证据目录；研究文档同步说明只提交脱敏摘要，避免真实用户原话、设备信息、截图、密钥或数据库 URL 被误提交。
 - 增加小程序 alpha 复盘样例模式：`analytics:miniprogram` 支持 `--sample`，可在数据库不可达时生成带有 SAMPLE 标记的 Markdown 版式预览，方便先验证 Day 10 报告结构；样例报告明确不能作为真实产品决策证据。
 - 改善 alpha 复盘数据库失败诊断：`analytics:miniprogram` 在数据库不可达时不再默认只抛 Prisma 堆栈，而是提示运行 `npm run db:doctor -- --timeout-ms 5000` 和备用连接变量检查；需要底层错误时可追加 `--verbose`。
 - 增强小程序 alpha 复盘报告：`npm run analytics:miniprogram` 新增 `--format=markdown` 和 `--out`，可在 Day 10 输出 `research/alpha/reports/Alpha-001-day10.md`，把核心指标、决策门槛、价值 cue、阻力 cue 和注意事项变成可贴进批次控制台的复盘材料。

@@ -8,3 +8,13 @@ dist
 *.log
 .vercel
 .env*.local
+
+# local research evidence and alpha user artifacts may contain screenshots,
+# recordings, device info, user quotes, or other private test data.
+research/evidence/**
+!research/evidence/
+!research/evidence/README.md
+research/alpha/preflight/**
+research/alpha/phone-sessions/**
+research/alpha/reports/**
+research/alpha/private/**

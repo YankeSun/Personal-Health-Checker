@@ -17,6 +17,7 @@ const phoneTestTemplatePath = path.join(projectRoot, "research", "alpha", "PHONE
 const validationPlanPath = path.join(projectRoot, "WECHAT_MINI_PROGRAM_VALIDATION_PLAN.md");
 const progressLogPath = path.join(projectRoot, "PROGRESS_LOG.md");
 const packageJsonPath = path.join(projectRoot, "package.json");
+const gitignorePath = path.join(projectRoot, ".gitignore");
 const results: CheckResult[] = [];
 
 function check(label: string, ok: boolean) {
@@ -37,6 +38,7 @@ const phoneTestTemplate = readText(phoneTestTemplatePath);
 const validationPlan = readText(validationPlanPath);
 const progressLog = readText(progressLogPath);
 const packageJson = readText(packageJsonPath);
+const gitignore = readText(gitignorePath);
 const sampleCount = Array.from(fieldwork.matchAll(/^### 样本 \d{2}：/gm)).length;
 
 check("research/WECHAT_COMPETITOR_FIELDWORK.md exists", existsSync(fieldworkPath));
@@ -109,6 +111,15 @@ check(
   "package exposes alpha phone session generator",
   packageJson.includes("\"alpha:phone-session\""),
 );
+for (const snippet of [
+  "research/evidence/**",
+  "research/alpha/preflight/**",
+  "research/alpha/phone-sessions/**",
+  "research/alpha/reports/**",
+  "research/alpha/private/**",
+]) {
+  check(`gitignore keeps private evidence local: ${snippet}`, gitignore.includes(snippet));
+}
 
 for (const snippet of ["Login", "Today record", "Dashboard", "Trends", "Delete account guard"]) {
   check(`phone test template covers ${snippet}`, phoneTestTemplate.includes(snippet));

@@ -4,6 +4,16 @@ This directory keeps validation materials for China-market commercialization and
 
 Use these files to collect evidence before changing product scope. Do not treat public descriptions or model guesses as completed competitor research.
 
+Generated evidence folders are local-only by default and ignored by Git:
+
+- `research/evidence/`
+- `research/alpha/preflight/`
+- `research/alpha/phone-sessions/`
+- `research/alpha/reports/`
+- `research/alpha/private/`
+
+Only commit sanitized templates and summaries. Do not commit raw screenshots, recordings, phone numbers, private chat content, device identifiers, user quotes that can identify a person, AppSecret values, tokens, or database URLs.
+
 - [WECHAT_COMPETITOR_FIELDWORK.md](./WECHAT_COMPETITOR_FIELDWORK.md): fieldwork kit for testing health, weight, hydration, sleep, and habit mini programs inside WeChat.
 - [WECHAT_COMPETITOR_SYNTHESIS.md](./WECHAT_COMPETITOR_SYNTHESIS.md): synthesis table for 8 verified competitor samples.
 - [templates/wechat-competitor-sample.md](./templates/wechat-competitor-sample.md): copyable notes template for one competitor sample.
@@ -18,17 +28,23 @@ Generate a Day 0 alpha preflight report before uploading an Experience build:
 npm run alpha:preflight -- --out research/alpha/preflight/Alpha-001.md
 ```
 
+This output is private local evidence. Paste only a redacted summary into [alpha/ALPHA_BATCH_CONTROL.md](./alpha/ALPHA_BATCH_CONTROL.md).
+
 Generate a real-device phone test session note before Day 1 internal smoke:
 
 ```bash
 npm run alpha:phone-session -- --batch Alpha-001 --tester internal-01
 ```
 
+This output is private local evidence. Keep screenshots and recordings beside it, but do not commit them.
+
 Generate a Day 10 mini program alpha report after the first user batch:
 
 ```bash
 npm run analytics:miniprogram -- --days=30 --format=markdown --out research/alpha/reports/Alpha-001-day10.md
 ```
+
+This output is private local evidence until it has been reviewed and redacted.
 
 If the report cannot reach the database, run:
 

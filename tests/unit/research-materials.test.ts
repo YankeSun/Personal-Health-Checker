@@ -46,6 +46,7 @@ describe("research materials", () => {
   });
 
   it("provides copyable evidence templates for phone fieldwork", () => {
+    const gitignore = readFileSync(path.join(projectRoot, ".gitignore"), "utf8");
     const evidenceGuide = readFileSync(
       path.join(projectRoot, "research", "evidence", "README.md"),
       "utf8",
@@ -88,6 +89,10 @@ describe("research materials", () => {
     expect(alphaBatchControl).toContain("beta_candidate");
     expect(phoneTestTemplate).toContain("Today record");
     expect(phoneTestTemplate).toContain("Delete account guard");
+    expect(gitignore).toContain("research/evidence/**");
+    expect(gitignore).toContain("research/alpha/phone-sessions/**");
+    expect(gitignore).toContain("research/alpha/reports/**");
+    expect(evidenceGuide).toContain("本地私有证据");
   });
 
   it("links fieldwork to the mini program validation plan", () => {

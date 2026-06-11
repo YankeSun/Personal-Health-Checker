@@ -4,6 +4,8 @@
 
 这份文件用于管理每一批微信小程序 alpha 体验版。它不是产品方案，而是发放前后的操作台：每一批都必须能追溯到同一个 Git commit、同一个 API 域名、同一组真机证据、同一组用户记录和同一次复盘结论。
 
+安全边界：`research/alpha/preflight/`、`research/alpha/phone-sessions/`、`research/alpha/reports/` 和 `research/evidence/` 默认是本地私有证据目录，并已加入 `.gitignore`。这里只提交脱敏摘要、状态和决策，不提交截图、录屏、手机号、私人聊天内容、可识别用户原话、密钥、token 或数据库 URL。
+
 ## 1. Batch Snapshot
 
 | Field | Alpha-001 |
@@ -52,9 +54,9 @@ Do not invite external users until every P0 gate is green.
 
 | Evidence Type | Where To Store | Required Before Decision |
 |---|---|---|
-| Alpha preflight report | `research/alpha/preflight/Alpha-001.md` | yes |
-| Real-device smoke notes | `research/alpha/phone-sessions/` or copied from `PHONE_TEST_SESSION_TEMPLATE.md` | yes |
-| Alpha analytics report | `research/alpha/reports/Alpha-001-day10.md` | yes |
+| Alpha preflight report | `research/alpha/preflight/Alpha-001.md` local private evidence; paste redacted summary here | yes |
+| Real-device smoke notes | `research/alpha/phone-sessions/` local private evidence | yes |
+| Alpha analytics report | `research/alpha/reports/Alpha-001-day10.md` local private evidence; paste redacted summary here | yes |
 | Alpha user table | `research/alpha/ALPHA_USER_EVIDENCE.md` | yes |
 | User quotes | `research/alpha/ALPHA_USER_EVIDENCE.md` | yes |
 | Analytics report output | Paste summary below or attach as dated notes | yes |

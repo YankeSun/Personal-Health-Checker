@@ -35,6 +35,8 @@ npm run alpha:phone-session -- --batch Alpha-001 --tester internal-01
 
 如果 `alpha:readiness` 输出了 `Manual next actions`，先按动作清单处理 AppID、Vercel env、request 合法域名、mock 开关、数据库可达性和发放材料，再进入严格闸门。
 
+这些命令生成的 preflight、phone session 和 report 文件默认是本地私有证据，已被 `.gitignore` 忽略。只把脱敏后的摘要写入 `research/alpha/ALPHA_BATCH_CONTROL.md`，不要提交截图、录屏、手机号、可识别用户原话、密钥或数据库 URL。
+
 再按发放前严格闸门逐项清零：
 
 ```bash
