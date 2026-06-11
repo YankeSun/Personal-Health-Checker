@@ -117,6 +117,7 @@ describe("research materials", () => {
     expect(alphaExecutionBrief).toContain("Experience build gate");
     expect(researchReadme).toContain("It intentionally does not generate a Day 10 analytics report");
     expect(researchReadme).toContain("requires a clean Git working tree");
+    expect(researchReadme).toContain("Experience build gate");
     expect(researchReadme).not.toContain("sample Day 10 report");
   });
 

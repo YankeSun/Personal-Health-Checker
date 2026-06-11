@@ -244,6 +244,7 @@ npm run analytics:report -- --days=30
 
 ## 2026-06-12
 
+- 增强 evidence pack 状态防误读：`alpha:evidence-pack` 生成的本地索引现在会提取并写入 `Experience build gate` 的 GREEN / YELLOW / RED 状态和 guidance，明确 RED / YELLOW 只能作为阻塞证据，不能当作体验版发放许可。
 - 收紧 alpha evidence pack 可追溯性：`alpha:evidence-pack` 现在会在写入任何 preflight / phone-session / pack-index 前检查 Git working tree，未提交代码会直接失败，避免本地私有证据包绕过 Git clean gate。
 - 修正体验版硬闸门执行顺序：`alpha:gate:experience` 现在先跑 strict readiness，只有 Git clean、launch、数据库和远程体验版检查通过后才生成 Day 0 preflight，避免 RED 状态下先留下可被误用的体验版证据文件。
 - 收紧体验版证据可追溯性：`alpha:readiness` 现在会先检查 Git working tree 是否干净，`alpha:gate:experience` 会因此阻断未提交代码生成体验版证据，确保真机反馈、批次控制台和 Git commit 能一一对应。

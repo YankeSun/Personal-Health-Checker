@@ -176,6 +176,9 @@ describe("miniprogram structure", () => {
     expect(alphaEvidencePackScript).toContain("alpha:preflight");
     expect(alphaEvidencePackScript).toContain("assertCleanWorkingTree");
     expect(alphaEvidencePackScript).toContain("Git working tree is dirty");
+    expect(alphaEvidencePackScript).toContain("extractPreflightGate");
+    expect(alphaEvidencePackScript).toContain("Experience Build Gate");
+    expect(alphaEvidencePackScript).toContain("Do not upload or share the Experience build");
     expect(alphaEvidencePackScript).toContain("includeVercel");
     expect(alphaEvidencePackScript).toContain("alpha:phone-session");
     expect(alphaEvidencePackScript).toContain("intentionally does not generate a Day 10 analytics report");

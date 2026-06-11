@@ -36,7 +36,7 @@ Generate the local Day 0 / Day 1 evidence pack in one command:
 npm run alpha:evidence-pack -- --batch Alpha-001
 ```
 
-This command requires a clean Git working tree before writing private evidence files, so the pack can be traced back to one commit. It creates private local preflight, phone-session, and pack-index files under ignored alpha evidence folders. It intentionally does not generate a Day 10 analytics report; only run the Day 10 report after real users complete the alpha window.
+This command requires a clean Git working tree before writing private evidence files, so the pack can be traced back to one commit. It creates private local preflight, phone-session, and pack-index files under ignored alpha evidence folders, and the pack index repeats the `Experience build gate` state so RED / YELLOW packs are not mistaken for release approval. It intentionally does not generate a Day 10 analytics report; only run the Day 10 report after real users complete the alpha window.
 
 Generate a real-device phone test session note before Day 1 internal smoke:
 

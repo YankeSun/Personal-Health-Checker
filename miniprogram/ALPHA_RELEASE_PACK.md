@@ -44,7 +44,7 @@ npm run alpha:phone-session -- --batch Alpha-001 --tester internal-01
 
 `npm run alpha:readiness -- --vercel --remote` 是体验版上传前更接近真实环境的总览：它会在同一份红绿灯里纳入 Vercel Production 变量名、线上 API health、数据库状态、真实 AppID / AppSecret 和远程微信后端凭证状态。
 
-如果要一键生成 Day 0 / Day 1 本地私有证据包，使用 `npm run alpha:evidence-pack -- --batch Alpha-001 --vercel --remote`；它只生成 preflight 和两份真机会话模板，不生成 Day 10 报告。
+如果要一键生成 Day 0 / Day 1 本地私有证据包，使用 `npm run alpha:evidence-pack -- --batch Alpha-001 --vercel --remote`；它只生成 preflight、两份真机会话模板和本地索引，不生成 Day 10 报告。索引会重复写入 `Experience build gate` 状态，RED / YELLOW 只能作为阻塞证据，不能当作体验版发放许可。
 
 `alpha:readiness` 顶部的 `Experience build gate` 必须是 `GREEN`，才可以继续进入体验版上传和真机证据收集；`YELLOW` 或 `RED` 都不要邀请外部 alpha 用户。
 

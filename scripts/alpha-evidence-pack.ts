@@ -1,5 +1,5 @@
 import { spawnSync } from "node:child_process";
-import { mkdirSync, writeFileSync } from "node:fs";
+import { mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import path from "node:path";
 
 type PackCommand = {
@@ -76,6 +76,23 @@ function assertCleanWorkingTree() {
 
 assertCleanWorkingTree();
 
+function extractPreflightGate(filePath: string) {
+  const resolvedPath = path.resolve(projectRoot, filePath);
+  const text = readFileSync(resolvedPath, "utf8");
+  const state =
+    text.match(/^Experience build gate:\s*(GREEN|YELLOW|RED)$/m)?.[1] ??
+    text.match(/\|\s*Experience build gate\s*\|\s*(GREEN|YELLOW|RED)\s*\|/)?.[1] ??
+    "unknown";
+  const guidance =
+    text.match(/^Gate guidance:\s*(.+)$/m)?.[1] ??
+    "No gate guidance found in preflight report.";
+
+  return {
+    state,
+    guidance,
+  };
+}
+
 const batchSlug = safeSlug(batch);
 const preflightPath = `research/alpha/preflight/${batchSlug}.md`;
 const phoneOnePath = `research/alpha/phone-sessions/${batchSlug}-${safeSlug(testerOne)}.md`;
@@ -139,7 +156,18 @@ for (const command of commands) {
   runCommand(command);
 }
 
+const preflightGate = extractPreflightGate(preflightPath);
+const releaseGuidance =
+  preflightGate.state === "GREEN"
+    ? "GREEN means automated gates passed. Continue with WeChat DevTools upload and real-device evidence before inviting users."
+    : "Do not upload or share the Experience build while this state is not GREEN. Resolve blockers, rerun the gate, then regenerate the evidence pack.";
 const index = `# ${batch} Local Evidence Pack
+
+## Experience Build Gate
+
+- State: ${preflightGate.state}
+- Guidance: ${preflightGate.guidance}
+- Release note: ${releaseGuidance}
 
 Generated files:
 
@@ -160,4 +188,5 @@ const resolvedIndexPath = path.resolve(projectRoot, indexPath);
 mkdirSync(path.dirname(resolvedIndexPath), { recursive: true });
 writeFileSync(resolvedIndexPath, index, "utf8");
 
+console.log(`[alpha-pack] Experience build gate: ${preflightGate.state}`);
 console.log(`[alpha-pack] Evidence pack index written to ${indexPath}`);
