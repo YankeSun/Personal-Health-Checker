@@ -107,6 +107,38 @@ export function HistoryMonthView({ overview }: HistoryMonthViewProps) {
         </article>
       </section>
 
+      {overview.weightContextSummary.recordedWeightDays > 0 ? (
+        <section className="rounded-3xl border border-sky-200 bg-sky-50 p-6 shadow-sm">
+          <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
+            <div>
+              <p className="text-sm font-semibold tracking-[0.18em] text-sky-700">
+                体重背景
+              </p>
+              <h2 className="mt-2 text-xl font-semibold text-slate-900">
+                本月有 {overview.weightContextSummary.taggedWeightDays}/
+                {overview.weightContextSummary.recordedWeightDays} 天带有背景标签
+              </h2>
+            </div>
+            {overview.weightContextSummary.topContextLabels.length > 0 ? (
+              <div className="flex flex-wrap gap-2 lg:max-w-xl lg:justify-end">
+                {overview.weightContextSummary.topContextLabels.map((item) => (
+                  <span
+                    className="rounded-full bg-white/85 px-3 py-1.5 text-xs font-medium text-slate-700 ring-1 ring-sky-100"
+                    key={item.label}
+                  >
+                    {item.label} {item.count} 次
+                  </span>
+                ))}
+              </div>
+            ) : (
+              <p className="max-w-md text-sm leading-6 text-slate-600">
+                有体重记录，但还没有补充饮食、活动或称重时段背景。
+              </p>
+            )}
+          </div>
+        </section>
+      ) : null}
+
       <section className="grid gap-4 lg:grid-cols-2">
         {overview.insights.map((insight) => {
           const toneClass =
@@ -202,6 +234,7 @@ export function HistoryMonthView({ overview }: HistoryMonthViewProps) {
                 <th className="pb-4 pr-4 font-medium">日期</th>
                 <th className="pb-4 pr-4 font-medium">睡眠</th>
                 <th className="pb-4 pr-4 font-medium">体重</th>
+                <th className="pb-4 pr-4 font-medium">体重背景</th>
                 <th className="pb-4 pr-4 font-medium">饮水</th>
                 <th className="pb-4 pr-4 font-medium">状态</th>
                 <th className="pb-4 font-medium text-right">操作</th>
@@ -228,6 +261,22 @@ export function HistoryMonthView({ overview }: HistoryMonthViewProps) {
                     </td>
                     <td className="py-4 pr-4 text-sm text-slate-700">
                       {row.weightDisplay ? `${row.weightDisplay} ${row.weightUnitLabel}` : "—"}
+                    </td>
+                    <td className="py-4 pr-4">
+                      {row.weightContextLabels.length > 0 ? (
+                        <div className="flex max-w-[220px] flex-wrap gap-1.5">
+                          {row.weightContextLabels.map((label) => (
+                            <span
+                              className="rounded-full bg-sky-50 px-2.5 py-1 text-[11px] font-medium text-sky-800 ring-1 ring-sky-100"
+                              key={label}
+                            >
+                              {label}
+                            </span>
+                          ))}
+                        </div>
+                      ) : (
+                        <span className="text-sm text-slate-400">—</span>
+                      )}
                     </td>
                     <td className="py-4 pr-4 text-sm text-slate-700">
                       {row.waterDisplay ? `${row.waterDisplay} ${row.waterUnitLabel}` : "—"}

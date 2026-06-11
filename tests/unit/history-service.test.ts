@@ -24,6 +24,12 @@ describe("history-service", () => {
               sleepHours: 7.2,
               weightKg: 63.1,
               waterMl: 1800,
+              contextTags: {
+                dietTags: ["LIGHT"],
+                activityLevel: "NORMAL",
+                energyLevel: null,
+                weighTiming: "MORNING",
+              },
             },
             {
               id: "record_2",
@@ -31,6 +37,12 @@ describe("history-service", () => {
               sleepHours: null,
               weightKg: 63.4,
               waterMl: 2100,
+              contextTags: {
+                dietTags: ["DINING_OUT"],
+                activityLevel: "LOW",
+                energyLevel: null,
+                weighTiming: null,
+              },
             },
           ];
         }
@@ -38,11 +50,12 @@ describe("history-service", () => {
         return [
           {
             id: "record_prev_1",
-            date: "2026-03-10",
-            sleepHours: 7.5,
-            weightKg: 63.5,
-            waterMl: 1900,
-          },
+              date: "2026-03-10",
+              sleepHours: 7.5,
+              weightKg: 63.5,
+              waterMl: 1900,
+              contextTags: null,
+            },
         ];
       },
     );
@@ -79,6 +92,19 @@ describe("history-service", () => {
     expect(overview.partialDays).toBe(1);
     expect(overview.emptyDays).toBe(28);
     expect(overview.recordDensity).toBe(6.7);
+    expect(overview.weightContextSummary).toMatchObject({
+      recordedWeightDays: 2,
+      taggedWeightDays: 2,
+    });
+    expect(overview.weightContextSummary.topContextLabels).toEqual(
+      expect.arrayContaining([
+        { label: "清淡", count: 1 },
+        { label: "正常", count: 1 },
+        { label: "晨起", count: 1 },
+        { label: "外食", count: 1 },
+        { label: "偏少", count: 1 },
+      ]),
+    );
     expect(overview.insights).toEqual([
       {
         tone: "info",
@@ -99,6 +125,7 @@ describe("history-service", () => {
     expect(overview.rows.find((row) => row.date === "2026-04-05")).toMatchObject({
       sleepDisplay: "7.2",
       weightDisplay: "63.1",
+      weightContextLabels: ["清淡", "正常", "晨起"],
       waterDisplay: "1800",
       isComplete: true,
     });

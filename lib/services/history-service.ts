@@ -11,6 +11,7 @@ import {
   getDateStringInTimezone,
   shiftMonthString,
 } from "@/lib/utils/dates";
+import { listRecordContextLabels } from "@/lib/utils/record-context";
 import { toDisplaySleep, toDisplayWater, toDisplayWeight } from "@/lib/utils/units";
 import { MAX_HISTORY_MONTHS } from "@/lib/validations/history";
 
@@ -36,6 +37,7 @@ export type HistoryDayRow = {
   sleepDisplay: string | null;
   weightDisplay: string | null;
   waterDisplay: string | null;
+  weightContextLabels: string[];
   weightUnitLabel: string;
   waterUnitLabel: string;
   completedMetrics: number;
@@ -54,6 +56,7 @@ export type HistoryMonthOverview = {
   partialDays: number;
   emptyDays: number;
   recordDensity: number;
+  weightContextSummary: HistoryWeightContextSummary;
   insights: HistoryMonthlyInsight[];
   calendar: HistoryCalendarCell[];
   rows: HistoryDayRow[];
@@ -63,6 +66,15 @@ export type HistoryMonthlyInsight = {
   tone: "success" | "info" | "warning";
   title: string;
   description: string;
+};
+
+export type HistoryWeightContextSummary = {
+  recordedWeightDays: number;
+  taggedWeightDays: number;
+  topContextLabels: Array<{
+    label: string;
+    count: number;
+  }>;
 };
 
 function getCompletedMetrics(record: {
@@ -168,6 +180,48 @@ function buildHistoryInsights({
   return insights;
 }
 
+function buildWeightContextSummary(
+  records: Array<{
+    weightKg: number | null;
+    contextTags?: unknown;
+  }>,
+): HistoryWeightContextSummary {
+  const labelCounts = new Map<string, number>();
+  let recordedWeightDays = 0;
+  let taggedWeightDays = 0;
+
+  for (const record of records) {
+    if (record.weightKg === null) {
+      continue;
+    }
+
+    recordedWeightDays += 1;
+    const labels = listRecordContextLabels(record.contextTags);
+
+    if (labels.length === 0) {
+      continue;
+    }
+
+    taggedWeightDays += 1;
+
+    for (const label of labels) {
+      labelCounts.set(label, (labelCounts.get(label) ?? 0) + 1);
+    }
+  }
+
+  return {
+    recordedWeightDays,
+    taggedWeightDays,
+    topContextLabels: [...labelCounts.entries()]
+      .sort((left, right) => right[1] - left[1] || left[0].localeCompare(right[0]))
+      .slice(0, 6)
+      .map(([label, count]) => ({
+        label,
+        count,
+      })),
+  };
+}
+
 export async function getHistoryMonthOverviewByUserId(
   userId: string,
   profile: HistoryProfile,
@@ -209,6 +263,10 @@ export async function getHistoryMonthOverviewByUserId(
           record?.weightKg === null || record?.weightKg == null
             ? null
             : toDisplayWeight(record.weightKg, profile.weightUnit),
+        weightContextLabels:
+          record?.weightKg === null || record?.weightKg == null
+            ? []
+            : listRecordContextLabels(record.contextTags).slice(0, 4),
         waterDisplay:
           record?.waterMl === null || record?.waterMl == null
             ? null
@@ -240,6 +298,7 @@ export async function getHistoryMonthOverviewByUserId(
   const partialDays = rows.filter((row) => row.hasAnyRecord && !row.isComplete).length;
   const emptyDays = rows.filter((row) => !row.hasAnyRecord).length;
   const recordDensity = roundTo((recordDays / rows.length) * 100);
+  const weightContextSummary = buildWeightContextSummary(records);
   const insights = buildHistoryInsights({
     currentRecordDays: recordDays,
     currentTotalDays: monthDates.length,
@@ -259,6 +318,7 @@ export async function getHistoryMonthOverviewByUserId(
     partialDays,
     emptyDays,
     recordDensity,
+    weightContextSummary,
     insights,
     calendar,
     rows,
