@@ -1,14 +1,45 @@
-<view class="page">
-  <view class="summary card">
-    <text class="eyebrow">TODAY</text>
-    <text class="title">今天已完成 {{completedCount}}/3</text>
-    <text class="muted">{{record.date || "同步今天记录中"}}</text>
+<view class="page today-page">
+  <view class="hero-card card">
+    <view class="hero-topline">
+      <text class="eyebrow">TODAY</text>
+      <text class="date-label">{{record.date || "同步中"}}</text>
+    </view>
+
+    <view class="weight-focus">
+      <text class="focus-label">今日称重</text>
+      <text class="focus-value">{{weightDisplay}}</text>
+      <text class="focus-hint">{{weightHint}}</text>
+    </view>
+
+    <view class="completion-panel">
+      <view class="completion-meta">
+        <text class="completion-title">已完成 {{completedCount}}/3</text>
+        <text class="completion-next">{{nextStepText}}</text>
+      </view>
+      <view class="progress-track">
+        <view class="progress-fill" style="width: {{completionPercent}}%;"></view>
+      </view>
+      <view class="step-list">
+        <text
+          wx:for="{{completionSteps}}"
+          wx:key="key"
+          class="step-pill {{item.done ? 'step-pill-done' : ''}}"
+        >
+          {{item.done ? "已记" : "待记"}} {{item.label}}
+        </text>
+      </view>
+    </view>
   </view>
 
-  <view class="form card">
-    <view class="field">
+  <view class="record-card card">
+    <view class="section-head">
+      <text class="section-title">核心记录</text>
+      <text class="section-note">体重优先，睡眠和饮水辅助回看节奏。</text>
+    </view>
+
+    <view class="field weight-field">
       <text class="label">体重 kg</text>
-      <input class="input" type="digit" value="{{form.weightKg}}" placeholder="例如 63.2" data-field="weightKg" bindinput="handleInput" />
+      <input class="input weight-input" type="digit" value="{{form.weightKg}}" placeholder="例如 63.2" data-field="weightKg" bindinput="handleInput" />
     </view>
 
     <view class="field-row">
@@ -21,9 +52,24 @@
         <input class="input" type="number" value="{{form.waterMl}}" placeholder="2000" data-field="waterMl" bindinput="handleInput" />
       </view>
     </view>
+  </view>
+
+  <view wx:if="{{qualityWarnings.length > 0}}" class="warning-card card">
+    <text class="warning-kicker">请确认</text>
+    <view wx:for="{{qualityWarnings}}" wx:key="id" class="warning-item">
+      <text class="warning-title">{{item.title}}</text>
+      <text class="warning-copy">{{item.description}}</text>
+    </view>
+  </view>
+
+  <view class="context-card card">
+    <view class="section-head">
+      <text class="section-title">体重背景</text>
+      <text class="section-note">只选今天最影响判断的线索。</text>
+    </view>
 
     <view class="context-group">
-      <text class="section-title">饮食状态</text>
+      <text class="context-label">饮食状态</text>
       <view class="chips">
         <text wx:for="{{dietOptions}}" wx:key="value" class="chip {{item.active ? 'chip-active' : ''}}" data-value="{{item.value}}" bindtap="toggleDiet">
           {{item.label}}
@@ -31,35 +77,42 @@
       </view>
     </view>
 
-    <view class="context-group">
-      <text class="section-title">活动量</text>
-      <view class="chips">
-        <text wx:for="{{activityOptions}}" wx:key="value" class="chip {{item.active ? 'chip-active' : ''}}" data-value="{{item.value}}" data-field="activityLevel" bindtap="toggleSingleContext">
-          {{item.label}}
-        </text>
+    <view class="context-grid">
+      <view class="context-group compact">
+        <text class="context-label">活动量</text>
+        <view class="chips">
+          <text wx:for="{{activityOptions}}" wx:key="value" class="chip {{item.active ? 'chip-active' : ''}}" data-value="{{item.value}}" data-field="activityLevel" bindtap="toggleSingleContext">
+            {{item.label}}
+          </text>
+        </view>
+      </view>
+
+      <view class="context-group compact">
+        <text class="context-label">精神状态</text>
+        <view class="chips">
+          <text wx:for="{{energyOptions}}" wx:key="value" class="chip {{item.active ? 'chip-active' : ''}}" data-value="{{item.value}}" data-field="energyLevel" bindtap="toggleSingleContext">
+            {{item.label}}
+          </text>
+        </view>
       </view>
     </view>
 
     <view class="context-group">
-      <text class="section-title">精神状态</text>
-      <view class="chips">
-        <text wx:for="{{energyOptions}}" wx:key="value" class="chip {{item.active ? 'chip-active' : ''}}" data-value="{{item.value}}" data-field="energyLevel" bindtap="toggleSingleContext">
-          {{item.label}}
-        </text>
-      </view>
-    </view>
-
-    <view class="context-group">
-      <text class="section-title">称重时段</text>
+      <text class="context-label">称重时段</text>
       <view class="chips">
         <text wx:for="{{timingOptions}}" wx:key="value" class="chip {{item.active ? 'chip-active' : ''}}" data-value="{{item.value}}" data-field="weighTiming" bindtap="toggleSingleContext">
           {{item.label}}
         </text>
       </view>
     </view>
+  </view>
 
+  <view class="submit-card card">
     <button class="primary-button save-button" loading="{{saving}}" bindtap="saveRecord">保存今天</button>
-    <text wx:if="{{message}}" class="success">{{message}}</text>
+    <view wx:if="{{message}}" class="save-feedback">
+      <text class="success">{{message}}</text>
+      <button class="ghost-button dashboard-button" bindtap="goDashboard">看今日概览</button>
+    </view>
     <text wx:if="{{error}}" class="error">{{error}}</text>
   </view>
 </view>

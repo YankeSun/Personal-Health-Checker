@@ -53,6 +53,34 @@ function decorateOptions(options, activeValues) {
   }));
 }
 
+function buildCompletionSteps(form) {
+  return [
+    {
+      key: "weight",
+      label: "体重",
+      done: normalizeNumber(form.weightKg) !== null,
+    },
+    {
+      key: "sleep",
+      label: "睡眠",
+      done: normalizeNumber(form.sleepHours) !== null,
+    },
+    {
+      key: "water",
+      label: "饮水",
+      done: normalizeNumber(form.waterMl) !== null,
+    },
+  ];
+}
+
+function getNextStepText(steps) {
+  const nextStep = steps.find((step) => !step.done);
+
+  return nextStep
+    ? `还差 ${nextStep.label}`
+    : "记录完整，可以看今日概览";
+}
+
 Page({
   data: {
     record: {},
@@ -63,6 +91,16 @@ Page({
       contextTags: emptyTags(),
     },
     completedCount: 0,
+    completionPercent: 0,
+    completionSteps: buildCompletionSteps({
+      sleepHours: "",
+      weightKg: "",
+      waterMl: "",
+    }),
+    nextStepText: "先记录今天体重",
+    weightDisplay: "-- kg",
+    weightHint: "先填今天体重",
+    qualityWarnings: [],
     dietOptions: decorateOptions(dietBaseOptions, []),
     activityOptions: decorateOptions(activityBaseOptions, []),
     energyOptions: decorateOptions(energyBaseOptions, []),
@@ -96,6 +134,7 @@ Page({
           waterMl: record.waterMl === null || record.waterMl === undefined ? "" : String(record.waterMl),
           contextTags,
         },
+        qualityWarnings: payload.qualityWarnings || [],
         error: "",
       });
       this.refreshDerivedState();
@@ -112,6 +151,7 @@ Page({
     this.setData({
       [`form.${field}`]: event.detail.value,
       message: "",
+      qualityWarnings: [],
     });
     this.refreshDerivedState();
   },
@@ -128,6 +168,7 @@ Page({
     this.setData({
       "form.contextTags.dietTags": next,
       message: "",
+      qualityWarnings: [],
     });
     this.refreshDerivedState();
   },
@@ -140,6 +181,7 @@ Page({
     this.setData({
       [`form.contextTags.${field}`]: current === value ? null : value,
       message: "",
+      qualityWarnings: [],
     });
     this.refreshDerivedState();
   },
@@ -147,14 +189,17 @@ Page({
   refreshDerivedState() {
     const form = this.data.form;
     const tags = form.contextTags || emptyTags();
-    const completedCount = [
-      normalizeNumber(form.sleepHours),
-      normalizeNumber(form.weightKg),
-      normalizeNumber(form.waterMl),
-    ].filter((value) => value !== null).length;
+    const completionSteps = buildCompletionSteps(form);
+    const completedCount = completionSteps.filter((step) => step.done).length;
+    const weightValue = normalizeNumber(form.weightKg);
 
     this.setData({
       completedCount,
+      completionPercent: Math.round((completedCount / 3) * 100),
+      completionSteps,
+      nextStepText: getNextStepText(completionSteps),
+      weightDisplay: weightValue === null ? "-- kg" : `${form.weightKg} kg`,
+      weightHint: weightValue === null ? "先填今天体重" : "体重已记录",
       dietOptions: decorateOptions(dietBaseOptions, tags.dietTags || []),
       activityOptions: decorateOptions(activityBaseOptions, tags.activityLevel ? [tags.activityLevel] : []),
       energyOptions: decorateOptions(energyBaseOptions, tags.energyLevel ? [tags.energyLevel] : []),
@@ -173,6 +218,13 @@ Page({
       return;
     }
 
+    if (this.data.completedCount === 0) {
+      this.setData({
+        error: "至少先记录一项数据",
+      });
+      return;
+    }
+
     this.setData({
       saving: true,
       error: "",
@@ -180,7 +232,7 @@ Page({
     });
 
     try {
-      await request({
+      const payload = await request({
         url: `/api/records/${date}`,
         method: "PUT",
         data: {
@@ -190,7 +242,10 @@ Page({
           contextTags: form.contextTags,
         },
       });
+      const savedRecord = payload.record || this.data.record;
       this.setData({
+        record: savedRecord,
+        qualityWarnings: payload.qualityWarnings || [],
         message: this.data.completedCount === 3 ? "今日三项已完成" : `已保存 ${this.data.completedCount}/3`,
       });
     } catch (error) {
@@ -202,5 +257,11 @@ Page({
         saving: false,
       });
     }
+  },
+
+  goDashboard() {
+    wx.switchTab({
+      url: "/pages/dashboard/dashboard",
+    });
   },
 });

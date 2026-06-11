@@ -244,6 +244,7 @@ npm run analytics:report -- --days=30
 
 ## 2026-06-12
 
+- 优化小程序 Today alpha 记录体验：首屏改为体重优先的今日称重焦点区，展示完成进度、下一步提示和保存后去 Dashboard 的单一 CTA；同时接入后端 `qualityWarnings`，对明显异常的睡眠、体重、饮水输入给出温和确认提示。
 - 整合 sub-agent 并行评审结论：`WECHAT_MINI_PROGRAM_VALIDATION_PLAN.md` 新增公开资料竞品预调研、当前 Alpha 作战板、P0 blocker 和 10 人真实用户 alpha 节奏；同时明确公开资料不能替代微信真机实测，仍需补 8 个以上真实小程序体验样本。
 - 收敛记录保存口径：新增共享保存服务，让 `/api/records/today` 和 `/api/records/[date]` 共用同一套保存、补录标记、质量提示和 ProductEvent 埋点逻辑，降低小程序 alpha 与 Web 数据口径不一致的风险。
 - 补齐账号数据权利闭环：账号导出现在包含与账号关联的 ProductEvent，账号删除会先清理该用户的产品事件，再删除用户主体；隐私说明、用户协议、小程序说明和验收清单同步更新，覆盖 alpha 反馈、页面访问和报告内测意向这类验证数据。

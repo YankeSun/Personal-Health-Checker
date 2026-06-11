@@ -1,28 +1,140 @@
-.summary {
+.today-page {
+  padding-bottom: 48rpx;
+}
+
+.hero-card {
+  overflow: hidden;
   padding: 34rpx;
+  background:
+    radial-gradient(circle at 88% 18%, rgba(246, 180, 78, 0.36), transparent 36%),
+    linear-gradient(145deg, #172033 0%, #2f3a2e 54%, #7a5a25 100%);
+  color: #fffaf0;
+}
+
+.hero-topline,
+.completion-meta,
+.section-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24rpx;
 }
 
 .eyebrow {
-  color: #8a6a2d;
+  color: rgba(255, 250, 240, 0.72);
   font-size: 22rpx;
-  font-weight: 800;
+  font-weight: 900;
   letter-spacing: 4rpx;
 }
 
-.title {
+.date-label {
+  border: 1rpx solid rgba(255, 255, 255, 0.22);
+  border-radius: 999rpx;
+  padding: 10rpx 18rpx;
+  color: rgba(255, 250, 240, 0.78);
+  font-size: 22rpx;
+}
+
+.weight-focus {
+  margin-top: 42rpx;
+}
+
+.focus-label,
+.focus-hint,
+.completion-next,
+.section-note,
+.context-label,
+.warning-copy {
   display: block;
-  margin-top: 16rpx;
-  font-size: 44rpx;
+  font-size: 24rpx;
+  line-height: 1.5;
+}
+
+.focus-label,
+.completion-next {
+  color: rgba(255, 250, 240, 0.72);
+}
+
+.focus-value {
+  display: block;
+  margin-top: 10rpx;
+  font-size: 76rpx;
+  font-weight: 950;
+  letter-spacing: -2rpx;
+}
+
+.focus-hint {
+  color: rgba(255, 250, 240, 0.84);
+}
+
+.completion-panel {
+  margin-top: 38rpx;
+  border: 1rpx solid rgba(255, 255, 255, 0.16);
+  border-radius: 30rpx;
+  background: rgba(255, 255, 255, 0.1);
+  padding: 24rpx;
+}
+
+.completion-title {
+  font-size: 28rpx;
   font-weight: 900;
 }
 
-.form {
-  margin-top: 28rpx;
+.progress-track {
+  overflow: hidden;
+  height: 14rpx;
+  margin-top: 22rpx;
+  border-radius: 999rpx;
+  background: rgba(255, 255, 255, 0.18);
+}
+
+.progress-fill {
+  height: 100%;
+  border-radius: 999rpx;
+  background: #f7c86f;
+}
+
+.step-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12rpx;
+  margin-top: 22rpx;
+}
+
+.step-pill {
+  border: 1rpx solid rgba(255, 255, 255, 0.18);
+  border-radius: 999rpx;
+  padding: 10rpx 16rpx;
+  color: rgba(255, 250, 240, 0.7);
+  font-size: 22rpx;
+}
+
+.step-pill-done {
+  border-color: rgba(247, 200, 111, 0.74);
+  background: rgba(247, 200, 111, 0.18);
+  color: #fffaf0;
+}
+
+.record-card,
+.context-card,
+.warning-card,
+.submit-card {
+  margin-top: 24rpx;
   padding: 34rpx;
 }
 
+.section-title {
+  font-size: 30rpx;
+}
+
+.section-note {
+  max-width: 360rpx;
+  color: #777064;
+  text-align: right;
+}
+
 .field {
-  margin-bottom: 28rpx;
+  margin-top: 28rpx;
 }
 
 .field-row {
@@ -39,21 +151,72 @@
   margin-bottom: 12rpx;
   color: #6f675d;
   font-size: 24rpx;
-  font-weight: 700;
+  font-weight: 800;
 }
 
 .input {
   min-height: 92rpx;
+  border: 1rpx solid rgba(23, 32, 51, 0.08);
   border-radius: 24rpx;
   background: #f8f4ec;
   padding: 0 24rpx;
   color: #172033;
   font-size: 32rpx;
-  font-weight: 700;
+  font-weight: 800;
+}
+
+.weight-input {
+  min-height: 108rpx;
+  background: #fff8e8;
+  font-size: 42rpx;
+}
+
+.warning-card {
+  border-color: rgba(180, 83, 9, 0.24);
+  background: #fff7ed;
+}
+
+.warning-kicker {
+  display: block;
+  color: #9a5412;
+  font-size: 22rpx;
+  font-weight: 900;
+  letter-spacing: 3rpx;
+}
+
+.warning-item {
+  margin-top: 18rpx;
+}
+
+.warning-title {
+  display: block;
+  color: #7c2d12;
+  font-size: 28rpx;
+  font-weight: 900;
+}
+
+.warning-copy {
+  margin-top: 6rpx;
+  color: #8a5a2b;
 }
 
 .context-group {
   margin-top: 28rpx;
+}
+
+.context-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20rpx;
+}
+
+.compact .chips {
+  gap: 12rpx;
+}
+
+.context-label {
+  color: #6f675d;
+  font-weight: 800;
 }
 
 .chips {
@@ -63,22 +226,39 @@
   margin-top: 18rpx;
 }
 
+.submit-card {
+  position: sticky;
+  bottom: 24rpx;
+}
+
 .save-button {
-  margin-top: 42rpx;
+  min-height: 92rpx;
+}
+
+.save-feedback {
+  margin-top: 20rpx;
+  border-radius: 28rpx;
+  background: #f0fdf4;
+  padding: 22rpx;
+}
+
+.dashboard-button {
+  margin-top: 18rpx;
 }
 
 .success,
 .error {
   display: block;
-  margin-top: 20rpx;
   font-size: 26rpx;
   line-height: 1.5;
 }
 
 .success {
   color: #047857;
+  font-weight: 800;
 }
 
 .error {
+  margin-top: 20rpx;
   color: #be123c;
 }

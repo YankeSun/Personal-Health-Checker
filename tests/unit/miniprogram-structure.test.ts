@@ -144,6 +144,10 @@ describe("miniprogram structure", () => {
       path.join(miniprogramRoot, "pages", "today", "today.js"),
       "utf8",
     );
+    const todayMarkup = readFileSync(
+      path.join(miniprogramRoot, "pages", "today", "today.wxml"),
+      "utf8",
+    );
     const mePage = readFileSync(
       path.join(miniprogramRoot, "pages", "me", "me.js"),
       "utf8",
@@ -169,6 +173,12 @@ describe("miniprogram structure", () => {
     expect(loginPage).toContain("请先同意隐私保护指引和用户协议");
     expect(todayPage).toContain("/api/records/today");
     expect(todayPage).toContain("/api/records/${date}");
+    expect(todayPage).toContain("qualityWarnings");
+    expect(todayPage).toContain("completionSteps");
+    expect(todayPage).toContain("goDashboard");
+    expect(todayMarkup).toContain("今日称重");
+    expect(todayMarkup).toContain("qualityWarnings");
+    expect(todayMarkup).toContain("看今日概览");
     expect(mePage).toContain("/api/intent/pay");
     expect(mePage).toContain("/api/feedback");
     expect(mePage).toContain("submitFeedback");

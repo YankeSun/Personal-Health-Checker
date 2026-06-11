@@ -158,6 +158,7 @@ const apiHelper = readText(path.join(srcRoot, "utils", "api.js"));
 const loginJs = readText(path.join(srcRoot, "pages", "login", "login.js"));
 const loginWxml = readText(path.join(srcRoot, "pages", "login", "login.wxml"));
 const todayJs = readText(path.join(srcRoot, "pages", "today", "today.js"));
+const todayWxml = readText(path.join(srcRoot, "pages", "today", "today.wxml"));
 const dashboardJs = readText(path.join(srcRoot, "pages", "dashboard", "dashboard.js"));
 const trendsJs = readText(path.join(srcRoot, "pages", "trends", "trends.js"));
 const meJs = readText(path.join(srcRoot, "pages", "me", "me.js"));
@@ -176,6 +177,8 @@ check(
 );
 check("login exposes legal links", hasAll(loginWxml, ["隐私保护指引", "用户协议", "健康免责声明"]));
 check("today page reads and saves records", hasAll(todayJs, ["/api/records/today", "/api/records/${date}"]));
+check("today page keeps weight-first alpha flow", hasAll(todayJs, ["qualityWarnings", "goDashboard", "completionSteps"]));
+check("today page shows record quality and dashboard CTA", hasAll(todayWxml, ["今日称重", "qualityWarnings", "看今日概览"]));
 check("dashboard page reads summary", dashboardJs.includes("/api/dashboard"));
 check("trends page reads weight trend", trendsJs.includes("/api/trends?metric=weight"));
 check("me page supports account export and deletion", hasAll(meJs, ["/api/account/export", "/api/account"]));
