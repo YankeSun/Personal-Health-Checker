@@ -381,6 +381,21 @@ export const previewDashboardOverview: DashboardOverview = {
       actionLabel: "查看最近 7 天",
     },
   ],
+  weightContext: {
+    days: 7,
+    recordedDays: 6,
+    latestDisplay: toDisplayWeight(weightSeries[PREVIEW_DATE], weightUnit),
+    changeDisplay: "-0.2",
+    trend: "stable",
+    title: "最近 7 天体重基本稳定",
+    description:
+      "窗口内记录了 6/7 天，较窗口内第一条记录 -0.2 kg。常见背景是清淡、正常活动和晨起称重，这些只是回看线索，不代表直接原因。",
+    topContextLabels: [
+      { label: "清淡", count: 3 },
+      { label: "正常", count: 3 },
+      { label: "晨起", count: 4 },
+    ],
+  },
   windows: [buildWindowSummary(7), buildWindowSummary(30)],
 };
 

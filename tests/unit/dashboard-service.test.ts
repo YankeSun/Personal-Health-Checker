@@ -91,6 +91,12 @@ describe("dashboard-service", () => {
         sleepHours: new Prisma.Decimal("7.5"),
         weightKg: new Prisma.Decimal("62.3"),
         waterMl: 2000,
+        contextTags: {
+          dietTags: ["LIGHT"],
+          activityLevel: "NORMAL",
+          energyLevel: null,
+          weighTiming: "MORNING",
+        },
         createdAt: new Date(),
         updatedAt: new Date(),
       },
@@ -101,6 +107,12 @@ describe("dashboard-service", () => {
         sleepHours: new Prisma.Decimal("8.0"),
         weightKg: new Prisma.Decimal("62.1"),
         waterMl: 2100,
+        contextTags: {
+          dietTags: ["LIGHT"],
+          activityLevel: "NORMAL",
+          energyLevel: "GOOD",
+          weighTiming: "MORNING",
+        },
         createdAt: new Date(),
         updatedAt: new Date(),
       },
@@ -111,6 +123,12 @@ describe("dashboard-service", () => {
         sleepHours: new Prisma.Decimal("7.2"),
         weightKg: new Prisma.Decimal("62.0"),
         waterMl: 1900,
+        contextTags: {
+          dietTags: ["DINING_OUT"],
+          activityLevel: "LOW",
+          energyLevel: null,
+          weighTiming: "MORNING",
+        },
         createdAt: new Date(),
         updatedAt: new Date(),
       },
@@ -176,6 +194,19 @@ describe("dashboard-service", () => {
       goalMet: true,
       displayValue: "62",
     });
+    expect(overview.weightContext).toMatchObject({
+      days: 7,
+      recordedDays: 4,
+      trend: "down",
+      changeDisplay: "-0.5",
+      title: "最近 7 天体重有所下降",
+    });
+    expect(overview.weightContext.topContextLabels).toEqual([
+      { label: "晨起", count: 3 },
+      { label: "正常", count: 2 },
+      { label: "清淡", count: 2 },
+      { label: "不错", count: 1 },
+    ]);
   });
 
   it("returns zero streak when today's record is incomplete", async () => {

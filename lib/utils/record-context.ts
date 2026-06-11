@@ -132,13 +132,16 @@ export function countRecordContextTags(tags: unknown) {
 }
 
 export function formatRecordContextTags(tags: unknown) {
+  return listRecordContextLabels(tags).join(" / ");
+}
+
+export function listRecordContextLabels(tags: unknown) {
   const normalized = normalizeRecordContextTags(tags);
-  const labels = [
+
+  return [
     ...normalized.dietTags.map((tag) => optionLabelMaps.dietTags.get(tag)),
     normalized.activityLevel ? optionLabelMaps.activityLevel.get(normalized.activityLevel) : null,
     normalized.energyLevel ? optionLabelMaps.energyLevel.get(normalized.energyLevel) : null,
     normalized.weighTiming ? optionLabelMaps.weighTiming.get(normalized.weighTiming) : null,
   ].filter((label): label is string => Boolean(label));
-
-  return labels.join(" / ");
 }

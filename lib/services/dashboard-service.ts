@@ -14,6 +14,11 @@ import {
   getGoalUnitLabel,
 } from "@/lib/utils/goal-copy";
 import { GoalView, METRIC_ORDER } from "@/lib/utils/goals";
+import {
+  type RecordContextTags,
+  listRecordContextLabels,
+  normalizeRecordContextTags,
+} from "@/lib/utils/record-context";
 import { getStreakMomentum } from "@/lib/utils/streak";
 import { toDisplaySleep, toDisplayWater, toDisplayWeight } from "@/lib/utils/units";
 
@@ -77,6 +82,29 @@ type DashboardWindowSummary = {
   comparison: DashboardWindowComparison;
 };
 
+type DashboardRecord = {
+  sleepHours: number | null;
+  weightKg: number | null;
+  waterMl: number | null;
+  contextTags: RecordContextTags;
+};
+
+type MetricRecord = Pick<DashboardRecord, "sleepHours" | "weightKg" | "waterMl">;
+
+export type DashboardWeightContext = {
+  days: SupportedDashboardWindow;
+  recordedDays: number;
+  latestDisplay: string | null;
+  changeDisplay: string | null;
+  trend: "down" | "up" | "stable" | "none";
+  title: string;
+  description: string;
+  topContextLabels: Array<{
+    label: string;
+    count: number;
+  }>;
+};
+
 export type DashboardOverview = {
   todayDate: string;
   streakDays: number;
@@ -84,6 +112,7 @@ export type DashboardOverview = {
   totalTrackedMetrics: number;
   todayMetrics: DashboardTodayMetric[];
   insights: DashboardInsight[];
+  weightContext: DashboardWeightContext;
   windows: DashboardWindowSummary[];
 };
 
@@ -113,11 +142,7 @@ function roundTo(value: number, digits: number) {
 
 function getMetricValue(
   metric: Metric,
-  record: {
-    sleepHours: number | null;
-    weightKg: number | null;
-    waterMl: number | null;
-  } | null,
+  record: MetricRecord | null,
 ) {
   if (!record) {
     return null;
@@ -196,7 +221,7 @@ function isCompleteRecord(record: {
 
 function calculateStreak(
   todayDate: string,
-  recordMap: Map<string, { sleepHours: number | null; weightKg: number | null; waterMl: number | null }>,
+  recordMap: Map<string, DashboardRecord>,
 ) {
   let streak = 0;
   let cursor = todayDate;
@@ -232,7 +257,7 @@ function formatSignedDelta(
 function buildMetricSummary(
   metric: Metric,
   dates: string[],
-  recordMap: Map<string, { sleepHours: number | null; weightKg: number | null; waterMl: number | null }>,
+  recordMap: Map<string, DashboardRecord>,
   goal: GoalView,
   profile: DashboardProfile,
 ) {
@@ -272,7 +297,7 @@ function buildMetricSummary(
 function buildWindowSummary(
   days: SupportedDashboardWindow,
   todayDate: string,
-  recordMap: Map<string, { sleepHours: number | null; weightKg: number | null; waterMl: number | null }>,
+  recordMap: Map<string, DashboardRecord>,
   goals: GoalView[],
   profile: DashboardProfile,
 ) {
@@ -526,6 +551,104 @@ function buildWeeklyFocusInsight(
   return null;
 }
 
+function buildWeightContext(
+  todayDate: string,
+  recordMap: Map<string, DashboardRecord>,
+  profile: DashboardProfile,
+): DashboardWeightContext {
+  const days: SupportedDashboardWindow = 7;
+  const dates = getDateRange(todayDate, days);
+  const weightRecords = dates
+    .map((date) => ({
+      date,
+      record: recordMap.get(date) ?? null,
+    }))
+    .filter((item): item is { date: string; record: DashboardRecord } =>
+      Boolean(item.record && item.record.weightKg !== null),
+    );
+  const firstWeight = weightRecords[0]?.record.weightKg ?? null;
+  const latestWeight = weightRecords[weightRecords.length - 1]?.record.weightKg ?? null;
+  const change =
+    firstWeight === null || latestWeight === null
+      ? null
+      : roundTo(latestWeight - firstWeight, 2);
+  const trend: DashboardWeightContext["trend"] =
+    change === null
+      ? "none"
+      : Math.abs(change) < 0.2
+        ? "stable"
+        : change > 0
+          ? "up"
+          : "down";
+  const labelCounts = new Map<string, number>();
+
+  for (const { record } of weightRecords) {
+    for (const label of listRecordContextLabels(record.contextTags)) {
+      labelCounts.set(label, (labelCounts.get(label) ?? 0) + 1);
+    }
+  }
+
+  const topContextLabels = [...labelCounts.entries()]
+    .sort((left, right) => right[1] - left[1] || left[0].localeCompare(right[0]))
+    .slice(0, 4)
+    .map(([label, count]) => ({
+      label,
+      count,
+    }));
+  const latestDisplay = getDisplayValue(Metric.WEIGHT, latestWeight, profile);
+  const changeDisplay = change === null ? null : formatSignedDelta(Metric.WEIGHT, change, profile);
+
+  if (weightRecords.length === 0) {
+    return {
+      days,
+      recordedDays: 0,
+      latestDisplay: null,
+      changeDisplay: null,
+      trend: "none",
+      title: "先建立体重记录",
+      description: "连续几天记录体重后，这里会把体重变化和你选择的日常背景放在一起回看。",
+      topContextLabels: [],
+    };
+  }
+
+  if (weightRecords.length === 1) {
+    return {
+      days,
+      recordedDays: 1,
+      latestDisplay,
+      changeDisplay: null,
+      trend: "none",
+      title: "已有第一条体重记录",
+      description: "再连续记录几天，并补充饮食、活动量或称重时段，就能开始观察哪些背景经常和体重波动同天出现。",
+      topContextLabels,
+    };
+  }
+
+  const trendLabel =
+    trend === "stable"
+      ? "基本稳定"
+      : trend === "down"
+        ? "有所下降"
+        : "有所上升";
+  const contextDescription =
+    topContextLabels.length > 0
+      ? `这几天最常出现的背景是 ${topContextLabels
+          .map((item) => `${item.label} ${item.count} 次`)
+          .join("、")}。这些只是回看线索，不代表直接原因。`
+      : "如果同时补充饮食、活动量和称重时段，后续会更容易理解体重波动。";
+
+  return {
+    days,
+    recordedDays: weightRecords.length,
+    latestDisplay,
+    changeDisplay,
+    trend,
+    title: `最近 ${days} 天体重${trendLabel}`,
+    description: `窗口内记录了 ${weightRecords.length}/${days} 天，较窗口内第一条记录 ${changeDisplay ?? "暂无变化"} ${getGoalUnitLabel(Metric.WEIGHT, profile)}。${contextDescription}`,
+    topContextLabels,
+  };
+}
+
 export async function getDashboardOverviewByUserId(
   userId: string,
   profile: DashboardProfile,
@@ -551,7 +674,8 @@ export async function getDashboardOverviewByUserId(
         sleepHours: record.sleepHours === null ? null : Number(record.sleepHours),
         weightKg: record.weightKg === null ? null : Number(record.weightKg),
         waterMl: record.waterMl,
-      },
+        contextTags: normalizeRecordContextTags(record.contextTags),
+      } satisfies DashboardRecord,
     ]),
   );
 
@@ -626,6 +750,7 @@ export async function getDashboardOverviewByUserId(
       } satisfies DashboardTodayMetric;
     }),
     insights,
+    weightContext: buildWeightContext(todayDate, recordMap, profile),
     windows: windowSummaries,
   } satisfies DashboardOverview;
 }

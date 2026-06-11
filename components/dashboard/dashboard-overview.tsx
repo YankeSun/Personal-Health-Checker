@@ -52,8 +52,25 @@ function getComparisonLabel(direction: "up" | "down" | "flat" | "none") {
   return "上一周期数据不足";
 }
 
+function getWeightContextToneClass(trend: DashboardOverview["weightContext"]["trend"]) {
+  if (trend === "down") {
+    return "border-emerald-200 bg-emerald-50";
+  }
+
+  if (trend === "up") {
+    return "border-amber-200 bg-amber-50";
+  }
+
+  if (trend === "stable") {
+    return "border-sky-200 bg-sky-50";
+  }
+
+  return "border-slate-200 bg-white";
+}
+
 export function DashboardOverviewPanel({ overview, reminderFeed }: DashboardOverviewProps) {
   const summary30 = overview.windows.find((window) => window.days === 30) ?? overview.windows[0];
+  const weightContext = overview.weightContext;
 
   return (
     <div className="space-y-6">
@@ -87,6 +104,52 @@ export function DashboardOverviewPanel({ overview, reminderFeed }: DashboardOver
             {summary30.completeRecordDays} / 30 天完成了三项记录。
           </p>
         </article>
+      </section>
+
+      <section
+        className={`rounded-3xl border p-6 shadow-sm ${getWeightContextToneClass(
+          weightContext.trend,
+        )}`}
+      >
+        <div className="flex flex-col gap-5 lg:flex-row lg:items-start lg:justify-between">
+          <div className="max-w-3xl">
+            <p className="text-sm font-semibold tracking-[0.18em] text-slate-500">
+              体重变化线索
+            </p>
+            <h2 className="mt-2 text-2xl font-semibold text-slate-900">
+              {weightContext.title}
+            </h2>
+            <p className="mt-3 text-sm leading-6 text-slate-700">
+              {weightContext.description}
+            </p>
+          </div>
+          <dl className="grid min-w-52 grid-cols-2 gap-3 text-sm lg:text-right">
+            <div className="rounded-2xl bg-white/70 px-4 py-3">
+              <dt className="text-slate-500">体重记录</dt>
+              <dd className="mt-1 font-semibold text-slate-900">
+                {weightContext.recordedDays}/{weightContext.days} 天
+              </dd>
+            </div>
+            <div className="rounded-2xl bg-white/70 px-4 py-3">
+              <dt className="text-slate-500">最近值</dt>
+              <dd className="mt-1 font-semibold text-slate-900">
+                {weightContext.latestDisplay ?? "暂无"}
+              </dd>
+            </div>
+          </dl>
+        </div>
+        {weightContext.topContextLabels.length > 0 ? (
+          <div className="mt-5 flex flex-wrap gap-2">
+            {weightContext.topContextLabels.map((item) => (
+              <span
+                className="rounded-full bg-white/75 px-3 py-1.5 text-xs font-medium text-slate-700 ring-1 ring-slate-200"
+                key={item.label}
+              >
+                {item.label} {item.count} 次
+              </span>
+            ))}
+          </div>
+        ) : null}
       </section>
 
       <section className="grid gap-4 md:grid-cols-2">
