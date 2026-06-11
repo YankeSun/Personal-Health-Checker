@@ -88,6 +88,10 @@ describe("miniprogram structure", () => {
       path.join(projectRoot, "miniprogram", "ENVIRONMENT_READINESS.md"),
       "utf8",
     );
+    const releasePack = readFileSync(
+      path.join(projectRoot, "miniprogram", "ALPHA_RELEASE_PACK.md"),
+      "utf8",
+    );
     const readinessScript = readFileSync(
       path.join(projectRoot, "scripts", "launch-readiness-check.ts"),
       "utf8",
@@ -104,6 +108,10 @@ describe("miniprogram structure", () => {
     expect(readinessScript).toContain("SESSION_SECRET");
     expect(readinessScript).toContain("WECHAT_MINI_PROGRAM_MOCK_LOGIN_ENABLED");
     expect(readinessScript).toContain("vercel");
+    expect(readinessScript).toContain("miniprogram/ALPHA_RELEASE_PACK.md");
+    expect(releasePack).toContain("7 天任务卡");
+    expect(releasePack).toContain("可直接发送的邀请文案");
+    expect(releasePack).toContain("npm run analytics:miniprogram");
     expect(smokeScript).toContain("/api/mp/auth/wechat-login");
     expect(smokeScript).toContain("/api/records/today");
     expect(smokeScript).toContain("/api/dashboard?days=7");

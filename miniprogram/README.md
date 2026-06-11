@@ -24,6 +24,8 @@
 
 如果暂时没有真实微信 AppID / AppSecret，可以按 [ENVIRONMENT_READINESS.md](./ENVIRONMENT_READINESS.md) 临时开启内部 mock 登录测试主路径。mock 登录只用于内部测试，正式体验版前必须关闭。
 
+准备发给真实 alpha 用户前，按 [ALPHA_RELEASE_PACK.md](./ALPHA_RELEASE_PACK.md) 整理发放闸门、邀请文案、7 天任务卡、观察记录和复盘指标。
+
 后端主路径可用下面的脚本先验：
 
 ```bash

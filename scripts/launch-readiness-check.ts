@@ -223,6 +223,7 @@ for (const filePath of [
   "compliance/PRIVACY_POLICY_DRAFT.md",
   "compliance/USER_AGREEMENT_DRAFT.md",
   "compliance/HEALTH_DISCLAIMER_DRAFT.md",
+  "miniprogram/ALPHA_RELEASE_PACK.md",
   "miniprogram/TESTING_CHECKLIST.md",
   "WECHAT_MINI_PROGRAM_VALIDATION_PLAN.md",
 ]) {
