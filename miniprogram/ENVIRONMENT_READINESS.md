@@ -7,10 +7,13 @@
 先跑不阻塞的总览：
 
 ```bash
+npm run alpha:readiness
 npm run launch:check
 ```
 
-它会检查：
+`alpha:readiness` 会聚合 launch 配置、小程序结构、研究材料和数据库可达性；`launch:check` 则专门展开体验版配置项。
+
+`launch:check` 会检查：
 
 - Vercel 项目是否已 link 到当前仓库
 - 小程序 `apiBaseUrl` 是否是 HTTPS

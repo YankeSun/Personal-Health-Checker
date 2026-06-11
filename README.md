@@ -150,6 +150,12 @@ npm run launch:check:vercel
 npm run miniprogram:check:remote
 ```
 
+如果要看 alpha 体验版前的总览状态：
+
+```bash
+npm run alpha:readiness
+```
+
 如果在 local/preview 环境临时开启了 mock 登录，可以跑小程序主路径 smoke：
 
 ```bash

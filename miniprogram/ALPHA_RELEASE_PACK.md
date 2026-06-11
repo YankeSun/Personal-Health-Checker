@@ -25,6 +25,14 @@
 
 ### 1.1 自动检查
 
+先跑总览，确认当前 blocker 集中在哪里：
+
+```bash
+npm run alpha:readiness
+```
+
+再按发放前严格闸门逐项清零：
+
 ```bash
 npm run launch:check:strict
 npm run launch:check:vercel

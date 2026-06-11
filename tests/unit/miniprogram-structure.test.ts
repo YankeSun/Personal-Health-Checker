@@ -55,9 +55,16 @@ describe("miniprogram structure", () => {
       path.join(projectRoot, "scripts", "database-doctor.ts"),
       "utf8",
     );
+    const alphaReadinessScript = readFileSync(
+      path.join(projectRoot, "scripts", "alpha-readiness-report.ts"),
+      "utf8",
+    );
 
     expect(packageJson.scripts["db:doctor"]).toBe(
       "tsx scripts/database-doctor.ts",
+    );
+    expect(packageJson.scripts["alpha:readiness"]).toBe(
+      "tsx scripts/alpha-readiness-report.ts",
     );
     expect(packageJson.scripts["miniprogram:check"]).toBe(
       "tsx scripts/miniprogram-check.ts",
@@ -96,6 +103,10 @@ describe("miniprogram structure", () => {
     expect(databaseDoctorScript).toContain("resolveNextLikeEnvValue");
     expect(databaseDoctorScript).toContain("--database-url-env");
     expect(databaseDoctorScript).toContain("docker compose up -d postgres");
+    expect(alphaReadinessScript).toContain("launch:check");
+    expect(alphaReadinessScript).toContain("miniprogram:check");
+    expect(alphaReadinessScript).toContain("research:check");
+    expect(alphaReadinessScript).toContain("db:doctor");
   });
 
   it("documents environment readiness checks for mini program launch prep", () => {
@@ -121,6 +132,7 @@ describe("miniprogram structure", () => {
     );
 
     expect(readinessDoc).toContain("npm run launch:check:vercel");
+    expect(readinessDoc).toContain("npm run alpha:readiness");
     expect(readinessDoc).toContain("WECHAT_MINI_PROGRAM_APP_ID");
     expect(readinessDoc).toContain("WECHAT_MINI_PROGRAM_APP_SECRET");
     expect(readinessScript).toContain("DATABASE_URL");
@@ -131,6 +143,7 @@ describe("miniprogram structure", () => {
     expect(readinessScript).toContain("research/WECHAT_COMPETITOR_FIELDWORK.md");
     expect(readinessScript).toContain("research/alpha/ALPHA_USER_EVIDENCE.md");
     expect(releasePack).toContain("7 天任务卡");
+    expect(releasePack).toContain("npm run alpha:readiness");
     expect(releasePack).toContain("可直接发送的邀请文案");
     expect(releasePack).toContain("npm run analytics:miniprogram");
     expect(smokeScript).toContain("/api/mp/auth/wechat-login");
