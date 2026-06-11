@@ -180,7 +180,9 @@ check("dashboard page reads summary", dashboardJs.includes("/api/dashboard"));
 check("trends page reads weight trend", trendsJs.includes("/api/trends?metric=weight"));
 check("me page supports account export and deletion", hasAll(meJs, ["/api/account/export", "/api/account"]));
 check("me page records pay intent only", meJs.includes("/api/intent/pay"));
+check("me page submits alpha feedback", hasAll(meJs, ["/api/feedback", "submitFeedback"]));
 check("me page exposes legal links", hasAll(meWxml, ["协议与说明", "隐私保护指引", "用户协议", "健康免责声明"]));
+check("me page exposes alpha feedback card", meWxml.includes("Alpha 反馈"));
 check("legal page includes privacy, terms, and health disclaimer", hasAll(legalJs, ["privacy", "terms", "health"]));
 
 if (strict) {

@@ -13,6 +13,7 @@ export const PRODUCT_EVENT_NAMES = {
   firstCompleteRecordSaved: "FIRST_COMPLETE_RECORD_SAVED",
   contextTagsSaved: "CONTEXT_TAGS_SAVED",
   payIntentClicked: "PAY_INTENT_CLICKED",
+  alphaFeedbackSubmitted: "ALPHA_FEEDBACK_SUBMITTED",
 } as const;
 
 type ProductEventName =
@@ -70,6 +71,17 @@ export type MiniProgramAlphaSnapshot = {
   trendViewRate: number;
   payIntentUsers: number;
   payIntentRate: number;
+  feedbackUsers: number;
+  feedbackRate: number;
+  averageFeedbackRating: number;
+  topValueCues: Array<{
+    value: string;
+    count: number;
+  }>;
+  topFrictions: Array<{
+    value: string;
+    count: number;
+  }>;
   decision: "needs_data" | "continue_candidate" | "hold_and_improve";
   gates: Array<{
     label: string;
@@ -378,6 +390,7 @@ export async function getMiniProgramAlphaSnapshot(days = 30) {
           PRODUCT_EVENT_NAMES.firstCompleteRecordSaved,
           PRODUCT_EVENT_NAMES.contextTagsSaved,
           PRODUCT_EVENT_NAMES.payIntentClicked,
+          PRODUCT_EVENT_NAMES.alphaFeedbackSubmitted,
         ],
       },
     },
@@ -511,6 +524,21 @@ export async function getMiniProgramAlphaSnapshot(days = 30) {
       (event) => event.eventName === PRODUCT_EVENT_NAMES.payIntentClicked,
     ),
   ).size;
+  const feedbackEvents = miniProgramEvents.filter(
+    (event) => event.eventName === PRODUCT_EVENT_NAMES.alphaFeedbackSubmitted,
+  );
+  const feedbackUsers = uniqueUserIds(feedbackEvents).size;
+  const feedbackRatings = feedbackEvents
+    .map((event) => getMetadataValue(event.metadata, "rating"))
+    .filter((rating): rating is number => typeof rating === "number");
+  const averageFeedbackRating =
+    feedbackRatings.length === 0
+      ? 0
+      : roundTo(
+          feedbackRatings.reduce((total, rating) => total + rating, 0) /
+            feedbackRatings.length,
+          2,
+        );
   const alphaUsers = alphaUserIds.size;
   const recordedDays = records.length;
   const gates = [
@@ -544,6 +572,12 @@ export async function getMiniProgramAlphaSnapshot(days = 30) {
       target: 5,
       passed: alphaUsers > 0 && payIntentUsers / alphaUsers >= 0.05,
     },
+    {
+      label: "反馈提交率",
+      actual: alphaUsers === 0 ? 0 : roundTo((feedbackUsers / alphaUsers) * 100, 1),
+      target: 30,
+      passed: alphaUsers > 0 && feedbackUsers / alphaUsers >= 0.3,
+    },
   ];
   const decision =
     alphaUsers === 0
@@ -553,7 +587,7 @@ export async function getMiniProgramAlphaSnapshot(days = 30) {
         : "hold_and_improve";
   const notes = [
     "该报告只基于 ProductEvent 和 DailyRecord，不包含访谈反馈。",
-    "若判定为 continue_candidate，仍需用户反馈能复述产品价值后再规划 beta。",
+    "若判定为 continue_candidate，仍需结合反馈文本判断用户能否复述产品价值。",
     "mock 登录数据会污染真实 alpha 指标，正式测试前请清理或使用独立环境。",
   ];
 
@@ -580,10 +614,36 @@ export async function getMiniProgramAlphaSnapshot(days = 30) {
     trendViewRate: alphaUsers === 0 ? 0 : roundTo((trendViewUsers / alphaUsers) * 100, 1),
     payIntentUsers,
     payIntentRate: gates[4].actual,
+    feedbackUsers,
+    feedbackRate: gates[5].actual,
+    averageFeedbackRating,
+    topValueCues: countMetadataValues(feedbackEvents, "valueCue"),
+    topFrictions: countMetadataValues(feedbackEvents, "friction"),
     decision,
     gates,
     notes,
   } satisfies MiniProgramAlphaSnapshot;
+}
+
+function countMetadataValues(events: EventRow[], key: string) {
+  const counts = new Map<string, number>();
+
+  for (const event of events) {
+    const value = getMetadataValue(event.metadata, key);
+
+    if (typeof value !== "string" || !value) {
+      continue;
+    }
+
+    counts.set(value, (counts.get(value) ?? 0) + 1);
+  }
+
+  return [...counts.entries()]
+    .map(([value, count]) => ({
+      value,
+      count,
+    }))
+    .sort((left, right) => right.count - left.count);
 }
 
 function roundTo(value: number, fractionDigits: number) {

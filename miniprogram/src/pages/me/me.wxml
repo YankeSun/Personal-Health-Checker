@@ -21,6 +21,24 @@
   </view>
 
   <view class="card block">
+    <text class="section-title">Alpha 反馈</text>
+    <text class="feedback-copy">这会帮助我们判断是否值得继续做小程序 beta。</text>
+    <view class="rating-row">
+      <text wx:for="{{[1, 2, 3, 4, 5]}}" wx:key="*this" data-rating="{{item}}" bindtap="setFeedbackRating" class="rating-chip {{feedback.rating === item ? 'rating-active' : ''}}">{{item}}</text>
+    </view>
+    <text class="feedback-label">最有用的点</text>
+    <view class="feedback-options">
+      <text wx:for="{{feedbackValueOptions}}" wx:key="value" data-value="{{item.value}}" bindtap="selectFeedbackValue" class="feedback-chip {{item.active ? 'feedback-chip-active' : ''}}">{{item.label}}</text>
+    </view>
+    <text class="feedback-label">最卡的点</text>
+    <view class="feedback-options">
+      <text wx:for="{{feedbackFrictionOptions}}" wx:key="value" data-value="{{item.value}}" bindtap="selectFeedbackFriction" class="feedback-chip {{item.active ? 'feedback-chip-active' : ''}}">{{item.label}}</text>
+    </view>
+    <textarea class="feedback-textarea" value="{{feedback.comment}}" maxlength="160" bindinput="handleFeedbackComment" placeholder="一句话告诉我们：你会不会继续用？为什么？" />
+    <button class="ghost-button action-button" loading="{{submittingFeedback}}" bindtap="submitFeedback">提交反馈</button>
+  </view>
+
+  <view class="card block">
     <text class="section-title">数据与账号</text>
     <button class="ghost-button action-button" loading="{{exporting}}" bindtap="exportAccount">导出个人数据</button>
     <button class="danger-button action-button" loading="{{deleting}}" bindtap="confirmDeleteAccount">删除账号和全部数据</button>

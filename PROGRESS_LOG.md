@@ -244,6 +244,7 @@ npm run analytics:report -- --days=30
 
 ## 2026-06-12
 
+- 增加 alpha 用户反馈闭环：新增 `POST /api/feedback`，小程序“我的”页可提交评分、最有用的点、最卡的点和一句话反馈；反馈复用 `ProductEvent` 的 `ALPHA_FEEDBACK_SUBMITTED`，并进入 `analytics:miniprogram` 的反馈人数、反馈率、平均评分、价值感和阻力统计，用于判断用户是否能复述产品价值。
 - 增加小程序 alpha 指标报告：新增 `npm run analytics:miniprogram -- --days=30`，基于现有 `ProductEvent` 和 `DailyRecord` 输出 alpha 用户数、首次完整记录、次日回访、7 日记录天数、体重/上下文填写率、Dashboard/Trends 使用率、付费意愿点击率和 `decision`；Dashboard/Trends 的 Bearer 请求现在会记录小程序 page view，方便判断是否值得进入 beta。
 - 增加小程序 alpha 主路径 smoke：新增 `npm run miniprogram:smoke`，可在 local/preview 环境启用 mock 登录后，用同一套 Bearer API 验证登录、今日记录保存、Dashboard、体重趋势、资料/目标、账号导出和报告内测意向；它不替代微信开发者工具/真机验收，但能先定位后端主路径是否可用。
 - 补小程序无微信凭证时的主路径测试能力：新增受控 mock 登录，只有 `WECHAT_MINI_PROGRAM_MOCK_LOGIN_ENABLED=true` 且非 Vercel Production 时才接受 `mock:` 登录 code；小程序端默认 `mockLoginEnabled=false` 不展示按钮，临时开启后可先测试 Today / Dashboard / Trends / 我的页。launch 检查会把正式体验版前未关闭 mock 视为 blocker。

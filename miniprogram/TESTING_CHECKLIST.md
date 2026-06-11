@@ -67,7 +67,7 @@ npm run miniprogram:smoke -- --base-url http://localhost:3000
 npm run analytics:miniprogram -- --days=30
 ```
 
-报告会输出次日回访率、7 日平均记录天数、体重填写率、上下文标签填写率、Dashboard / Trends 使用率、付费意愿点击率和 `decision`。`continue_candidate` 只代表数据达标，仍需要访谈反馈能复述产品价值后再规划 beta。
+报告会输出次日回访率、7 日平均记录天数、体重填写率、上下文标签填写率、Dashboard / Trends 使用率、付费意愿点击率、alpha 反馈提交率和 `decision`。`continue_candidate` 只代表数据达标，仍需要反馈文本能说明产品价值后再规划 beta。
 
 ## 2. 微信后台准备
 
@@ -121,6 +121,7 @@ npm run analytics:miniprogram -- --days=30
 - 可以查看资料和目标摘要。
 - 可以查看协议与说明。
 - 可以点击“加入报告内测”，只记录意向，不进入支付。
+- 可以提交 Alpha 反馈，反馈包含评分、最有用的点、最卡的点和一句话说明。
 - 可以触发个人数据导出。
 - 删除账号前必须出现二次确认。
 
@@ -143,6 +144,7 @@ npm run analytics:miniprogram -- --days=30
 | 我的页是否通过 | 是 / 否 |
 | 协议与说明是否可访问 | 是 / 否 |
 | 数据导出是否通过 | 是 / 否 |
+| Alpha 反馈是否提交 | 是 / 否 |
 | 删除账号是否通过 | 是 / 否 |
 | 发现的问题 |  |
 | 是否可以发给外部测试用户 | 是 / 否 |

@@ -204,6 +204,18 @@ describe("observability-service", () => {
         },
         createdAt: new Date("2026-04-02T08:30:00.000Z"),
       },
+      {
+        userId: "user_1",
+        eventName: PRODUCT_EVENT_NAMES.alphaFeedbackSubmitted,
+        path: "wechat_mp/me",
+        metadata: {
+          platform: "wechat_mp",
+          rating: 5,
+          valueCue: "UNDERSTAND_WEIGHT",
+          friction: "FORGET_TO_RECORD",
+        },
+        createdAt: new Date("2026-04-02T08:40:00.000Z"),
+      },
     ] as never);
     vi.mocked(prisma.dailyRecord.findMany).mockResolvedValue([
       {
@@ -263,7 +275,18 @@ describe("observability-service", () => {
       trendViewRate: 100,
       payIntentUsers: 1,
       payIntentRate: 100,
+      feedbackUsers: 1,
+      feedbackRate: 100,
+      averageFeedbackRating: 5,
       decision: "continue_candidate",
+    });
+    expect(snapshot.topValueCues[0]).toEqual({
+      value: "UNDERSTAND_WEIGHT",
+      count: 1,
+    });
+    expect(snapshot.topFrictions[0]).toEqual({
+      value: "FORGET_TO_RECORD",
+      count: 1,
     });
     expect(snapshot.gates.every((gate) => gate.passed)).toBe(true);
 

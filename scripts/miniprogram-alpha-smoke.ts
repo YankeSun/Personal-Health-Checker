@@ -150,6 +150,19 @@ async function main() {
   });
   assert(intentPayload.success === true, "pay intent did not return success");
 
+  printStep("submitting alpha feedback");
+  const feedbackPayload = await authedJson("/api/feedback", token, {
+    method: "POST",
+    body: JSON.stringify({
+      source: "wechat_mp/smoke",
+      rating: 5,
+      valueCue: "UNDERSTAND_WEIGHT",
+      friction: "NO_FRICTION",
+      comment: "smoke feedback",
+    }),
+  });
+  assert(feedbackPayload.success === true, "feedback did not return success");
+
   if (cleanup) {
     printStep("cleaning up smoke account");
     await authedJson("/api/account", token, {

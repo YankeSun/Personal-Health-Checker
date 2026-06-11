@@ -109,6 +109,7 @@ describe("miniprogram structure", () => {
     expect(smokeScript).toContain("/api/dashboard?days=7");
     expect(smokeScript).toContain("/api/trends?metric=weight&days=30");
     expect(smokeScript).toContain("/api/intent/pay");
+    expect(smokeScript).toContain("/api/feedback");
   });
 
   it("exposes mini program alpha reporting for commercial validation", () => {
@@ -169,6 +170,8 @@ describe("miniprogram structure", () => {
     expect(todayPage).toContain("/api/records/today");
     expect(todayPage).toContain("/api/records/${date}");
     expect(mePage).toContain("/api/intent/pay");
+    expect(mePage).toContain("/api/feedback");
+    expect(mePage).toContain("submitFeedback");
     expect(mePage).toContain("/api/account/export");
     expect(mePage).toContain("/api/account");
     expect(loginPage).toContain("/pages/legal/legal?type=${type}");
@@ -177,6 +180,7 @@ describe("miniprogram structure", () => {
     expect(loginMarkup).toContain("用户协议");
     expect(loginMarkup).toContain("健康免责声明");
     expect(meMarkup).toContain("协议与说明");
+    expect(meMarkup).toContain("Alpha 反馈");
     expect(legalPage).toContain("privacy");
     expect(legalPage).toContain("terms");
     expect(legalPage).toContain("health");

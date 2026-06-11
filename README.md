@@ -113,6 +113,7 @@ npm run analytics:report -- --days=30
 - 合规底座：我的页可触发个人数据导出和账号删除
 - 协议入口：登录页和我的页可查看隐私保护指引、用户协议、健康免责声明
 - 商业验证：我的页可记录 30 天观察报告内测意向，不创建订单、不收款
+- Alpha 反馈：我的页可提交评分、价值感和阻力反馈，用于判断是否继续 beta
 
 本地或体验版调试步骤：
 
@@ -160,6 +161,8 @@ npm run miniprogram:smoke -- --base-url http://localhost:3000
 ```bash
 npm run analytics:miniprogram -- --days=30
 ```
+
+报告会同时包含量化行为和 alpha 反馈指标。
 
 当前小程序壳仅用于 alpha 内测，不包含支付、订阅消息、设备接入或正式上线合规材料。
 
