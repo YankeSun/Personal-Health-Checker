@@ -1,0 +1,13 @@
+{
+  "appid": "touristappid",
+  "compileType": "miniprogram",
+  "miniprogramRoot": "src/",
+  "projectname": "personal-health-checker-alpha",
+  "setting": {
+    "es6": true,
+    "enhance": true,
+    "postcss": true,
+    "minified": true,
+    "urlCheck": true
+  }
+}

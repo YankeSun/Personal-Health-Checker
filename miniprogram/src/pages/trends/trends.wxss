@@ -1,0 +1,68 @@
+.hero {
+  padding: 34rpx;
+}
+
+.eyebrow {
+  color: #8a6a2d;
+  font-size: 22rpx;
+  font-weight: 800;
+  letter-spacing: 4rpx;
+}
+
+.title {
+  display: block;
+  margin-top: 16rpx;
+  font-size: 56rpx;
+  font-weight: 900;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20rpx;
+  margin-top: 24rpx;
+}
+
+.stat,
+.block {
+  padding: 30rpx;
+}
+
+.label {
+  color: #6f675d;
+  font-size: 24rpx;
+  font-weight: 700;
+}
+
+.block {
+  margin-top: 24rpx;
+}
+
+.context-text {
+  display: block;
+  margin-top: 14rpx;
+  font-size: 26rpx;
+  line-height: 1.6;
+}
+
+.chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 14rpx;
+  margin-top: 22rpx;
+}
+
+.point-row {
+  display: flex;
+  justify-content: space-between;
+  border-bottom: 1rpx solid rgba(15, 23, 42, 0.08);
+  padding: 22rpx 0;
+  font-size: 28rpx;
+}
+
+.error {
+  display: block;
+  margin-top: 20rpx;
+  color: #be123c;
+  font-size: 26rpx;
+}

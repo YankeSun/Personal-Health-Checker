@@ -1,0 +1,38 @@
+<view class="page">
+  <view class="hero card">
+    <text class="eyebrow">WEIGHT TREND</text>
+    <text class="title">{{trend.latestDisplay || "--"}} {{trend.unitLabel || "kg"}}</text>
+    <text class="muted">最近 30 天体重记录</text>
+  </view>
+
+  <view class="grid">
+    <view class="stat card">
+      <text class="label">平均</text>
+      <text class="metric-value">{{trend.averageDisplay || "--"}}</text>
+    </view>
+    <view class="stat card">
+      <text class="label">记录天数</text>
+      <text class="metric-value">{{trend.recordedDays || 0}}</text>
+    </view>
+  </view>
+
+  <view wx:if="{{contextSummary}}" class="card block">
+    <text class="section-title">{{contextSummary.title}}</text>
+    <text class="muted context-text">{{contextSummary.description}}</text>
+    <view class="chips">
+      <text wx:for="{{contextSummary.topContextLabels}}" wx:key="label" class="chip">
+        {{item.label}} {{item.count}} 次
+      </text>
+    </view>
+  </view>
+
+  <view class="card block">
+    <text class="section-title">最近记录</text>
+    <view wx:for="{{recentPoints}}" wx:key="date" class="point-row">
+      <text>{{item.label}}</text>
+      <text class="muted">{{item.value === null ? "未记录" : item.value + " " + trend.unitLabel}}</text>
+    </view>
+  </view>
+
+  <text wx:if="{{error}}" class="error">{{error}}</text>
+</view>

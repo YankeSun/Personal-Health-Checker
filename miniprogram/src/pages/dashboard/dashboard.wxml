@@ -1,0 +1,37 @@
+<view class="page">
+  <view class="hero card">
+    <text class="eyebrow">DASHBOARD</text>
+    <text class="title">今天已完成 {{dashboard.todayCompletedMetrics || 0}}/{{dashboard.totalTrackedMetrics || 3}}</text>
+    <text class="muted">连续记录 {{dashboard.streakDays || 0}} 天</text>
+  </view>
+
+  <view class="grid">
+    <view class="stat card">
+      <text class="label">记录密度</text>
+      <text class="metric-value">{{window.completionRate || 0}}%</text>
+    </view>
+    <view class="stat card">
+      <text class="label">达标率</text>
+      <text class="metric-value">{{window.attainmentRate || 0}}%</text>
+    </view>
+  </view>
+
+  <view class="card block">
+    <text class="section-title">今日状态</text>
+    <view wx:for="{{dashboard.todayMetrics}}" wx:key="metric" class="metric-row">
+      <text>{{item.label}}</text>
+      <text class="muted">{{item.displayValue || "未记录"}}</text>
+    </view>
+  </view>
+
+  <view class="card block">
+    <text class="section-title">站内提醒</text>
+    <view wx:if="{{reminders.length === 0}}" class="empty">暂时没有需要处理的提醒</view>
+    <view wx:for="{{reminders}}" wx:key="id" class="reminder">
+      <text class="reminder-title">{{item.title}}</text>
+      <text class="muted">{{item.description}}</text>
+    </view>
+  </view>
+
+  <text wx:if="{{error}}" class="error">{{error}}</text>
+</view>

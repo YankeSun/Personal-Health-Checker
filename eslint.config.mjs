@@ -2,7 +2,7 @@ import nextVitals from "eslint-config-next/core-web-vitals";
 
 const config = [
   {
-    ignores: [".next/**", ".vercel/output/**"],
+    ignores: [".next/**", ".vercel/output/**", "miniprogram/**"],
   },
   ...nextVitals,
 ];

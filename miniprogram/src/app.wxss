@@ -1,0 +1,72 @@
+page {
+  background: #f7f3ea;
+  color: #172033;
+  font-family: -apple-system, BlinkMacSystemFont, "Helvetica Neue", sans-serif;
+}
+
+view,
+text,
+input,
+button {
+  box-sizing: border-box;
+}
+
+button {
+  border-radius: 999px;
+}
+
+.page {
+  min-height: 100vh;
+  padding: 32rpx;
+}
+
+.card {
+  border: 1rpx solid rgba(15, 23, 42, 0.08);
+  border-radius: 36rpx;
+  background: rgba(255, 255, 255, 0.88);
+  box-shadow: 0 20rpx 60rpx rgba(30, 41, 59, 0.08);
+}
+
+.primary-button {
+  background: #172033;
+  color: #ffffff;
+  font-size: 30rpx;
+  font-weight: 700;
+}
+
+.ghost-button {
+  border: 1rpx solid rgba(15, 23, 42, 0.16);
+  background: #ffffff;
+  color: #172033;
+  font-size: 28rpx;
+}
+
+.muted {
+  color: #777064;
+}
+
+.chip {
+  border: 1rpx solid rgba(15, 23, 42, 0.12);
+  border-radius: 999rpx;
+  padding: 14rpx 22rpx;
+  color: #5e574d;
+  font-size: 24rpx;
+}
+
+.chip-active {
+  border-color: #172033;
+  background: #172033;
+  color: #ffffff;
+}
+
+.section-title {
+  font-size: 28rpx;
+  font-weight: 800;
+  color: #172033;
+}
+
+.metric-value {
+  font-size: 56rpx;
+  font-weight: 800;
+  letter-spacing: -1rpx;
+}

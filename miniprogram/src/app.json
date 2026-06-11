@@ -1,0 +1,41 @@
+{
+  "pages": [
+    "pages/login/login",
+    "pages/today/today",
+    "pages/dashboard/dashboard",
+    "pages/trends/trends",
+    "pages/me/me"
+  ],
+  "window": {
+    "navigationBarTitleText": "Personal Health Checker",
+    "navigationBarBackgroundColor": "#f7f3ea",
+    "navigationBarTextStyle": "black",
+    "backgroundColor": "#f7f3ea"
+  },
+  "tabBar": {
+    "color": "#7a756b",
+    "selectedColor": "#0f172a",
+    "backgroundColor": "#fffaf0",
+    "borderStyle": "black",
+    "list": [
+      {
+        "pagePath": "pages/today/today",
+        "text": "记录"
+      },
+      {
+        "pagePath": "pages/dashboard/dashboard",
+        "text": "概览"
+      },
+      {
+        "pagePath": "pages/trends/trends",
+        "text": "趋势"
+      },
+      {
+        "pagePath": "pages/me/me",
+        "text": "我的"
+      }
+    ]
+  },
+  "style": "v2",
+  "sitemapLocation": "sitemap.json"
+}

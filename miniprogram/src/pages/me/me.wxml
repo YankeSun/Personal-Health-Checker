@@ -1,0 +1,19 @@
+<view class="page">
+  <view class="profile card">
+    <text class="eyebrow">PROFILE</text>
+    <text class="title">{{profile.displayName || "微信用户"}}</text>
+    <text class="muted">体重单位 {{profile.weightUnit || "KG"}} · 饮水单位 {{profile.waterUnit || "ML"}}</text>
+  </view>
+
+  <view class="card block">
+    <text class="section-title">目标</text>
+    <view wx:if="{{goals.length === 0}}" class="empty">还没有配置目标，Web 设置页可继续完善。</view>
+    <view wx:for="{{goals}}" wx:key="metric" class="goal-row">
+      <text>{{item.metric}}</text>
+      <text class="muted">{{item.isActive ? item.mode : "未启用"}}</text>
+    </view>
+  </view>
+
+  <button class="ghost-button logout-button" bindtap="logout">退出登录</button>
+  <text wx:if="{{error}}" class="error">{{error}}</text>
+</view>

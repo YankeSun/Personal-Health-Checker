@@ -7,6 +7,7 @@
 - 邮箱密码注册 / 登录 / 退出
 - 邮箱验证提醒、忘记密码、重置密码
 - HttpOnly Cookie + 服务端 Session
+- 微信小程序 Alpha 壳 + Bearer Session
 - `/dashboard`、`/today`、`/trends`、`/settings` 受保护
 - 设置页支持读取和保存个人资料（昵称、时区、单位、提醒开关）
 - 今日记录页支持读取和保存睡眠、体重、饮水的当日手动录入
@@ -78,6 +79,7 @@ npm run analytics:report -- --days=30
 - `POST /api/auth/register`
 - `POST /api/auth/login`
 - `POST /api/auth/logout`
+- `POST /api/mp/auth/wechat-login`
 - `GET /api/profile`
 - `PATCH /api/profile`
 - `GET /api/goals`
@@ -87,6 +89,25 @@ npm run analytics:report -- --days=30
 - `GET /api/records?from=YYYY-MM-DD&to=YYYY-MM-DD`
 - `GET /api/dashboard?days=7|30`
 - `GET /api/trends?metric=sleep|weight|water&days=7|30`
+
+## Mini Program Alpha
+
+仓库内已包含微信小程序最小前端壳：
+
+- 目录：`miniprogram/`
+- 页面：登录、今日记录、简版 Dashboard、体重趋势、我的 / 设置
+- 认证：`wx.login` -> `POST /api/mp/auth/wechat-login` -> 服务端 Bearer token
+
+本地或体验版调试步骤：
+
+1. 在微信开发者工具中导入 `miniprogram/`
+2. 在 `miniprogram/src/config.js` 中确认 `apiBaseUrl`
+3. 在 Vercel 配置：
+   - `WECHAT_MINI_PROGRAM_APP_ID`
+   - `WECHAT_MINI_PROGRAM_APP_SECRET`
+4. 在微信公众平台后台配置 request 合法域名
+
+当前小程序壳仅用于 alpha 内测，不包含支付、订阅消息、设备接入或正式上线合规材料。
 
 ## Deployment
 

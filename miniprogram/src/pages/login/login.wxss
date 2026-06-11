@@ -1,0 +1,54 @@
+.login-page {
+  display: flex;
+  align-items: center;
+}
+
+.hero {
+  width: 100%;
+  padding: 48rpx 40rpx;
+}
+
+.eyebrow {
+  color: #8a6a2d;
+  font-size: 22rpx;
+  font-weight: 800;
+  letter-spacing: 4rpx;
+}
+
+.title {
+  display: block;
+  margin-top: 28rpx;
+  color: #172033;
+  font-size: 56rpx;
+  font-weight: 900;
+  line-height: 1.12;
+}
+
+.subtitle {
+  display: block;
+  margin-top: 24rpx;
+  color: #6b6459;
+  font-size: 28rpx;
+  line-height: 1.7;
+}
+
+.login-button {
+  margin-top: 48rpx;
+}
+
+.privacy {
+  display: block;
+  margin-top: 28rpx;
+  color: #8b8376;
+  font-size: 24rpx;
+  line-height: 1.6;
+}
+
+.error-card {
+  margin-top: 28rpx;
+  border-radius: 28rpx;
+  background: #fff1f2;
+  padding: 24rpx;
+  color: #9f1239;
+  font-size: 26rpx;
+}

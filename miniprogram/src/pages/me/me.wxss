@@ -1,0 +1,46 @@
+.profile,
+.block {
+  padding: 34rpx;
+}
+
+.eyebrow {
+  color: #8a6a2d;
+  font-size: 22rpx;
+  font-weight: 800;
+  letter-spacing: 4rpx;
+}
+
+.title {
+  display: block;
+  margin-top: 16rpx;
+  font-size: 44rpx;
+  font-weight: 900;
+}
+
+.block {
+  margin-top: 24rpx;
+}
+
+.goal-row {
+  display: flex;
+  justify-content: space-between;
+  border-bottom: 1rpx solid rgba(15, 23, 42, 0.08);
+  padding: 24rpx 0;
+  font-size: 28rpx;
+}
+
+.empty,
+.error {
+  display: block;
+  margin-top: 22rpx;
+  color: #777064;
+  font-size: 26rpx;
+}
+
+.error {
+  color: #be123c;
+}
+
+.logout-button {
+  margin-top: 32rpx;
+}

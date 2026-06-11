@@ -1,0 +1,65 @@
+<view class="page">
+  <view class="summary card">
+    <text class="eyebrow">TODAY</text>
+    <text class="title">今天已完成 {{completedCount}}/3</text>
+    <text class="muted">{{record.date || "同步今天记录中"}}</text>
+  </view>
+
+  <view class="form card">
+    <view class="field">
+      <text class="label">体重 kg</text>
+      <input class="input" type="digit" value="{{form.weightKg}}" placeholder="例如 63.2" data-field="weightKg" bindinput="handleInput" />
+    </view>
+
+    <view class="field-row">
+      <view class="field half">
+        <text class="label">睡眠 小时</text>
+        <input class="input" type="digit" value="{{form.sleepHours}}" placeholder="7.5" data-field="sleepHours" bindinput="handleInput" />
+      </view>
+      <view class="field half">
+        <text class="label">饮水 ml</text>
+        <input class="input" type="number" value="{{form.waterMl}}" placeholder="2000" data-field="waterMl" bindinput="handleInput" />
+      </view>
+    </view>
+
+    <view class="context-group">
+      <text class="section-title">饮食状态</text>
+      <view class="chips">
+        <text wx:for="{{dietOptions}}" wx:key="value" class="chip {{item.active ? 'chip-active' : ''}}" data-value="{{item.value}}" bindtap="toggleDiet">
+          {{item.label}}
+        </text>
+      </view>
+    </view>
+
+    <view class="context-group">
+      <text class="section-title">活动量</text>
+      <view class="chips">
+        <text wx:for="{{activityOptions}}" wx:key="value" class="chip {{item.active ? 'chip-active' : ''}}" data-value="{{item.value}}" data-field="activityLevel" bindtap="toggleSingleContext">
+          {{item.label}}
+        </text>
+      </view>
+    </view>
+
+    <view class="context-group">
+      <text class="section-title">精神状态</text>
+      <view class="chips">
+        <text wx:for="{{energyOptions}}" wx:key="value" class="chip {{item.active ? 'chip-active' : ''}}" data-value="{{item.value}}" data-field="energyLevel" bindtap="toggleSingleContext">
+          {{item.label}}
+        </text>
+      </view>
+    </view>
+
+    <view class="context-group">
+      <text class="section-title">称重时段</text>
+      <view class="chips">
+        <text wx:for="{{timingOptions}}" wx:key="value" class="chip {{item.active ? 'chip-active' : ''}}" data-value="{{item.value}}" data-field="weighTiming" bindtap="toggleSingleContext">
+          {{item.label}}
+        </text>
+      </view>
+    </view>
+
+    <button class="primary-button save-button" loading="{{saving}}" bindtap="saveRecord">保存今天</button>
+    <text wx:if="{{message}}" class="success">{{message}}</text>
+    <text wx:if="{{error}}" class="error">{{error}}</text>
+  </view>
+</view>
