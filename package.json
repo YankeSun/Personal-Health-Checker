@@ -13,6 +13,7 @@
     "smoke": "bash scripts/smoke.sh",
     "analytics:report": "tsx scripts/usage-report.ts",
     "analytics:miniprogram": "tsx scripts/miniprogram-alpha-report.ts",
+    "research:check": "tsx scripts/research-check.ts",
     "launch:check": "tsx scripts/launch-readiness-check.ts",
     "launch:check:strict": "tsx scripts/launch-readiness-check.ts --strict",
     "launch:check:vercel": "tsx scripts/launch-readiness-check.ts --strict --vercel",

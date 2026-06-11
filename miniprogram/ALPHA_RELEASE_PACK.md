@@ -53,6 +53,7 @@ npm run miniprogram:check:remote
 - 已上传体验版
 - 至少 2 台真机完成 [TESTING_CHECKLIST.md](./TESTING_CHECKLIST.md) 的主路径验收
 - 记录当前 Git commit、API 域名、测试设备和微信版本
+- 用 `research/alpha/PHONE_TEST_SESSION_TEMPLATE.md` 记录至少 2 台真机测试过程
 
 ### 1.3 不要发放的情况
 
@@ -144,6 +145,8 @@ npm run miniprogram:check:remote
 ## 5. 观察记录表
 
 每个测试用户建议记录以下信息：
+
+建议同步填写 `research/alpha/ALPHA_USER_EVIDENCE.md`，把用户原话和 7 天行为证据留在同一处。
 
 | 字段 | 记录内容 |
 |---|---|

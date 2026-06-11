@@ -73,6 +73,30 @@ function hasAll(source: string, snippets: string[]) {
   return snippets.every((snippet) => source.includes(snippet));
 }
 
+function describeRemoteError(error: unknown, healthUrl: string) {
+  const message = error instanceof Error ? error.message : String(error);
+  const cause = error instanceof Error && "cause" in error ? error.cause : null;
+
+  if (!cause) {
+    return `url=${healthUrl}, error=${message}`;
+  }
+
+  if (cause instanceof Error) {
+    return `url=${healthUrl}, error=${message}, cause=${cause.message}`;
+  }
+
+  if (typeof cause === "object") {
+    const details = Object.entries(cause as Record<string, unknown>)
+      .filter(([key]) => ["code", "errno", "syscall", "hostname", "host", "port"].includes(key))
+      .map(([key, value]) => `${key}=${String(value)}`)
+      .join(", ");
+
+    return `url=${healthUrl}, error=${message}${details ? `, cause=${details}` : ""}`;
+  }
+
+  return `url=${healthUrl}, error=${message}, cause=${String(cause)}`;
+}
+
 const requiredPages = [
   "pages/login/login",
   "pages/today/today",
@@ -243,26 +267,26 @@ async function checkRemoteHealth() {
     check(
       "remote API health endpoint responds",
       response.ok && payload?.status === "ok",
-      `status=${response.status}, health=${payload?.status ?? "missing"}`,
+      `url=${healthUrl}, status=${response.status}, health=${payload?.status ?? "missing"}`,
     );
     check(
       "remote database check is ok",
       payload?.checks?.database?.status === "ok",
-      `database=${payload?.checks?.database?.status ?? "missing"}`,
+      `url=${healthUrl}, database=${payload?.checks?.database?.status ?? "missing"}`,
     );
 
     if (strict) {
       check(
         "remote WeChat backend credentials are configured",
         payload?.checks?.wechatMiniProgram?.status === "configured",
-        `wechatMiniProgram=${payload?.checks?.wechatMiniProgram?.status ?? "missing"}`,
+        `url=${healthUrl}, wechatMiniProgram=${payload?.checks?.wechatMiniProgram?.status ?? "missing"}`,
       );
     }
   } catch (error) {
     check(
       "remote API health endpoint responds",
       false,
-      error instanceof Error ? error.message : "unknown error",
+      describeRemoteError(error, healthUrl),
     );
   }
 }

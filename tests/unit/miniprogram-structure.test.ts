@@ -80,6 +80,8 @@ describe("miniprogram structure", () => {
     expect(checkScript).toContain("WECHAT_MINI_PROGRAM_APP_SECRET");
     expect(checkScript).toContain("apiBaseUrl uses HTTPS");
     expect(checkScript).toContain("/api/health");
+    expect(checkScript).toContain("describeRemoteError");
+    expect(checkScript).toContain("url=${healthUrl}");
     expect(checkScript).toContain("mockLoginEnabled");
   });
 
@@ -109,6 +111,8 @@ describe("miniprogram structure", () => {
     expect(readinessScript).toContain("WECHAT_MINI_PROGRAM_MOCK_LOGIN_ENABLED");
     expect(readinessScript).toContain("vercel");
     expect(readinessScript).toContain("miniprogram/ALPHA_RELEASE_PACK.md");
+    expect(readinessScript).toContain("research/WECHAT_COMPETITOR_FIELDWORK.md");
+    expect(readinessScript).toContain("research/alpha/ALPHA_USER_EVIDENCE.md");
     expect(releasePack).toContain("7 天任务卡");
     expect(releasePack).toContain("可直接发送的邀请文案");
     expect(releasePack).toContain("npm run analytics:miniprogram");

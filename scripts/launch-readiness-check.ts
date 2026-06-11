@@ -225,6 +225,10 @@ for (const filePath of [
   "compliance/HEALTH_DISCLAIMER_DRAFT.md",
   "miniprogram/ALPHA_RELEASE_PACK.md",
   "miniprogram/TESTING_CHECKLIST.md",
+  "research/WECHAT_COMPETITOR_FIELDWORK.md",
+  "research/WECHAT_COMPETITOR_SYNTHESIS.md",
+  "research/alpha/ALPHA_USER_EVIDENCE.md",
+  "research/alpha/PHONE_TEST_SESSION_TEMPLATE.md",
   "WECHAT_MINI_PROGRAM_VALIDATION_PLAN.md",
 ]) {
   blocker(`${filePath} exists`, existsSync(path.join(projectRoot, filePath)));
