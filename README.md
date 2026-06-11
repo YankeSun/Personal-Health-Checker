@@ -107,6 +107,7 @@ npm run analytics:report -- --days=30
 - 目录：`miniprogram/`
 - 页面：登录、今日记录、简版 Dashboard、体重趋势、我的 / 设置
 - 认证：`wx.login` -> `POST /api/mp/auth/wechat-login` -> 服务端 Bearer token
+- 内部测试：可临时开启 mock 登录验证小程序主路径，正式体验版前必须关闭
 - 登录确认：调用微信登录前需要确认隐私保护指引和用户协议
 - 合规底座：我的页可触发个人数据导出和账号删除
 - 协议入口：登录页和我的页可查看隐私保护指引、用户协议、健康免责声明

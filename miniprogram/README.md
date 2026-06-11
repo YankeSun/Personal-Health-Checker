@@ -21,3 +21,5 @@
 - 30 天体重观察报告内测意向入口
 
 当前不包含支付、订阅消息、设备接入、医疗建议或正式商业化能力；报告入口只记录内测意向。
+
+如果暂时没有真实微信 AppID / AppSecret，可以按 [ENVIRONMENT_READINESS.md](./ENVIRONMENT_READINESS.md) 临时开启内部 mock 登录测试主路径。mock 登录只用于内部测试，正式体验版前必须关闭。

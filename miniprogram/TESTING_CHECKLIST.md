@@ -20,6 +20,7 @@ npm run miniprogram:check
 - tabBar 是否只暴露记录、概览、趋势、我的
 - `apiBaseUrl` 是否是 HTTPS
 - Bearer token、协议确认、账号导出/删除、付费意向入口是否仍存在
+- 内部 mock 登录按钮是否默认关闭
 
 准备体验版前再运行：
 
@@ -77,6 +78,7 @@ npm run miniprogram:check:remote
 - 未勾选协议时点击“微信登录并开始记录”，应停留在登录页并提示先同意协议。
 - 点击隐私保护指引、用户协议、健康免责声明，应进入对应说明。
 - 勾选协议后微信登录，应进入今日记录页。
+- 如果暂时没有真实微信 AppID / AppSecret，可按 [ENVIRONMENT_READINESS.md](./ENVIRONMENT_READINESS.md) 临时开启内部 mock 登录测试主路径；正式体验版前必须关闭。
 
 ### 今日记录
 

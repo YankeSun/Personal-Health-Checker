@@ -1,5 +1,6 @@
 import { prisma } from "@/lib/db";
 import { ensureDatabaseSchema } from "@/lib/db/ensure-schema";
+import { isWechatMiniProgramMockLoginEnabled } from "@/lib/services/wechat-auth-service";
 
 export const dynamic = "force-dynamic";
 
@@ -48,6 +49,7 @@ export async function GET() {
         : "missing_configuration",
     appIdConfigured,
     appSecretConfigured,
+    mockLoginEnabled: isWechatMiniProgramMockLoginEnabled(),
   };
   const status = database.status === "ok" ? "ok" : "degraded";
   const httpStatus = status === "ok" ? 200 : 503;

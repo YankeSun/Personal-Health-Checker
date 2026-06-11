@@ -19,6 +19,8 @@ describe("health route", () => {
     process.env.DATABASE_URL = "postgres://health-check";
     delete process.env.WECHAT_MINI_PROGRAM_APP_ID;
     delete process.env.WECHAT_MINI_PROGRAM_APP_SECRET;
+    delete process.env.WECHAT_MINI_PROGRAM_MOCK_LOGIN_ENABLED;
+    delete process.env.VERCEL_ENV;
     delete process.env.VERCEL_GIT_COMMIT_SHA;
   });
 
@@ -42,6 +44,7 @@ describe("health route", () => {
       status: "configured",
       appIdConfigured: true,
       appSecretConfigured: true,
+      mockLoginEnabled: false,
     });
     expect(data.version).toBe("abcdef1");
   });
@@ -73,5 +76,17 @@ describe("health route", () => {
     expect(data.checks.database.status).toBe("error");
     expect(data.checks.wechatMiniProgram.status).toBe("missing_configuration");
     consoleError.mockRestore();
+  });
+
+  it("reports whether mock mini program login is enabled outside production", async () => {
+    queryRaw.mockResolvedValue([{ ok: 1 }]);
+    process.env.WECHAT_MINI_PROGRAM_MOCK_LOGIN_ENABLED = "true";
+
+    const { GET } = await import("@/app/api/health/route");
+    const response = await GET();
+    const data = await response.json();
+
+    expect(response.status).toBe(200);
+    expect(data.checks.wechatMiniProgram.mockLoginEnabled).toBe(true);
   });
 });

@@ -167,6 +167,8 @@ const miniProgramConfig = readFileSync(
 );
 const apiBaseUrlMatch = miniProgramConfig.match(/apiBaseUrl:\s*["']([^"']+)["']/);
 const apiBaseUrl = apiBaseUrlMatch?.[1] ?? "";
+const mockLoginEnabledInMiniProgram =
+  /mockLoginEnabled:\s*true/.test(miniProgramConfig);
 
 blocker("Vercel project is linked", Boolean(vercelProject?.projectName), ".vercel/project.json");
 warn(
@@ -176,6 +178,10 @@ warn(
 );
 blocker("mini program apiBaseUrl is HTTPS", apiBaseUrl.startsWith("https://"), `apiBaseUrl=${apiBaseUrl || "missing"}`);
 warn("mini program apiBaseUrl is not localhost", !apiBaseUrl.includes("localhost"), `apiBaseUrl=${apiBaseUrl || "missing"}`);
+blocker(
+  "mini program mock login button is disabled for launch",
+  !mockLoginEnabledInMiniProgram,
+);
 blocker(
   "mini program project uses a real AppID",
   Boolean(projectConfig?.appid && projectConfig.appid !== "touristappid"),
@@ -200,6 +206,10 @@ warn("EMAIL_FROM is configured for account email flows", configured("EMAIL_FROM"
 warn(
   "RESEND_API_KEY is configured for real email delivery",
   notPlaceholder("RESEND_API_KEY", ["re_xxx"]),
+);
+blocker(
+  "WECHAT_MINI_PROGRAM_MOCK_LOGIN_ENABLED is not enabled for launch",
+  envValue("WECHAT_MINI_PROGRAM_MOCK_LOGIN_ENABLED") !== "true",
 );
 
 if (configured("WECHAT_MINI_PROGRAM_APP_ID") && projectConfig?.appid) {

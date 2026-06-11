@@ -31,6 +31,15 @@ type WechatSessionIdentity = {
   unionid: string | null;
 };
 
+const MOCK_WECHAT_APP_ID = "mock-wechat-mini-program";
+
+export function isWechatMiniProgramMockLoginEnabled() {
+  return (
+    process.env.WECHAT_MINI_PROGRAM_MOCK_LOGIN_ENABLED === "true" &&
+    process.env.VERCEL_ENV !== "production"
+  );
+}
+
 function getWechatMiniProgramConfig() {
   const appId = process.env.WECHAT_MINI_PROGRAM_APP_ID;
   const appSecret = process.env.WECHAT_MINI_PROGRAM_APP_SECRET;
@@ -55,6 +64,21 @@ function buildInternalWechatEmail(appId: string, openid: string) {
 }
 
 async function exchangeWechatCode(code: string): Promise<WechatSessionIdentity> {
+  if (code.startsWith("mock:")) {
+    if (!isWechatMiniProgramMockLoginEnabled()) {
+      throw new WechatAuthError("小程序测试登录未开启", 403);
+    }
+
+    return {
+      appId: process.env.WECHAT_MINI_PROGRAM_APP_ID || MOCK_WECHAT_APP_ID,
+      openid: `mock_${createHash("sha256")
+        .update(code)
+        .digest("hex")
+        .slice(0, 24)}`,
+      unionid: null,
+    };
+  }
+
   const { appId, appSecret } = getWechatMiniProgramConfig();
   const url = new URL("https://api.weixin.qq.com/sns/jscode2session");
 

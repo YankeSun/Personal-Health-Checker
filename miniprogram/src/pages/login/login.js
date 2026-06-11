@@ -1,10 +1,13 @@
+const config = require("../../config");
 const { request, saveAuth } = require("../../utils/api");
 
 Page({
   data: {
     loading: false,
+    mockLoading: false,
     error: "",
     acceptedLegal: false,
+    mockLoginEnabled: Boolean(config.mockLoginEnabled),
   },
 
   onLoad() {
@@ -68,6 +71,44 @@ Page({
         });
       },
     });
+  },
+
+  async handleMockLogin() {
+    if (!this.data.acceptedLegal) {
+      this.setData({
+        error: "请先同意隐私保护指引和用户协议",
+      });
+      return;
+    }
+
+    this.setData({
+      mockLoading: true,
+      error: "",
+    });
+
+    try {
+      const payload = await request({
+        url: "/api/mp/auth/wechat-login",
+        method: "POST",
+        data: {
+          code: `mock:${Date.now()}`,
+          displayName: "体验测试用户",
+        },
+      });
+
+      saveAuth(payload);
+      wx.switchTab({
+        url: "/pages/today/today",
+      });
+    } catch (error) {
+      this.setData({
+        error: error.message,
+      });
+    } finally {
+      this.setData({
+        mockLoading: false,
+      });
+    }
   },
 
   openLegal(event) {

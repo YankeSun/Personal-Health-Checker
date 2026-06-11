@@ -74,6 +74,7 @@ describe("miniprogram structure", () => {
     expect(checkScript).toContain("WECHAT_MINI_PROGRAM_APP_SECRET");
     expect(checkScript).toContain("apiBaseUrl uses HTTPS");
     expect(checkScript).toContain("/api/health");
+    expect(checkScript).toContain("mockLoginEnabled");
   });
 
   it("documents environment readiness checks for mini program launch prep", () => {
@@ -91,6 +92,7 @@ describe("miniprogram structure", () => {
     expect(readinessDoc).toContain("WECHAT_MINI_PROGRAM_APP_SECRET");
     expect(readinessScript).toContain("DATABASE_URL");
     expect(readinessScript).toContain("SESSION_SECRET");
+    expect(readinessScript).toContain("WECHAT_MINI_PROGRAM_MOCK_LOGIN_ENABLED");
     expect(readinessScript).toContain("vercel");
   });
 
@@ -101,6 +103,10 @@ describe("miniprogram structure", () => {
     );
     const loginPage = readFileSync(
       path.join(miniprogramRoot, "pages", "login", "login.js"),
+      "utf8",
+    );
+    const miniprogramConfig = readFileSync(
+      path.join(miniprogramRoot, "config.js"),
       "utf8",
     );
     const todayPage = readFileSync(
@@ -125,8 +131,10 @@ describe("miniprogram structure", () => {
     );
 
     expect(apiHelper).toContain("Authorization: `Bearer ${token}`");
+    expect(miniprogramConfig).toContain("mockLoginEnabled: false");
     expect(loginPage).toContain("/api/mp/auth/wechat-login");
     expect(loginPage).toContain("acceptedLegal");
+    expect(loginPage).toContain("handleMockLogin");
     expect(loginPage).toContain("请先同意隐私保护指引和用户协议");
     expect(todayPage).toContain("/api/records/today");
     expect(todayPage).toContain("/api/records/${date}");

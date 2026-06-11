@@ -36,6 +36,10 @@
   margin-top: 48rpx;
 }
 
+.mock-login-button {
+  margin-top: 20rpx;
+}
+
 .agreement {
   display: flex;
   gap: 18rpx;

@@ -12,6 +12,9 @@
     <button class="primary-button login-button" loading="{{loading}}" bindtap="handleWechatLogin">
       微信登录并开始记录
     </button>
+    <button wx:if="{{mockLoginEnabled}}" class="ghost-button mock-login-button" loading="{{mockLoading}}" bindtap="handleMockLogin">
+      内部测试登录
+    </button>
 
     <text class="privacy">仅用于个人记录和趋势回看，不提供医疗诊断、治疗建议或设备同步。</text>
     <view class="legal-links">

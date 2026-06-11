@@ -135,6 +135,7 @@ check(
 
 const config = requireFromProject(configPath) as {
   apiBaseUrl?: string;
+  mockLoginEnabled?: boolean;
 };
 const apiBaseUrl = config.apiBaseUrl ?? "";
 check("apiBaseUrl is configured", typeof apiBaseUrl === "string" && apiBaseUrl.length > 0);
@@ -147,6 +148,10 @@ warn(
   "apiBaseUrl points to the current production host",
   apiBaseUrl === "https://health-tracker-web-umber.vercel.app",
   `apiBaseUrl=${apiBaseUrl || "missing"}`,
+);
+warn(
+  "mock login button is disabled by default",
+  config.mockLoginEnabled !== true,
 );
 
 const apiHelper = readText(path.join(srcRoot, "utils", "api.js"));
@@ -164,6 +169,10 @@ check("API helper clears invalid sessions on 401", hasAll(apiHelper, ["statusCod
 check(
   "login requires legal consent before wx.login",
   hasAll(loginJs, ["acceptedLegal", "请先同意隐私保护指引和用户协议", "wx.login"]),
+);
+check(
+  "login supports explicitly configured mock-login testing",
+  hasAll(loginJs, ["mockLoginEnabled", "handleMockLogin", "mock:"]),
 );
 check("login exposes legal links", hasAll(loginWxml, ["隐私保护指引", "用户协议", "健康免责声明"]));
 check("today page reads and saves records", hasAll(todayJs, ["/api/records/today", "/api/records/${date}"]));

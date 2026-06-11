@@ -28,6 +28,8 @@ describe("wechat-auth-service", () => {
     vi.clearAllMocks();
     process.env.WECHAT_MINI_PROGRAM_APP_ID = "wx_test_app";
     process.env.WECHAT_MINI_PROGRAM_APP_SECRET = "secret_test";
+    delete process.env.WECHAT_MINI_PROGRAM_MOCK_LOGIN_ENABLED;
+    delete process.env.VERCEL_ENV;
     vi.stubGlobal("fetch", vi.fn());
     vi.mocked(hashPassword).mockResolvedValue("hashed-random-password");
   });
@@ -135,5 +137,62 @@ describe("wechat-auth-service", () => {
       message: "微信登录暂未配置",
       status: 500,
     });
+  });
+
+  it("creates a deterministic internal user with mock login when explicitly enabled", async () => {
+    delete process.env.WECHAT_MINI_PROGRAM_APP_ID;
+    delete process.env.WECHAT_MINI_PROGRAM_APP_SECRET;
+    process.env.WECHAT_MINI_PROGRAM_MOCK_LOGIN_ENABLED = "true";
+    vi.mocked(prisma.wechatIdentity.findUnique).mockResolvedValue(null);
+    vi.mocked(prisma.user.create).mockResolvedValue({
+      id: "user_mock",
+      email: "wechat-mock@wechat.local",
+      profile: {
+        displayName: "体验测试用户",
+      },
+    });
+
+    const result = await loginWechatMiniProgramUser({
+      code: "mock:alpha-tester",
+      displayName: "体验测试用户",
+    });
+
+    expect(fetch).not.toHaveBeenCalled();
+    expect(result).toMatchObject({
+      isNewUser: true,
+      user: {
+        id: "user_mock",
+      },
+    });
+    expect(prisma.user.create).toHaveBeenCalledWith(
+      expect.objectContaining({
+        data: expect.objectContaining({
+          email: expect.stringMatching(/^wechat-[a-f0-9]{24}@wechat\.local$/),
+          wechatIdentities: {
+            create: {
+              appId: "mock-wechat-mini-program",
+              openid: expect.stringMatching(/^mock_[a-f0-9]{24}$/),
+              unionid: null,
+            },
+          },
+        }),
+      }),
+    );
+  });
+
+  it("rejects mock login in production deployments", async () => {
+    process.env.WECHAT_MINI_PROGRAM_MOCK_LOGIN_ENABLED = "true";
+    process.env.VERCEL_ENV = "production";
+
+    await expect(
+      loginWechatMiniProgramUser({
+        code: "mock:alpha-tester",
+      }),
+    ).rejects.toMatchObject<WechatAuthError>({
+      message: "小程序测试登录未开启",
+      status: 403,
+    });
+
+    expect(fetch).not.toHaveBeenCalled();
   });
 });

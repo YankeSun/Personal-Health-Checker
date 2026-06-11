@@ -15,7 +15,9 @@ npm run launch:check
 - Vercel 项目是否已 link 到当前仓库
 - 小程序 `apiBaseUrl` 是否是 HTTPS
 - `project.config.json` 是否还是游客 AppID
+- 小程序 mock 登录按钮是否仍保持关闭
 - 本地是否能看到 `DATABASE_URL`、`SESSION_SECRET`、微信小程序 AppID / AppSecret
+- `WECHAT_MINI_PROGRAM_MOCK_LOGIN_ENABLED` 是否没有为正式体验版开启
 - 合规草案、测试清单、验证方案是否存在
 
 准备体验版前跑严格检查：
@@ -41,6 +43,7 @@ npm run launch:check:vercel
 - Vercel Production 配置 `SESSION_SECRET`
 - Vercel Production 配置 `WECHAT_MINI_PROGRAM_APP_ID`
 - Vercel Production 配置 `WECHAT_MINI_PROGRAM_APP_SECRET`
+- Vercel Production 不配置 `WECHAT_MINI_PROGRAM_MOCK_LOGIN_ENABLED=true`
 - 微信公众平台配置 request 合法域名，域名应与 `miniprogram/src/config.js` 的 `apiBaseUrl` 一致
 
 可选但建议：
@@ -75,6 +78,7 @@ npm run miniprogram:check:remote
 | `WECHAT_MINI_PROGRAM_APP_SECRET` | 后端无法完成 `code2Session` | 在 Vercel 环境变量中配置 |
 | `remote database check is ok` | 线上数据库不可达或未配置 | 检查 `DATABASE_URL` 和 Neon 状态 |
 | `remote API health endpoint responds` | API 域名不可访问或部署未更新 | 检查 Vercel deployment 和 `apiBaseUrl` |
+| `mock login` | 内部测试登录仍处于开启状态 | 正式体验版前关闭小程序配置和后端环境变量 |
 
 ## 5. 不要提交的内容
 
@@ -87,3 +91,18 @@ npm run miniprogram:check:remote
 - 微信公众平台账号密码
 
 真实密钥只放在本机环境变量、Vercel 环境变量或微信公众平台后台。
+
+## 6. 内部 mock 登录
+
+如果还没有真实 AppID / AppSecret，但需要先测试小程序 Today、Dashboard、Trends、我的页，可以临时开启 mock 登录：
+
+1. 本地或测试环境设置 `WECHAT_MINI_PROGRAM_MOCK_LOGIN_ENABLED=true`
+2. 将 `miniprogram/src/config.js` 中的 `mockLoginEnabled` 临时改成 `true`
+3. 导入微信开发者工具，勾选协议后点击“内部测试登录”
+
+注意：
+
+- mock 登录只用于内部测试。
+- Vercel Production 中不应开启 `WECHAT_MINI_PROGRAM_MOCK_LOGIN_ENABLED=true`。
+- 提交代码前应把 `mockLoginEnabled` 改回 `false`。
+- mock 登录不能替代真实微信 `wx.login` 和 `code2Session` 验证。
