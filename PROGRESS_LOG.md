@@ -244,6 +244,7 @@ npm run analytics:report -- --days=30
 
 ## 2026-06-12
 
+- 加强微信 AppID / AppSecret 配置防错：`launch:check` 和 `miniprogram:check:strict` 现在会校验 AppID 是否像真实 `wx...` 值，并阻止把 AppID 误填进 AppSecret，减少真实 `wx.login` 前的手动配置试错。
 - 补强 evidence pack 终端提示：`alpha:evidence-pack` 现在不仅在本地索引写入 `Experience build gate`，也会在命令行直接打印 release note，避免只看终端输出时误把 RED / YELLOW 证据包当成可发许可。
 - 增强 evidence pack 状态防误读：`alpha:evidence-pack` 生成的本地索引现在会提取并写入 `Experience build gate` 的 GREEN / YELLOW / RED 状态和 guidance，明确 RED / YELLOW 只能作为阻塞证据，不能当作体验版发放许可。
 - 收紧 alpha evidence pack 可追溯性：`alpha:evidence-pack` 现在会在写入任何 preflight / phone-session / pack-index 前检查 Git working tree，未提交代码会直接失败，避免本地私有证据包绕过 Git clean gate。

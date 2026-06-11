@@ -104,9 +104,9 @@ npm run miniprogram:check:experience
 | 失败项 | 含义 | 下一步 |
 |---|---|---|
 | `Git working tree` | 当前还有未提交文件，体验版证据无法可靠对应到一个 commit | 先 `git commit` / `git push`，或 stash 无关本地文件，再生成 preflight / evidence pack / 上传体验版 |
-| `project.config.json uses a real AppID` | 当前仍是 `touristappid` | 到微信公众平台复制真实 AppID，写入 `project.config.json` |
-| `WECHAT_MINI_PROGRAM_APP_ID` | 后端不知道当前小程序 AppID | 在 Vercel 环境变量中配置 |
-| `WECHAT_MINI_PROGRAM_APP_SECRET` | 后端无法完成 `code2Session` | 在 Vercel 环境变量中配置 |
+| `project.config.json uses a real AppID` | 当前仍是 `touristappid`，或 AppID 不像真实 `wx...` 小程序 AppID | 到微信公众平台复制真实 AppID，写入 `project.config.json` |
+| `WECHAT_MINI_PROGRAM_APP_ID` | 后端不知道当前小程序 AppID，或本地值不像真实 `wx...` AppID | 在本地和 Vercel 环境变量中配置与 `project.config.json` 一致的 AppID |
+| `WECHAT_MINI_PROGRAM_APP_SECRET` | 后端无法完成 `code2Session`，或误把 AppID 填到了 AppSecret | 在本地和 Vercel 环境变量中配置微信公众平台里的 AppSecret，不要提交、不与 AppID 混用 |
 | `remote database check is ok` | 线上数据库不可达或未配置 | 检查 `DATABASE_URL` 和 Neon 状态 |
 | `remote API health endpoint responds` | API 域名不可访问或部署未更新 | 检查 Vercel deployment 和 `apiBaseUrl` |
 | `mock login` | 内部测试登录仍处于开启状态 | 正式体验版前关闭小程序配置和后端环境变量 |

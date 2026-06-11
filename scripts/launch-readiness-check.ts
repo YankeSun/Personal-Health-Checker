@@ -78,7 +78,7 @@ function nextActionFor(result: CheckResult) {
   }
 
   if (label === "mini program project uses a real AppID") {
-    return "Copy the real AppID from the WeChat public platform and replace `touristappid` in `miniprogram/project.config.json`.";
+    return "Copy the real AppID from the WeChat public platform and replace `touristappid` in `miniprogram/project.config.json`; it should look like `wx...`.";
   }
 
   if (label === "DATABASE_URL is configured locally") {
@@ -94,11 +94,15 @@ function nextActionFor(result: CheckResult) {
   }
 
   if (label === "WECHAT_MINI_PROGRAM_APP_ID is configured locally") {
-    return "Set `WECHAT_MINI_PROGRAM_APP_ID` locally and in Vercel Production to the same AppID used by `project.config.json`.";
+    return "Set `WECHAT_MINI_PROGRAM_APP_ID` locally and in Vercel Production to the same real `wx...` AppID used by `project.config.json`.";
   }
 
   if (label === "WECHAT_MINI_PROGRAM_APP_SECRET is configured locally") {
     return "Set `WECHAT_MINI_PROGRAM_APP_SECRET` locally and in Vercel Production from the WeChat public platform. Do not commit it.";
+  }
+
+  if (label === "WECHAT_MINI_PROGRAM_APP_SECRET is not the AppID") {
+    return "Copy the AppSecret from the WeChat public platform secret field; do not paste the AppID into `WECHAT_MINI_PROGRAM_APP_SECRET`.";
   }
 
   if (label === "EMAIL_FROM is configured for account email flows") {
@@ -203,6 +207,10 @@ function notPlaceholder(key: string, placeholders: string[]) {
   const value = envValue(key).trim();
 
   return Boolean(value) && !placeholders.some((placeholder) => value.includes(placeholder));
+}
+
+function looksLikeWechatAppId(value: string) {
+  return /^wx[a-zA-Z0-9]{10,}$/.test(value.trim());
 }
 
 function collectKeys(value: unknown, keys = new Set<string>()) {
@@ -342,7 +350,7 @@ blocker(
 );
 blocker(
   "mini program project uses a real AppID",
-  Boolean(projectConfig?.appid && projectConfig.appid !== "touristappid"),
+  Boolean(projectConfig?.appid && projectConfig.appid !== "touristappid" && looksLikeWechatAppId(projectConfig.appid)),
   `appid=${projectConfig?.appid ?? "missing"}`,
 );
 
@@ -354,12 +362,20 @@ blocker(
 );
 blocker(
   "WECHAT_MINI_PROGRAM_APP_ID is configured locally",
-  notPlaceholder("WECHAT_MINI_PROGRAM_APP_ID", ["wx_xxx"]),
+  notPlaceholder("WECHAT_MINI_PROGRAM_APP_ID", ["wx_xxx"]) &&
+    looksLikeWechatAppId(envValue("WECHAT_MINI_PROGRAM_APP_ID")),
 );
 blocker(
   "WECHAT_MINI_PROGRAM_APP_SECRET is configured locally",
   notPlaceholder("WECHAT_MINI_PROGRAM_APP_SECRET", ["wechat_secret_xxx"]),
 );
+if (configured("WECHAT_MINI_PROGRAM_APP_ID") && configured("WECHAT_MINI_PROGRAM_APP_SECRET")) {
+  blocker(
+    "WECHAT_MINI_PROGRAM_APP_SECRET is not the AppID",
+    envValue("WECHAT_MINI_PROGRAM_APP_SECRET") !== envValue("WECHAT_MINI_PROGRAM_APP_ID"),
+    "AppSecret value is compared locally without printing it",
+  );
+}
 warn("EMAIL_FROM is configured for account email flows", configured("EMAIL_FROM"));
 warn(
   "RESEND_API_KEY is configured for real email delivery",

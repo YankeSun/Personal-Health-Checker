@@ -73,6 +73,10 @@ function hasAll(source: string, snippets: string[]) {
   return snippets.every((snippet) => source.includes(snippet));
 }
 
+function looksLikeWechatAppId(value: string) {
+  return /^wx[a-zA-Z0-9]{10,}$/.test(value.trim());
+}
+
 function describeRemoteError(error: unknown, healthUrl: string) {
   const message = error instanceof Error ? error.message : String(error);
   const cause = error instanceof Error && "cause" in error ? error.cause : null;
@@ -250,17 +254,23 @@ check("legal page includes privacy, terms, and health disclaimer", hasAll(legalJ
 if (strict) {
   check(
     "project.config.json uses a real AppID",
-    Boolean(projectConfig?.appid && projectConfig.appid !== "touristappid"),
+    Boolean(projectConfig?.appid && projectConfig.appid !== "touristappid" && looksLikeWechatAppId(projectConfig.appid)),
     `appid=${projectConfig?.appid ?? "missing"}`,
   );
   check(
     "WECHAT_MINI_PROGRAM_APP_ID is available for backend login",
-    Boolean(process.env.WECHAT_MINI_PROGRAM_APP_ID),
+    Boolean(process.env.WECHAT_MINI_PROGRAM_APP_ID && looksLikeWechatAppId(process.env.WECHAT_MINI_PROGRAM_APP_ID)),
   );
   check(
     "WECHAT_MINI_PROGRAM_APP_SECRET is available for backend login",
     Boolean(process.env.WECHAT_MINI_PROGRAM_APP_SECRET),
   );
+  if (process.env.WECHAT_MINI_PROGRAM_APP_ID && process.env.WECHAT_MINI_PROGRAM_APP_SECRET) {
+    check(
+      "WECHAT_MINI_PROGRAM_APP_SECRET is not the AppID",
+      process.env.WECHAT_MINI_PROGRAM_APP_SECRET !== process.env.WECHAT_MINI_PROGRAM_APP_ID,
+    );
+  }
 }
 
 type RemoteHealthPayload = {

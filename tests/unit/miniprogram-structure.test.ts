@@ -136,6 +136,8 @@ describe("miniprogram structure", () => {
     );
     expect(checkScript).toContain("WECHAT_MINI_PROGRAM_APP_ID");
     expect(checkScript).toContain("WECHAT_MINI_PROGRAM_APP_SECRET");
+    expect(checkScript).toContain("looksLikeWechatAppId");
+    expect(checkScript).toContain("WECHAT_MINI_PROGRAM_APP_SECRET is not the AppID");
     expect(checkScript).toContain("apiBaseUrl uses HTTPS");
     expect(checkScript).toContain("/api/health");
     expect(checkScript).toContain("describeRemoteError");
@@ -236,6 +238,8 @@ describe("miniprogram structure", () => {
     expect(readinessScript).toContain("DATABASE_URL");
     expect(readinessScript).toContain("SESSION_SECRET");
     expect(readinessScript).toContain("WECHAT_MINI_PROGRAM_MOCK_LOGIN_ENABLED");
+    expect(readinessScript).toContain("looksLikeWechatAppId");
+    expect(readinessScript).toContain("WECHAT_MINI_PROGRAM_APP_SECRET is not the AppID");
     expect(readinessScript).toContain("nextActionFor");
     expect(readinessScript).toContain("describeVercelEnvListError");
     expect(readinessScript).toContain("network_unreachable");
