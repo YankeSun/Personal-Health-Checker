@@ -3,6 +3,8 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 const getCurrentUser = vi.fn();
 const getTodayRecordByUserId = vi.fn();
 const upsertDailyRecordByUserId = vi.fn();
+const getDailyRecordMilestonesByUserId = vi.fn();
+const trackProductEventSafely = vi.fn();
 
 vi.mock("@/lib/auth/session", () => ({
   getCurrentUser,
@@ -10,7 +12,18 @@ vi.mock("@/lib/auth/session", () => ({
 
 vi.mock("@/lib/services/daily-record-service", () => ({
   getTodayRecordByUserId,
+  getDailyRecordMilestonesByUserId,
   upsertDailyRecordByUserId,
+}));
+
+vi.mock("@/lib/services/observability-service", () => ({
+  PRODUCT_EVENT_NAMES: {
+    dailyRecordSaved: "DAILY_RECORD_SAVED",
+    firstRecordSaved: "FIRST_RECORD_SAVED",
+    firstCompleteRecordSaved: "FIRST_COMPLETE_RECORD_SAVED",
+    contextTagsSaved: "CONTEXT_TAGS_SAVED",
+  },
+  trackProductEventSafely,
 }));
 
 describe("today record route", () => {
@@ -59,6 +72,7 @@ describe("today record route", () => {
     expect(getTodayRecordByUserId).toHaveBeenCalledWith("user_1", "Asia/Shanghai");
     expect(data.record.sleepHours).toBe(7.2);
     expect(data.record.contextTags.dietTags).toEqual(["NORMAL"]);
+    expect(data.qualityWarnings).toEqual([]);
   });
 
   it("updates today's record for the active user", async () => {
@@ -72,12 +86,17 @@ describe("today record route", () => {
         timezone: "Asia/Shanghai",
       },
     });
+    getDailyRecordMilestonesByUserId.mockResolvedValue({
+      hasAnyRecord: false,
+      hasCompleteRecord: false,
+    });
     upsertDailyRecordByUserId.mockResolvedValue({
       id: "record_1",
       date: "2026-04-03",
       sleepHours: 7.5,
       weightKg: 63.2,
       waterMl: 2000,
+      isBackfilled: false,
       contextTags: {
         dietTags: ["LIGHT"],
         activityLevel: null,
@@ -110,20 +129,57 @@ describe("today record route", () => {
     const data = await response.json();
 
     expect(response.status).toBe(200);
-    expect(upsertDailyRecordByUserId).toHaveBeenCalledWith("user_1", {
-      date: "2026-04-03",
-      sleepHours: 7.5,
-      weightKg: 63.2,
-      waterMl: 2000,
-      contextTags: {
-        dietTags: ["LIGHT"],
-        activityLevel: null,
-        energyLevel: "GOOD",
-        weighTiming: "MORNING",
+    expect(upsertDailyRecordByUserId).toHaveBeenCalledWith(
+      "user_1",
+      {
+        date: "2026-04-03",
+        sleepHours: 7.5,
+        weightKg: 63.2,
+        waterMl: 2000,
+        contextTags: {
+          dietTags: ["LIGHT"],
+          activityLevel: null,
+          energyLevel: "GOOD",
+          weighTiming: "MORNING",
+        },
       },
-    });
+      {
+        isBackfilled: false,
+      },
+    );
     expect(data.record.waterMl).toBe(2000);
     expect(data.record.contextTags.energyLevel).toBe("GOOD");
+    expect(data.qualityWarnings).toEqual([]);
+    expect(trackProductEventSafely).toHaveBeenCalledWith({
+      userId: "user_1",
+      eventName: "DAILY_RECORD_SAVED",
+      path: "/today",
+      metadata: {
+        date: "2026-04-03",
+        completedMetrics: 3,
+        isToday: true,
+        isBackfilled: false,
+        contextTagCount: 3,
+        hasContextTags: true,
+        platform: "web",
+      },
+    });
+    expect(trackProductEventSafely).toHaveBeenCalledWith({
+      userId: "user_1",
+      eventName: "FIRST_RECORD_SAVED",
+      path: "/today",
+      metadata: {
+        date: "2026-04-03",
+      },
+    });
+    expect(trackProductEventSafely).toHaveBeenCalledWith({
+      userId: "user_1",
+      eventName: "FIRST_COMPLETE_RECORD_SAVED",
+      path: "/today",
+      metadata: {
+        date: "2026-04-03",
+      },
+    });
 
     vi.useRealTimers();
   });

@@ -244,6 +244,8 @@ npm run analytics:report -- --days=30
 
 ## 2026-06-12
 
+- 整合 sub-agent 并行评审结论：`WECHAT_MINI_PROGRAM_VALIDATION_PLAN.md` 新增公开资料竞品预调研、当前 Alpha 作战板、P0 blocker 和 10 人真实用户 alpha 节奏；同时明确公开资料不能替代微信真机实测，仍需补 8 个以上真实小程序体验样本。
+- 收敛记录保存口径：新增共享保存服务，让 `/api/records/today` 和 `/api/records/[date]` 共用同一套保存、补录标记、质量提示和 ProductEvent 埋点逻辑，降低小程序 alpha 与 Web 数据口径不一致的风险。
 - 补齐账号数据权利闭环：账号导出现在包含与账号关联的 ProductEvent，账号删除会先清理该用户的产品事件，再删除用户主体；隐私说明、用户协议、小程序说明和验收清单同步更新，覆盖 alpha 反馈、页面访问和报告内测意向这类验证数据。
 - 增加 alpha 用户反馈闭环：新增 `POST /api/feedback`，小程序“我的”页可提交评分、最有用的点、最卡的点和一句话反馈；反馈复用 `ProductEvent` 的 `ALPHA_FEEDBACK_SUBMITTED`，并进入 `analytics:miniprogram` 的反馈人数、反馈率、平均评分、价值感和阻力统计，用于判断用户是否能复述产品价值。
 - 增加小程序 alpha 指标报告：新增 `npm run analytics:miniprogram -- --days=30`，基于现有 `ProductEvent` 和 `DailyRecord` 输出 alpha 用户数、首次完整记录、次日回访、7 日记录天数、体重/上下文填写率、Dashboard/Trends 使用率、付费意愿点击率和 `decision`；Dashboard/Trends 的 Bearer 请求现在会记录小程序 page view，方便判断是否值得进入 beta。

@@ -1,13 +1,12 @@
 import { ZodError } from "zod";
 
 import { getCurrentUser } from "@/lib/auth/session";
-import {
-  getTodayRecordByUserId,
-  upsertDailyRecordByUserId,
-} from "@/lib/services/daily-record-service";
+import { getTodayRecordByUserId } from "@/lib/services/daily-record-service";
+import { saveDailyRecordWithEvents } from "@/lib/services/record-save-service";
 import { jsonError, getZodErrorMessage } from "@/lib/utils/api";
 import { getDateStringInTimezone } from "@/lib/utils/dates";
 import { getDefaultRecordContextTags } from "@/lib/utils/record-context";
+import { getRecordQualityWarnings } from "@/lib/utils/record-quality";
 import { dailyRecordInputSchema } from "@/lib/validations/daily-record";
 
 export async function GET(request?: Request) {
@@ -30,8 +29,16 @@ export async function GET(request?: Request) {
       sleepHours: null,
       weightKg: null,
       waterMl: null,
+      isBackfilled: false,
       contextTags: getDefaultRecordContextTags(),
     },
+    qualityWarnings: record
+      ? getRecordQualityWarnings({
+          sleepHours: record.sleepHours,
+          weightKg: record.weightKg,
+          waterMl: record.waterMl,
+        })
+      : [],
   });
 }
 
@@ -54,9 +61,16 @@ export async function PUT(request: Request) {
       return jsonError("只能保存今天的记录", 400);
     }
 
-    const record = await upsertDailyRecordByUserId(user.id, body);
+    const { date, ...fields } = body;
+    const { record, qualityWarnings } = await saveDailyRecordWithEvents({
+      userId: user.id,
+      date,
+      timezone: user.profile.timezone,
+      fields,
+      request,
+    });
 
-    return Response.json({ record });
+    return Response.json({ record, qualityWarnings });
   } catch (error) {
     if (error instanceof ZodError) {
       return jsonError(getZodErrorMessage(error), 400);

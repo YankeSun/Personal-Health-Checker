@@ -118,6 +118,41 @@
 - 商业化自然度：付费入口是否与用户目标一致
 - 合规安全感：是否清楚表达非医疗诊断边界
 
+### 2.5 公开资料预调研结论
+
+以下结论来自公开网页、应用介绍、新闻稿、开源项目和应用商店信息，**尚未替代微信小程序真机实测**。
+
+| 产品 / 相邻产品 | 证据类型 | 可观察心智 | 对当前路线的启发 |
+|---|---|---|---|
+| 小水怪 | 官网明确提供小程序入口和功能说明 | 饮水习惯 + 智能水杯 | 饮水单点若要成立，通常需要提醒或硬件降低手动记录成本；纯手填饮水商业价值偏弱 |
+| 小懒喵 | 公开产品介绍 / App 信息 | 轻量健康生活记录 | 体重、体围、饮水、饮食、运动、睡眠常被包装成“好看、轻松、持续”的日常记录产品 |
+| 体重日记 | App Store / 应用宝介绍 | 减肥、增肌、保持体型 | 体重记录会自然扩展到体脂、围度、饮食、运动、照片、导出和会员能力；但功能堆叠风险很高 |
+| 薄荷健康 | 官网 / App Store | 科学减重、热量管理、方案陪伴 | 强竞品心智不是“记录”，而是“科学减重方案”；我们短期不正面做完整食物库和专家服务 |
+| 轻琳健康 | App Store 评论与产品介绍 | 体脂秤 / 硬件用户 | 自动采集是体重管理强壁垒；短期没有硬件时，必须把手动记录摩擦压低 |
+| 人民网“初见”智能体 | 新闻稿 | AI 体重管理、拍照识热量、微信步数 | “AI + 饮食 / 运动解释”正在变成显性卖点，但当前产品仍要避免复杂 AI 和医疗化表达 |
+| 上城 AI 智能体重管理小程序 | 地方新闻稿 | 社区健康管理、家庭医生协同 | “记录 + 专业服务”价值高，但合规、医疗边界和运营成本也高，当前不进入 |
+| 减肥打卡开源小程序 | GitHub 项目 | 打卡、排行榜、海报传播 | 微信适合打卡和分享，但健康类排行榜容易制造焦虑，当前只观察，不做社交化 |
+
+阶段性判断：
+
+- 只做睡眠 / 体重 / 饮水作为商业产品切口偏窄，但仍适合作为 alpha 的最小记录入口。
+- 如果 alpha 后需要扩展，不应先堆健康指标，而应优先补“解释体重变化”的轻量变量。
+- 下一批可验证方向按优先级是：饮食状态 / 运动或步数 / 体脂或围度 / 心情压力；其中饮食和运动优先作为上下文或自动数据接入候选，而不是立刻扩成完整热量系统。
+- 公开资料不能证明微信内真实首开体验、登录授权、提醒、付费入口和留存设计，仍必须完成 8 个以上小程序真机样本。
+
+公开来源索引：
+
+- 小水怪官网：https://app.sguai.net/
+- 小懒喵介绍：https://maliquankai.com/2022/10/09/2022-09-19-xiaolanmiao/index.html
+- 体重日记 App Store：https://apps.apple.com/cn/app/id1662819197
+- 体重日记应用宝：https://sj.qq.com/appdetail/com.kproduce.weight
+- 薄荷健康官网：https://www.boohee.com/
+- 薄荷健康 App Store：https://apps.apple.com/cn/app/id457856023
+- 轻琳健康 App Store：https://apps.apple.com/cn/app/id1465679505
+- 人民网“初见”智能体新闻稿转载：https://www.sohu.com/a/915668042_120578424
+- 上城 AI 智能体重管理新闻稿：https://www.hzsc.com.cn/content/content_9859257.html
+- 减肥打卡小程序开源项目：https://github.com/frankiegu/weight-loss-clock
+
 ---
 
 ## 3. Web 验证路线
@@ -319,7 +354,71 @@ npm run analytics:miniprogram -- --days=30
 
 ---
 
-## 6. 近期执行 Backlog
+## 6. 当前 Alpha 作战板
+
+更新时间：2026-06-12
+
+本节用于把“小程序可测试”拆成可执行状态，不替代上面的长期判断。
+
+### 6.1 当前证据
+
+| 检查项 | 当前结果 | 证据 |
+|---|---|---|
+| 小程序代码结构 | 已通过 | `npm run miniprogram:check` 通过，页面、tabBar、Bearer token、协议入口、账号导出 / 删除、付费意向和 alpha 反馈入口均存在 |
+| 体验版配置总览 | 未通过 | `npm run launch:check` 报 3 个 blocker：仍是 `touristappid`、本地缺 `WECHAT_MINI_PROGRAM_APP_ID`、本地缺 `WECHAT_MINI_PROGRAM_APP_SECRET` |
+| 线上 API 可达性 | 未通过 | `npm run miniprogram:check:remote` 在当前终端失败；`curl` 无法解析 `health-tracker-web-umber.vercel.app`，`vercel project ls` 也因 `vercel.com` DNS 解析失败 |
+| 数据权利闭环 | 已补齐 | `GET /api/account/export` 已包含与账号关联的 ProductEvent；`DELETE /api/account` 会先清理该用户 ProductEvent，再删除用户主体 |
+| 商业化验证入口 | 已具备最小版本 | 小程序“我的”页可记录 30 天观察报告内测意向和 alpha 反馈；当前不接支付 |
+
+### 6.2 体验版 P0 Blockers
+
+这些事项未完成前，不应发给外部真实用户：
+
+- 使用真实小程序 AppID 替换 `miniprogram/project.config.json` 中的 `touristappid`
+- 在本地和 Vercel Production 配置 `WECHAT_MINI_PROGRAM_APP_ID`
+- 在本地和 Vercel Production 配置 `WECHAT_MINI_PROGRAM_APP_SECRET`
+- 确认 `miniprogram/src/config.js` 的 `apiBaseUrl` 在当前网络、微信开发者工具和真机微信中都可访问
+- 在微信公众平台配置 request 合法域名，域名与 `apiBaseUrl` 保持一致
+- 用真实 `wx.login -> code2Session -> Bearer token` 跑通登录、今日记录、Dashboard、趋势、我的页
+- 记录一次微信开发者工具和真机测试证据，包括设备、微信版本、API 域名和 Git commit
+
+### 6.3 Agent 可继续做的事
+
+- 继续优化小程序壳的空状态、错误态和记录完成反馈
+- 补更多自动化检查，例如 Vercel env、API health、mock 开关、账号导出字段覆盖
+- 汇总竞品公开证据和用户测试问题，更新产品路线
+- 根据 alpha 数据继续完善 `analytics:miniprogram`
+- 修复真机测试暴露的前后端 bug
+
+### 6.4 必须用户手动完成的事
+
+- 注册或选择真实微信小程序主体，拿到 AppID / AppSecret
+- 在微信公众平台配置隐私保护指引、类目、备案、request 合法域名和客服入口
+- 在 Vercel 控制台配置真实环境变量，不把密钥提交到 Git
+- 用微信开发者工具导入 `miniprogram/` 并上传体验版
+- 邀请第一批 10-30 个真实用户，并收集截图、录屏和访谈反馈
+
+### 6.5 10 个真实用户 Alpha 节奏
+
+| 阶段 | 目标 | 完成证据 |
+|---|---|---|
+| Day 0 配置日 | 补齐真实 AppID、后端密钥、Vercel env、request 合法域名 | `launch:check:strict`、`launch:check:vercel`、`miniprogram:check:strict` 通过 |
+| Day 1 内部验收 | 研发者本人和 1 个内部测试者完整跑通主路径 | `miniprogram:check:remote` 通过，测试清单至少 2 台设备通过 |
+| Day 2 发 10 人 alpha | 邀请有体重管理意愿且愿意连续记录 7 天的真实用户 | 记录用户来源、设备、是否完成首次记录 |
+| Day 3-9 跟踪记录 | 观察是否回来记录，而不是只看首日反馈 | 每天查看 ProductEvent、DailyRecord 和反馈文本 |
+| Day 10 复盘 | 判断继续 Web 优化还是规划 beta | 运行 `npm run analytics:miniprogram -- --days=30`，并补 3-5 条用户访谈摘要 |
+
+### 6.6 本阶段不做
+
+- 不接微信支付
+- 不做订阅消息推送
+- 不接设备数据
+- 不扩展成完整饮食 / 热量系统
+- 不把 `continue_candidate` 等同于可以商业化，只把它作为进入 beta 规划的候选信号
+
+---
+
+## 7. 近期执行 Backlog
 
 ### Round 1：竞品实测材料收集
 
@@ -379,7 +478,7 @@ npm run analytics:miniprogram -- --days=30
 
 ---
 
-## 7. 默认交接说明
+## 8. 默认交接说明
 
 新 agent 接手时应先读：
 
