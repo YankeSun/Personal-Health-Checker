@@ -29,6 +29,7 @@ Do not invite external users until every P0 gate is green.
 | Gate | Evidence | Status | Owner | Notes |
 |---|---|---|---|---|
 | Local evidence pack generated | `npm run alpha:evidence-pack -- --batch Alpha-001` | blocked / ready |  |  |
+| Experience gate passed | `npm run alpha:gate:experience -- --batch Alpha-001` | blocked / ready |  |  |
 | Alpha readiness summary reviewed | `npm run alpha:readiness` output | blocked / ready |  |  |
 | Alpha preflight report saved | `npm run alpha:preflight -- --out research/alpha/preflight/Alpha-001.md` | blocked / ready |  |  |
 | Phone session notes created | `npm run alpha:phone-session -- --batch Alpha-001 --tester internal-01` and `internal-02` | blocked / ready |  |  |

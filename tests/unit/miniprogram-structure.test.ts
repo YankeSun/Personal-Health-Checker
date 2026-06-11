@@ -71,6 +71,10 @@ describe("miniprogram structure", () => {
       path.join(projectRoot, "scripts", "alpha-evidence-pack.ts"),
       "utf8",
     );
+    const alphaExperienceGateScript = readFileSync(
+      path.join(projectRoot, "scripts", "alpha-experience-gate.ts"),
+      "utf8",
+    );
 
     expect(packageJson.scripts["db:doctor"]).toBe(
       "tsx scripts/database-doctor.ts",
@@ -86,6 +90,9 @@ describe("miniprogram structure", () => {
     );
     expect(packageJson.scripts["alpha:evidence-pack"]).toBe(
       "tsx scripts/alpha-evidence-pack.ts",
+    );
+    expect(packageJson.scripts["alpha:gate:experience"]).toBe(
+      "tsx scripts/alpha-experience-gate.ts",
     );
     expect(packageJson.scripts["miniprogram:check"]).toBe(
       "tsx scripts/miniprogram-check.ts",
@@ -104,6 +111,9 @@ describe("miniprogram structure", () => {
     );
     expect(packageJson.scripts["miniprogram:check:remote"]).toBe(
       "tsx scripts/miniprogram-check.ts --remote",
+    );
+    expect(packageJson.scripts["miniprogram:check:experience"]).toBe(
+      "tsx scripts/miniprogram-check.ts --strict --remote",
     );
     expect(packageJson.scripts["miniprogram:smoke"]).toBe(
       "tsx scripts/miniprogram-alpha-smoke.ts",
@@ -152,6 +162,12 @@ describe("miniprogram structure", () => {
     expect(alphaEvidencePackScript).toContain("alpha:phone-session");
     expect(alphaEvidencePackScript).toContain("analytics:miniprogram");
     expect(alphaEvidencePackScript).toContain("local private evidence");
+    expect(alphaExperienceGateScript).toContain("alpha:preflight");
+    expect(alphaExperienceGateScript).toContain("alpha:readiness");
+    expect(alphaExperienceGateScript).toContain("--strict");
+    expect(alphaExperienceGateScript).toContain("--vercel");
+    expect(alphaExperienceGateScript).toContain("--remote");
+    expect(alphaExperienceGateScript).toContain("miniprogram:check:experience");
   });
 
   it("documents environment readiness checks for mini program launch prep", () => {

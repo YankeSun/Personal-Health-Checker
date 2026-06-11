@@ -244,6 +244,7 @@ npm run analytics:report -- --days=30
 
 ## 2026-06-12
 
+- 增加体验版硬闸门命令：新增 `npm run alpha:gate:experience -- --batch Alpha-001`，会先生成包含 Vercel env 和远程 API 的 Day 0 preflight，再执行 strict readiness 和 strict remote mini program check；非 GREEN 会直接失败，减少人工误读红灯 / 黄灯后发体验版的风险。
 - 打通 alpha preflight 的完整远程闸门参数：`alpha:preflight` 和 `alpha:evidence-pack` 现在都支持 `--vercel --remote`，Day 0 私有预检报告可以同步包含 Vercel Production 环境变量名称、远程 API health、数据库和 AppID 状态，避免只在终端看到红灯但证据包漏掉关键 blocker。
 - 增强 alpha readiness 总闸门：`npm run alpha:readiness -- --vercel --remote` 现在可把 Vercel Production 环境变量名称和远程 API health 合并进同一份红绿灯输出；体验版上传前不必再在多个命令之间拼判断，Day 0 阻塞项会更集中。
 - 补齐 Web 设置页数据权利入口：Settings 新增“数据与账号”卡片，支持导出个人资料、目标、记录、体重背景、微信身份映射和 ProductEvent，并要求输入 `DELETE` 后才能删除账号；这样 Web 与小程序都具备账号导出 / 删除入口，减少 alpha 前的合规体验断点。

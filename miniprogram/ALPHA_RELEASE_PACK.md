@@ -32,6 +32,7 @@ npm run alpha:evidence-pack -- --batch Alpha-001
 npm run alpha:evidence-pack -- --batch Alpha-001 --vercel --remote
 npm run alpha:readiness
 npm run alpha:readiness -- --vercel --remote
+npm run alpha:gate:experience -- --batch Alpha-001
 npm run alpha:preflight -- --out research/alpha/preflight/Alpha-001.md
 npm run alpha:preflight -- --vercel --remote --out research/alpha/preflight/Alpha-001.md
 npm run alpha:phone-session -- --batch Alpha-001 --tester internal-01
@@ -46,6 +47,8 @@ npm run alpha:phone-session -- --batch Alpha-001 --tester internal-01
 `alpha:readiness` 顶部的 `Experience build gate` 必须是 `GREEN`，才可以继续进入体验版上传和真机证据收集；`YELLOW` 或 `RED` 都不要邀请外部 alpha 用户。
 
 这些命令生成的 preflight、phone session 和 report 文件默认是本地私有证据，已被 `.gitignore` 忽略。只把脱敏后的摘要写入 `research/alpha/ALPHA_BATCH_CONTROL.md`，不要提交截图、录屏、手机号、可识别用户原话、密钥或数据库 URL。
+
+`npm run alpha:gate:experience -- --batch Alpha-001` 是体验版上传前的硬闸门：它会先生成包含 Vercel 和远程 API 的 Day 0 preflight，再用 strict readiness 和 strict remote mini program check 阻断非 GREEN 状态。
 
 再按发放前严格闸门逐项清零：
 

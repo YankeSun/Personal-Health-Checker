@@ -163,6 +163,12 @@ npm run alpha:readiness -- --vercel --remote
 npm run alpha:preflight -- --vercel --remote --out research/alpha/preflight/Alpha-001.md
 ```
 
+真正准备上传或分享体验版前，使用硬闸门命令；非 GREEN 会直接失败：
+
+```bash
+npm run alpha:gate:experience -- --batch Alpha-001
+```
+
 如果在 local/preview 环境临时开启了 mock 登录，可以跑小程序主路径 smoke：
 
 ```bash
