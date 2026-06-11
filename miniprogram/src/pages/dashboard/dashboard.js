@@ -1,4 +1,4 @@
-const { ensureAuthed, request } = require("../../utils/api");
+const { ensureAuthed, request, toErrorState } = require("../../utils/api");
 
 function toneClass(tone) {
   if (tone === "success") return "tone-success";
@@ -127,6 +127,8 @@ Page({
     windowMetrics: [],
     completionPercent: 0,
     error: "",
+    errorDetail: "",
+    errorRetryLabel: "",
   },
 
   onShow() {
@@ -163,10 +165,14 @@ Page({
         windowMetrics: buildWindowMetrics(windowSummary),
         completionPercent,
         error: "",
+        errorDetail: "",
+        errorRetryLabel: "",
       });
     } catch (error) {
+      const errorState = toErrorState(error, { retryLabel: "重新加载" });
+
       this.setData({
-        error: error.message,
+        ...errorState,
       });
     }
   },
@@ -177,5 +183,9 @@ Page({
     wx.switchTab({
       url: route,
     });
+  },
+
+  retryLastAction() {
+    this.loadDashboard();
   },
 });

@@ -24,5 +24,8 @@
     </view>
   </view>
 
-  <view wx:if="{{error}}" class="error-card">{{error}}</view>
+  <view wx:if="{{error}}" class="error-card">
+    <text class="error-title">{{error}}</text>
+    <text wx:if="{{errorDetail}}" class="error-detail">{{errorDetail}}</text>
+  </view>
 </view>

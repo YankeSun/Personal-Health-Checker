@@ -207,6 +207,50 @@ describe("mini program page behavior", () => {
     expect((globalThis as MiniProgramGlobals).wx.request).not.toHaveBeenCalled();
   });
 
+  it("shows actionable diagnostics when Today save hits a network failure", async () => {
+    installMiniProgramGlobals();
+    (globalThis as MiniProgramGlobals).wx.request.mockImplementationOnce((options) => {
+      options.fail({
+        errMsg: "request:fail url not in domain list",
+      });
+    });
+    const page = loadPage("miniprogram/src/pages/today/today.js") as {
+      data: {
+        error: string;
+        errorDetail: string;
+        errorRetryLabel: string;
+        errorRetryAction: string;
+      };
+      refreshDerivedState: () => void;
+      saveRecord: () => Promise<void>;
+    };
+
+    page.setData({
+      record: {
+        date: "2026-06-12",
+      },
+      form: {
+        sleepHours: "",
+        weightKg: "68.4",
+        waterMl: "",
+        contextTags: {
+          dietTags: [],
+          activityLevel: null,
+          energyLevel: null,
+          weighTiming: null,
+        },
+      },
+    });
+    page.refreshDerivedState();
+    await page.saveRecord();
+
+    expect(page.data.error).toContain("网络连接失败");
+    expect(page.data.errorDetail).toContain("https://api.example.test/api/records/2026-06-12");
+    expect(page.data.errorDetail).toContain("request:fail url not in domain list");
+    expect(page.data.errorRetryLabel).toBe("重新保存");
+    expect(page.data.errorRetryAction).toBe("save");
+  });
+
   it("clears Me feedback form after a successful alpha feedback submission", async () => {
     installMiniProgramGlobals({
       "/api/feedback": {

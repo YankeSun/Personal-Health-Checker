@@ -105,6 +105,7 @@ npm run analytics:miniprogram -- --days=30
 - 点击隐私保护指引、用户协议、健康免责声明，应进入对应说明。
 - 勾选协议后微信登录，应进入今日记录页。
 - 如果暂时没有真实微信 AppID / AppSecret，可按 [ENVIRONMENT_READINESS.md](./ENVIRONMENT_READINESS.md) 临时开启内部 mock 登录测试主路径；正式体验版前必须关闭。
+- 如果登录、加载、保存失败，页面应展示具体诊断信息，例如接口路径、HTTP 状态或 request 合法域名 / 网络提示；加载类错误应能直接点“重新加载”，保存类错误应能点“重新保存”。
 - 如果只想先验证后端主路径，可在 mock 环境跑 `npm run miniprogram:smoke`。
 
 ### 今日记录

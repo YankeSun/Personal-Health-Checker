@@ -1,4 +1,4 @@
-const { clearAuth, ensureAuthed, request } = require("../../utils/api");
+const { clearAuth, ensureAuthed, request, toErrorState } = require("../../utils/api");
 
 const feedbackValueOptions = [
   { value: "KEEP_RECORDING", label: "更容易坚持记录" },
@@ -78,6 +78,9 @@ Page({
     submittingFeedback: false,
     message: "",
     error: "",
+    errorDetail: "",
+    errorRetryLabel: "",
+    errorRetryAction: "",
   },
 
   onShow() {
@@ -104,10 +107,16 @@ Page({
         goals: goalsPayload.goals || [],
         message: "",
         error: "",
+        errorDetail: "",
+        errorRetryLabel: "",
+        errorRetryAction: "",
       });
     } catch (error) {
+      const errorState = toErrorState(error, { retryLabel: "重新加载" });
+
       this.setData({
-        error: error.message,
+        ...errorState,
+        errorRetryAction: errorState.errorRetryLabel ? "settings" : "",
       });
     }
   },
@@ -117,6 +126,9 @@ Page({
       joiningReportBeta: true,
       message: "",
       error: "",
+      errorDetail: "",
+      errorRetryLabel: "",
+      errorRetryAction: "",
     });
 
     try {
@@ -133,8 +145,11 @@ Page({
         message: payload.message || "已记录你的内测意向。",
       });
     } catch (error) {
+      const errorState = toErrorState(error);
+
       this.setData({
-        error: error.message,
+        ...errorState,
+        errorRetryAction: "",
       });
     } finally {
       this.setData({
@@ -148,6 +163,9 @@ Page({
       exporting: true,
       message: "",
       error: "",
+      errorDetail: "",
+      errorRetryLabel: "",
+      errorRetryAction: "",
     });
 
     try {
@@ -162,8 +180,11 @@ Page({
         message: `已生成个人数据导出，共 ${recordCount} 条记录。`,
       });
     } catch (error) {
+      const errorState = toErrorState(error);
+
       this.setData({
-        error: error.message,
+        ...errorState,
+        errorRetryAction: "",
       });
     } finally {
       this.setData({
@@ -176,6 +197,10 @@ Page({
     this.setData({
       "feedback.rating": Number(event.currentTarget.dataset.rating),
       message: "",
+      error: "",
+      errorDetail: "",
+      errorRetryLabel: "",
+      errorRetryAction: "",
     });
   },
 
@@ -186,6 +211,10 @@ Page({
       "feedback.valueCue": value,
       feedbackValueOptions: decorateOptions(feedbackValueOptions, value),
       message: "",
+      error: "",
+      errorDetail: "",
+      errorRetryLabel: "",
+      errorRetryAction: "",
     });
   },
 
@@ -196,6 +225,10 @@ Page({
       "feedback.friction": value,
       feedbackFrictionOptions: decorateOptions(feedbackFrictionOptions, value),
       message: "",
+      error: "",
+      errorDetail: "",
+      errorRetryLabel: "",
+      errorRetryAction: "",
     });
   },
 
@@ -203,6 +236,10 @@ Page({
     this.setData({
       "feedback.comment": event.detail.value,
       message: "",
+      error: "",
+      errorDetail: "",
+      errorRetryLabel: "",
+      errorRetryAction: "",
     });
   },
 
@@ -212,6 +249,9 @@ Page({
     if (!feedback.rating || !feedback.valueCue || !feedback.friction) {
       this.setData({
         error: "请先选择评分、最有用的点和最卡的点",
+        errorDetail: "",
+        errorRetryLabel: "",
+        errorRetryAction: "",
       });
       return;
     }
@@ -220,6 +260,9 @@ Page({
       submittingFeedback: true,
       message: "",
       error: "",
+      errorDetail: "",
+      errorRetryLabel: "",
+      errorRetryAction: "",
     });
 
     try {
@@ -247,8 +290,11 @@ Page({
         feedbackFrictionOptions: decorateOptions(feedbackFrictionOptions, ""),
       });
     } catch (error) {
+      const errorState = toErrorState(error);
+
       this.setData({
-        error: error.message,
+        ...errorState,
+        errorRetryAction: "",
       });
     } finally {
       this.setData({
@@ -276,6 +322,9 @@ Page({
       deleting: true,
       message: "",
       error: "",
+      errorDetail: "",
+      errorRetryLabel: "",
+      errorRetryAction: "",
     });
 
     try {
@@ -288,8 +337,11 @@ Page({
         url: "/pages/login/login",
       });
     } catch (error) {
+      const errorState = toErrorState(error);
+
       this.setData({
-        error: error.message,
+        ...errorState,
+        errorRetryAction: "",
       });
     } finally {
       this.setData({
@@ -328,5 +380,11 @@ Page({
     wx.navigateTo({
       url: `/pages/legal/legal?type=${type}`,
     });
+  },
+
+  retryLastAction() {
+    if (this.data.errorRetryAction === "settings") {
+      this.loadSettings();
+    }
   },
 });

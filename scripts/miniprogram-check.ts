@@ -194,6 +194,10 @@ const legalJs = readText(path.join(srcRoot, "pages", "legal", "legal.js"));
 check("API helper sends bearer token", apiHelper.includes("Authorization: `Bearer ${token}`"));
 check("API helper clears invalid sessions on 401", hasAll(apiHelper, ["statusCode === 401", "clearAuth()"]));
 check(
+  "API helper returns actionable request diagnostics",
+  hasAll(apiHelper, ["makeRequestError", "toErrorState", "HTTP ${response.statusCode}", "request 合法域名"]),
+);
+check(
   "login requires legal consent before wx.login",
   hasAll(loginJs, ["acceptedLegal", "请先同意隐私保护指引和用户协议", "wx.login"]),
 );
@@ -205,16 +209,36 @@ check("login exposes legal links", hasAll(loginWxml, ["隐私保护指引", "用
 check("today page reads and saves records", hasAll(todayJs, ["/api/records/today", "/api/records/${date}"]));
 check("today page keeps weight-first alpha flow", hasAll(todayJs, ["qualityWarnings", "goDashboard", "completionSteps"]));
 check("today page shows record quality and dashboard CTA", hasAll(todayWxml, ["今日称重", "qualityWarnings", "看今日概览"]));
+check(
+  "today page supports save/load retry diagnostics",
+  hasAll(todayJs, ["toErrorState", "retryLastAction", "errorRetryAction"]) &&
+    hasAll(todayWxml, ["errorDetail", "errorRetryLabel"]),
+);
 check("dashboard page reads summary", dashboardJs.includes("/api/dashboard"));
 check("dashboard page surfaces alpha action insights", hasAll(dashboardJs, ["actionCards", "weightContext", "handleAction"]));
 check("dashboard page shows weekly focus and weight context", hasAll(dashboardWxml, ["今天先做什么", "体重变化线索", "今日三项"]));
+check(
+  "dashboard page supports load retry diagnostics",
+  hasAll(dashboardJs, ["toErrorState", "retryLastAction"]) &&
+    hasAll(dashboardWxml, ["errorDetail", "errorRetryLabel"]),
+);
 check("trends page reads weight trend", trendsJs.includes("/api/trends?metric=weight"));
 check("trends page surfaces insight, comparison, and context", hasAll(trendsJs, ["buildInsight", "buildComparison", "buildSparkPoints", "buildTrendAction"]));
 check("trends page shows weight trend review flow", hasAll(trendsWxml, ["趋势结论", "最近走势", "体重背景", "最近记录"]));
+check(
+  "trends page supports load retry diagnostics",
+  hasAll(trendsJs, ["toErrorState", "retryLastAction"]) &&
+    hasAll(trendsWxml, ["errorDetail", "errorRetryLabel"]),
+);
 check("me page supports account export and deletion", hasAll(meJs, ["/api/account/export", "/api/account"]));
 check("me page records pay intent only", meJs.includes("/api/intent/pay"));
 check("me page submits alpha feedback", hasAll(meJs, ["/api/feedback", "submitFeedback"]));
 check("me page closes alpha test loop", hasAll(meJs, ["alphaTaskItems", "reportReasonItems", "handleAlphaTask"]));
+check(
+  "me page supports settings retry diagnostics",
+  hasAll(meJs, ["toErrorState", "retryLastAction", "errorRetryAction"]) &&
+    hasAll(meWxml, ["errorDetail", "errorRetryLabel"]),
+);
 check("me page exposes legal links", hasAll(meWxml, ["协议与说明", "隐私保护指引", "用户协议", "健康免责声明"]));
 check("me page exposes alpha feedback card", meWxml.includes("Alpha 反馈"));
 check("me page shows alpha tasks and waitlist", hasAll(meWxml, ["7 天测试任务", "30 天体重观察报告", "WAITLIST"]));

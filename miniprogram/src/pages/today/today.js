@@ -1,4 +1,4 @@
-const { ensureAuthed, request } = require("../../utils/api");
+const { ensureAuthed, request, toErrorState } = require("../../utils/api");
 
 const dietBaseOptions = [
   { value: "LIGHT", label: "清淡" },
@@ -108,6 +108,9 @@ Page({
     saving: false,
     message: "",
     error: "",
+    errorDetail: "",
+    errorRetryLabel: "",
+    errorRetryAction: "",
   },
 
   onShow() {
@@ -136,11 +139,17 @@ Page({
         },
         qualityWarnings: payload.qualityWarnings || [],
         error: "",
+        errorDetail: "",
+        errorRetryLabel: "",
+        errorRetryAction: "",
       });
       this.refreshDerivedState();
     } catch (error) {
+      const errorState = toErrorState(error, { retryLabel: "重新加载" });
+
       this.setData({
-        error: error.message,
+        ...errorState,
+        errorRetryAction: errorState.errorRetryLabel ? "load" : "",
       });
     }
   },
@@ -151,6 +160,10 @@ Page({
     this.setData({
       [`form.${field}`]: event.detail.value,
       message: "",
+      error: "",
+      errorDetail: "",
+      errorRetryLabel: "",
+      errorRetryAction: "",
       qualityWarnings: [],
     });
     this.refreshDerivedState();
@@ -168,6 +181,10 @@ Page({
     this.setData({
       "form.contextTags.dietTags": next,
       message: "",
+      error: "",
+      errorDetail: "",
+      errorRetryLabel: "",
+      errorRetryAction: "",
       qualityWarnings: [],
     });
     this.refreshDerivedState();
@@ -181,6 +198,10 @@ Page({
     this.setData({
       [`form.contextTags.${field}`]: current === value ? null : value,
       message: "",
+      error: "",
+      errorDetail: "",
+      errorRetryLabel: "",
+      errorRetryAction: "",
       qualityWarnings: [],
     });
     this.refreshDerivedState();
@@ -214,6 +235,9 @@ Page({
     if (!date) {
       this.setData({
         error: "今天的日期还没有同步完成",
+        errorDetail: "",
+        errorRetryLabel: "",
+        errorRetryAction: "",
       });
       return;
     }
@@ -221,6 +245,9 @@ Page({
     if (this.data.completedCount === 0) {
       this.setData({
         error: "至少先记录一项数据",
+        errorDetail: "",
+        errorRetryLabel: "",
+        errorRetryAction: "",
       });
       return;
     }
@@ -228,6 +255,9 @@ Page({
     this.setData({
       saving: true,
       error: "",
+      errorDetail: "",
+      errorRetryLabel: "",
+      errorRetryAction: "",
       message: "",
     });
 
@@ -247,10 +277,17 @@ Page({
         record: savedRecord,
         qualityWarnings: payload.qualityWarnings || [],
         message: this.data.completedCount === 3 ? "今日三项已完成" : `已保存 ${this.data.completedCount}/3`,
+        error: "",
+        errorDetail: "",
+        errorRetryLabel: "",
+        errorRetryAction: "",
       });
     } catch (error) {
+      const errorState = toErrorState(error, { retryLabel: "重新保存" });
+
       this.setData({
-        error: error.message,
+        ...errorState,
+        errorRetryAction: errorState.errorRetryLabel ? "save" : "",
       });
     } finally {
       this.setData({
@@ -263,5 +300,14 @@ Page({
     wx.switchTab({
       url: "/pages/dashboard/dashboard",
     });
+  },
+
+  retryLastAction() {
+    if (this.data.errorRetryAction === "save") {
+      this.saveRecord();
+      return;
+    }
+
+    this.loadToday();
   },
 });

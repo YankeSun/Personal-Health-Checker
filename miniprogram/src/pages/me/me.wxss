@@ -227,12 +227,33 @@
   font-size: 26rpx;
 }
 
+.error-card {
+  margin-top: 22rpx;
+  border-radius: 28rpx;
+  background: #fff1f2;
+  padding: 22rpx;
+}
+
 .error {
+  margin-top: 0;
   color: #be123c;
+}
+
+.error-detail {
+  display: block;
+  margin-top: 10rpx;
+  color: #9f1239;
+  font-size: 22rpx;
+  line-height: 1.45;
+  word-break: break-all;
 }
 
 .message {
   color: #047857;
+}
+
+.retry-button {
+  margin-top: 18rpx;
 }
 
 .action-button {

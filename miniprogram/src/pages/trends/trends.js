@@ -1,4 +1,4 @@
-const { ensureAuthed, request } = require("../../utils/api");
+const { ensureAuthed, request, toErrorState } = require("../../utils/api");
 
 function toneClass(tone) {
   if (tone === "success") return "tone-success";
@@ -139,6 +139,8 @@ Page({
     sparkPoints: [],
     recentPoints: [],
     error: "",
+    errorDetail: "",
+    errorRetryLabel: "",
   },
 
   onShow() {
@@ -166,10 +168,14 @@ Page({
         sparkPoints: buildSparkPoints(trend.points, unitLabel),
         recentPoints: buildRecentPoints(trend.points, unitLabel),
         error: "",
+        errorDetail: "",
+        errorRetryLabel: "",
       });
     } catch (error) {
+      const errorState = toErrorState(error, { retryLabel: "重新加载" });
+
       this.setData({
-        error: error.message,
+        ...errorState,
       });
     }
   },
@@ -180,5 +186,9 @@ Page({
     wx.switchTab({
       url: route,
     });
+  },
+
+  retryLastAction() {
+    this.loadTrend();
   },
 });

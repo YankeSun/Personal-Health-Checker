@@ -83,5 +83,9 @@
     </view>
   </view>
 
-  <text wx:if="{{error}}" class="error">{{error}}</text>
+  <view wx:if="{{error}}" class="error-card">
+    <text class="error">{{error}}</text>
+    <text wx:if="{{errorDetail}}" class="error-detail">{{errorDetail}}</text>
+    <button wx:if="{{errorRetryLabel}}" class="ghost-button retry-button" bindtap="retryLastAction">{{errorRetryLabel}}</button>
+  </view>
 </view>

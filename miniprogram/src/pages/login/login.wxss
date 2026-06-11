@@ -101,3 +101,16 @@
   color: #9f1239;
   font-size: 26rpx;
 }
+
+.error-title {
+  display: block;
+  font-weight: 800;
+}
+
+.error-detail {
+  display: block;
+  margin-top: 10rpx;
+  font-size: 22rpx;
+  line-height: 1.45;
+  word-break: break-all;
+}

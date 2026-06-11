@@ -316,9 +316,28 @@
   font-weight: 900;
 }
 
+.error-card {
+  margin-top: 20rpx;
+  border-radius: 28rpx;
+  background: #fff1f2;
+  padding: 22rpx;
+}
+
 .error {
   display: block;
-  margin-top: 20rpx;
   color: #be123c;
   font-size: 26rpx;
+}
+
+.error-detail {
+  display: block;
+  margin-top: 10rpx;
+  color: #9f1239;
+  font-size: 22rpx;
+  line-height: 1.45;
+  word-break: break-all;
+}
+
+.retry-button {
+  margin-top: 18rpx;
 }
