@@ -8,6 +8,8 @@ export const PRODUCT_EVENT_NAMES = {
   loginCompleted: "LOGIN_COMPLETED",
   wechatLoginCompleted: "WECHAT_LOGIN_COMPLETED",
   pageView: "PAGE_VIEW",
+  recordFormStarted: "RECORD_FORM_STARTED",
+  recordSaveAttempted: "RECORD_SAVE_ATTEMPTED",
   dailyRecordSaved: "DAILY_RECORD_SAVED",
   firstRecordSaved: "FIRST_RECORD_SAVED",
   firstCompleteRecordSaved: "FIRST_COMPLETE_RECORD_SAVED",
@@ -61,6 +63,11 @@ export type MiniProgramAlphaSnapshot = {
   usersWithAnyRecord: number;
   usersWithCompleteRecord: number;
   firstCompleteRecordRate: number;
+  recordFormStartedUsers: number;
+  recordFormStartRate: number;
+  recordSaveAttemptUsers: number;
+  recordSaveAttemptRate: number;
+  recordSaveSuccessRate: number;
   nextDayReturnUsers: number;
   nextDayReturnRate: number;
   averageRecordedDaysInFirst7Days: number;
@@ -425,6 +432,8 @@ export async function getMiniProgramAlphaSnapshot(days = 30) {
         in: [
           PRODUCT_EVENT_NAMES.wechatLoginCompleted,
           PRODUCT_EVENT_NAMES.pageView,
+          PRODUCT_EVENT_NAMES.recordFormStarted,
+          PRODUCT_EVENT_NAMES.recordSaveAttempted,
           PRODUCT_EVENT_NAMES.dailyRecordSaved,
           PRODUCT_EVENT_NAMES.firstRecordSaved,
           PRODUCT_EVENT_NAMES.firstCompleteRecordSaved,
@@ -467,6 +476,25 @@ export async function getMiniProgramAlphaSnapshot(days = 30) {
   const newAlphaUsers = uniqueUserIds(
     loginEvents.filter((event) => getMetadataValue(event.metadata, "isNewUser") === true),
   ).size;
+  const recordFormStartedUsers = uniqueUserIds(
+    miniProgramEvents.filter(
+      (event) => event.eventName === PRODUCT_EVENT_NAMES.recordFormStarted,
+    ),
+  ).size;
+  const recordSaveAttemptUserIds = uniqueUserIds(
+    miniProgramEvents.filter(
+      (event) => event.eventName === PRODUCT_EVENT_NAMES.recordSaveAttempted,
+    ),
+  );
+  const recordSaveAttemptUsers = recordSaveAttemptUserIds.size;
+  const recordSavedUserIds = uniqueUserIds(
+    miniProgramEvents.filter(
+      (event) => event.eventName === PRODUCT_EVENT_NAMES.dailyRecordSaved,
+    ),
+  );
+  const recordSaveSuccessUsers = [...recordSaveAttemptUserIds].filter((userId) =>
+    recordSavedUserIds.has(userId),
+  ).length;
   const records = alphaUserIdList.length
     ? await prisma.dailyRecord.findMany({
         where: {
@@ -601,6 +629,34 @@ export async function getMiniProgramAlphaSnapshot(days = 30) {
   const recordedDays = records.length;
   const gates = [
     {
+      label: "记录表单进入率",
+      actual: alphaUsers === 0 ? 0 : roundTo((recordFormStartedUsers / alphaUsers) * 100, 1),
+      target: 80,
+      passed: alphaUsers > 0 && recordFormStartedUsers / alphaUsers >= 0.8,
+    },
+    {
+      label: "记录保存尝试率",
+      actual:
+        recordFormStartedUsers === 0
+          ? 0
+          : roundTo((recordSaveAttemptUsers / recordFormStartedUsers) * 100, 1),
+      target: 60,
+      passed:
+        recordFormStartedUsers > 0 &&
+        recordSaveAttemptUsers / recordFormStartedUsers >= 0.6,
+    },
+    {
+      label: "记录保存成功率",
+      actual:
+        recordSaveAttemptUsers === 0
+          ? 0
+          : roundTo((recordSaveSuccessUsers / recordSaveAttemptUsers) * 100, 1),
+      target: 90,
+      passed:
+        recordSaveAttemptUsers > 0 &&
+        recordSaveSuccessUsers / recordSaveAttemptUsers >= 0.9,
+    },
+    {
       label: "次日回访率",
       actual: alphaUsers === 0 ? 0 : roundTo((nextDayReturnUsers / alphaUsers) * 100, 1),
       target: 25,
@@ -673,25 +729,30 @@ export async function getMiniProgramAlphaSnapshot(days = 30) {
     usersWithCompleteRecord: usersWithCompleteRecord.size,
     firstCompleteRecordRate:
       alphaUsers === 0 ? 0 : roundTo((usersWithCompleteRecord.size / alphaUsers) * 100, 1),
+    recordFormStartedUsers,
+    recordFormStartRate: gates[0].actual,
+    recordSaveAttemptUsers,
+    recordSaveAttemptRate: gates[1].actual,
+    recordSaveSuccessRate: gates[2].actual,
     nextDayReturnUsers,
-    nextDayReturnRate: gates[0].actual,
+    nextDayReturnRate: gates[3].actual,
     averageRecordedDaysInFirst7Days,
     recordedDays,
     weightFilledDays,
-    weightFillRate: gates[2].actual,
+    weightFillRate: gates[5].actual,
     contextTagFilledDays,
-    contextTagFillRate: gates[3].actual,
+    contextTagFillRate: gates[6].actual,
     dashboardViewUsers,
     dashboardViewRate: alphaUsers === 0 ? 0 : roundTo((dashboardViewUsers / alphaUsers) * 100, 1),
     trendViewUsers,
     trendViewRate: alphaUsers === 0 ? 0 : roundTo((trendViewUsers / alphaUsers) * 100, 1),
     payIntentShownUsers,
-    payIntentExposureRate: gates[4].actual,
+    payIntentExposureRate: gates[7].actual,
     payIntentUsers,
-    payIntentRate: gates[5].actual,
-    payIntentClickThroughRate: gates[6].actual,
+    payIntentRate: gates[8].actual,
+    payIntentClickThroughRate: gates[9].actual,
     feedbackUsers,
-    feedbackRate: gates[7].actual,
+    feedbackRate: gates[10].actual,
     averageFeedbackRating,
     topValueCues: countMetadataValues(feedbackEvents, "valueCue"),
     topFrictions: countMetadataValues(feedbackEvents, "friction"),

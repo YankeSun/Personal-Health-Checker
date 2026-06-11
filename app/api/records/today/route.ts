@@ -2,7 +2,10 @@ import { ZodError } from "zod";
 
 import { getCurrentUser } from "@/lib/auth/session";
 import { getTodayRecordByUserId } from "@/lib/services/daily-record-service";
-import { saveDailyRecordWithEvents } from "@/lib/services/record-save-service";
+import {
+  saveDailyRecordWithEvents,
+  trackRecordFormStartedSafely,
+} from "@/lib/services/record-save-service";
 import { jsonError, getZodErrorMessage } from "@/lib/utils/api";
 import { getDateStringInTimezone } from "@/lib/utils/dates";
 import { getDefaultRecordContextTags } from "@/lib/utils/record-context";
@@ -22,6 +25,12 @@ export async function GET(request?: Request) {
 
   const today = getDateStringInTimezone(user.profile.timezone);
   const record = await getTodayRecordByUserId(user.id, user.profile.timezone);
+  await trackRecordFormStartedSafely({
+    userId: user.id,
+    date: today,
+    timezone: user.profile.timezone,
+    request,
+  });
 
   return Response.json({
     record: record ?? {

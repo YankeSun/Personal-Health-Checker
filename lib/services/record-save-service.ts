@@ -20,6 +20,80 @@ type SaveDailyRecordWithEventsInput = {
   request: Request;
 };
 
+function getRecordEventMetadata({
+  date,
+  fields,
+  isToday,
+  request,
+}: {
+  date: string;
+  fields: DailyRecordFieldsInput;
+  isToday: boolean;
+  request?: Request;
+}) {
+  const contextTagCount = countRecordContextTags(fields.contextTags);
+
+  return {
+    date,
+    completedMetrics: [
+      fields.sleepHours,
+      fields.weightKg,
+      fields.waterMl,
+    ].filter((value) => value !== null).length,
+    isToday,
+    contextTagCount,
+    hasContextTags: contextTagCount > 0,
+    platform: getRequestPlatform(request),
+  };
+}
+
+export async function trackRecordFormStartedSafely({
+  userId,
+  date,
+  timezone,
+  request,
+}: {
+  userId: string;
+  date: string;
+  timezone: string;
+  request?: Request;
+}) {
+  const isToday = date === getDateStringInTimezone(timezone);
+
+  await trackProductEventSafely({
+    userId,
+    eventName: PRODUCT_EVENT_NAMES.recordFormStarted,
+    path: isToday ? "/today" : "/history",
+    metadata: {
+      date,
+      isToday,
+      platform: getRequestPlatform(request),
+    },
+  });
+}
+
+export async function trackRecordSaveAttemptedSafely({
+  userId,
+  date,
+  timezone,
+  fields,
+  request,
+}: SaveDailyRecordWithEventsInput) {
+  const isToday = date === getDateStringInTimezone(timezone);
+
+  await trackProductEventSafely({
+    userId,
+    eventName: PRODUCT_EVENT_NAMES.recordSaveAttempted,
+    path: isToday ? "/today" : "/history",
+    metadata: getRecordEventMetadata({
+      date,
+      fields,
+      isToday,
+      request,
+    }),
+  });
+}
+
 export async function saveDailyRecordWithEvents({
   userId,
   date,
@@ -31,6 +105,13 @@ export async function saveDailyRecordWithEvents({
   const todayDate = getDateStringInTimezone(timezone);
   const isToday = date === todayDate;
   const platform = getRequestPlatform(request);
+  await trackRecordSaveAttemptedSafely({
+    userId,
+    date,
+    timezone,
+    fields,
+    request,
+  });
   const record = await upsertDailyRecordByUserId(
     userId,
     {

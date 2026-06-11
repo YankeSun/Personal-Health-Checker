@@ -111,6 +111,9 @@ npm run alpha:phone-session -- --batch Alpha-001 --tester internal-02 --device "
 |---|---|
 | alphaUsers |  |
 | firstCompleteRecordRate |  |
+| recordFormStartRate |  |
+| recordSaveAttemptRate |  |
+| recordSaveSuccessRate |  |
 | nextDayReturnRate |  |
 | averageRecordDaysInFirst7Days |  |
 | weightRecordRate |  |

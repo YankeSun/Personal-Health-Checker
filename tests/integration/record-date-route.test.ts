@@ -20,6 +20,8 @@ vi.mock("@/lib/services/daily-record-service", () => ({
 
 vi.mock("@/lib/services/observability-service", () => ({
   PRODUCT_EVENT_NAMES: {
+    recordFormStarted: "RECORD_FORM_STARTED",
+    recordSaveAttempted: "RECORD_SAVE_ATTEMPTED",
     dailyRecordSaved: "DAILY_RECORD_SAVED",
     firstRecordSaved: "FIRST_RECORD_SAVED",
     firstCompleteRecordSaved: "FIRST_COMPLETE_RECORD_SAVED",
@@ -158,7 +160,20 @@ describe("record-by-date route", () => {
     }, {
       isBackfilled: true,
     });
-    expect(trackProductEventSafely).toHaveBeenCalledTimes(4);
+    expect(trackProductEventSafely).toHaveBeenCalledTimes(5);
+    expect(trackProductEventSafely).toHaveBeenCalledWith({
+      userId: "user_1",
+      eventName: "RECORD_SAVE_ATTEMPTED",
+      path: "/history",
+      metadata: {
+        date: "2026-04-02",
+        completedMetrics: 3,
+        isToday: false,
+        contextTagCount: 3,
+        hasContextTags: true,
+        platform: "wechat_mp",
+      },
+    });
     expect(trackProductEventSafely).toHaveBeenCalledWith({
       userId: "user_1",
       eventName: "DAILY_RECORD_SAVED",

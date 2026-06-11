@@ -6,7 +6,11 @@ import {
   getRecentDailyRecordSummariesByUserId,
 } from "@/lib/services/daily-record-service";
 import { getGoalsByUserId } from "@/lib/services/goals-service";
-import { trackProductPageViewSafely } from "@/lib/services/observability-service";
+import {
+  trackProductEventSafely,
+  PRODUCT_EVENT_NAMES,
+  trackProductPageViewSafely,
+} from "@/lib/services/observability-service";
 import { getReminderFeedByUserId } from "@/lib/services/reminder-service";
 import {
   formatDateLabel,
@@ -52,6 +56,16 @@ export default async function TodayPage({ searchParams }: TodayPageProps) {
       selectedDate,
       isToday,
       }),
+    trackProductEventSafely({
+      userId: user.id,
+      eventName: PRODUCT_EVENT_NAMES.recordFormStarted,
+      path: isToday ? "/today" : "/history",
+      metadata: {
+        date: selectedDate,
+        isToday,
+        platform: "web",
+      },
+    }),
   ]);
   const previousDate =
     selectedDate > bounds.minDate ? shiftDateString(selectedDate, -1) : null;

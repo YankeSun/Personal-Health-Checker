@@ -238,6 +238,9 @@ npm run analytics:miniprogram -- --days=30 --format=markdown --real-device-evide
 
 - `alphaUsers`
 - `firstCompleteRecordRate`
+- `recordFormStartRate`
+- `recordSaveAttemptRate`
+- `recordSaveSuccessRate`
 - `nextDayReturnRate`
 - `averageRecordDaysInFirst7Days`
 - `weightRecordRate`
@@ -255,6 +258,9 @@ npm run analytics:miniprogram -- --days=30 --format=markdown --real-device-evide
 继续进入 beta 规划的最低候选信号：
 
 - 次日回访率 >= 25%
+- 记录表单进入率 >= 80%
+- 记录保存尝试率 >= 60%
+- 记录保存成功率 >= 90%
 - 7 日内平均记录天数 >= 3
 - 体重记录率 >= 50%
 - 背景标签填写率 >= 40%

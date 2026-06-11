@@ -60,6 +60,24 @@ function buildDecisionReview(
 ): DecisionReview {
   const quantitativeGates = [
     {
+      label: "记录表单进入率",
+      actual: `${snapshot.recordFormStartRate}%`,
+      target: ">= 80%",
+      passed: snapshot.recordFormStartRate >= 80,
+    },
+    {
+      label: "记录保存尝试率",
+      actual: `${snapshot.recordSaveAttemptRate}%`,
+      target: ">= 60%",
+      passed: snapshot.recordSaveAttemptRate >= 60,
+    },
+    {
+      label: "记录保存成功率",
+      actual: `${snapshot.recordSaveSuccessRate}%`,
+      target: ">= 90%",
+      passed: snapshot.recordSaveSuccessRate >= 90,
+    },
+    {
       label: "Alpha 用户数",
       actual: snapshot.alphaUsers,
       target: 10,
@@ -172,6 +190,11 @@ function createSampleSnapshot(days: number): AlphaSnapshot {
     usersWithAnyRecord: 8,
     usersWithCompleteRecord: 6,
     firstCompleteRecordRate: 60,
+    recordFormStartedUsers: 9,
+    recordFormStartRate: 90,
+    recordSaveAttemptUsers: 8,
+    recordSaveAttemptRate: 88.9,
+    recordSaveSuccessRate: 100,
     nextDayReturnUsers: 3,
     nextDayReturnRate: 30,
     averageRecordedDaysInFirst7Days: 3.2,
@@ -214,6 +237,24 @@ function createSampleSnapshot(days: number): AlphaSnapshot {
     ],
     decision: "continue_candidate",
     gates: [
+      {
+        label: "记录表单进入率",
+        actual: 90,
+        target: 80,
+        passed: true,
+      },
+      {
+        label: "记录保存尝试率",
+        actual: 88.9,
+        target: 60,
+        passed: true,
+      },
+      {
+        label: "记录保存成功率",
+        actual: 100,
+        target: 90,
+        passed: true,
+      },
       {
         label: "次日回访率",
         actual: 30,
@@ -331,6 +372,9 @@ ${markdownTable([
   ["usersWithAnyRecord", snapshot.usersWithAnyRecord],
   ["usersWithCompleteRecord", snapshot.usersWithCompleteRecord],
   ["firstCompleteRecordRate", `${snapshot.firstCompleteRecordRate}%`],
+  ["recordFormStartRate", `${snapshot.recordFormStartRate}%`],
+  ["recordSaveAttemptRate", `${snapshot.recordSaveAttemptRate}%`],
+  ["recordSaveSuccessRate", `${snapshot.recordSaveSuccessRate}%`],
   ["nextDayReturnRate", `${snapshot.nextDayReturnRate}%`],
   ["averageRecordedDaysInFirst7Days", snapshot.averageRecordedDaysInFirst7Days],
   ["weightFillRate", `${snapshot.weightFillRate}%`],

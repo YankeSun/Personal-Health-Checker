@@ -5,7 +5,10 @@ import {
   deleteDailyRecordByUserAndDate,
   getDailyRecordByUserAndDate,
 } from "@/lib/services/daily-record-service";
-import { saveDailyRecordWithEvents } from "@/lib/services/record-save-service";
+import {
+  saveDailyRecordWithEvents,
+  trackRecordFormStartedSafely,
+} from "@/lib/services/record-save-service";
 import { getZodErrorMessage, jsonError } from "@/lib/utils/api";
 import { getDefaultRecordContextTags } from "@/lib/utils/record-context";
 import { getRecordQualityWarnings } from "@/lib/utils/record-quality";
@@ -68,6 +71,12 @@ export async function GET(request: Request, context: RouteContext) {
   }
 
   const record = await getDailyRecordByUserAndDate(user.id, parsedDate.date);
+  await trackRecordFormStartedSafely({
+    userId: user.id,
+    date: parsedDate.date,
+    timezone: user.profile.timezone,
+    request,
+  });
 
   return Response.json({
     record: record ?? {

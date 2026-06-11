@@ -178,6 +178,24 @@ describe("observability-service", () => {
       },
       {
         userId: "user_1",
+        eventName: PRODUCT_EVENT_NAMES.recordFormStarted,
+        path: "/today",
+        metadata: {
+          platform: "wechat_mp",
+        },
+        createdAt: new Date("2026-04-01T08:05:00.000Z"),
+      },
+      {
+        userId: "user_1",
+        eventName: PRODUCT_EVENT_NAMES.recordSaveAttempted,
+        path: "/today",
+        metadata: {
+          platform: "wechat_mp",
+        },
+        createdAt: new Date("2026-04-02T07:59:00.000Z"),
+      },
+      {
+        userId: "user_1",
         eventName: PRODUCT_EVENT_NAMES.dailyRecordSaved,
         path: "/today",
         metadata: {
@@ -278,6 +296,11 @@ describe("observability-service", () => {
       usersWithAnyRecord: 1,
       usersWithCompleteRecord: 1,
       firstCompleteRecordRate: 100,
+      recordFormStartedUsers: 1,
+      recordFormStartRate: 100,
+      recordSaveAttemptUsers: 1,
+      recordSaveAttemptRate: 100,
+      recordSaveSuccessRate: 100,
       nextDayReturnUsers: 1,
       nextDayReturnRate: 100,
       averageRecordedDaysInFirst7Days: 3,

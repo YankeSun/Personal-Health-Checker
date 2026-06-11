@@ -18,6 +18,8 @@ vi.mock("@/lib/services/daily-record-service", () => ({
 
 vi.mock("@/lib/services/observability-service", () => ({
   PRODUCT_EVENT_NAMES: {
+    recordFormStarted: "RECORD_FORM_STARTED",
+    recordSaveAttempted: "RECORD_SAVE_ATTEMPTED",
     dailyRecordSaved: "DAILY_RECORD_SAVED",
     firstRecordSaved: "FIRST_RECORD_SAVED",
     firstCompleteRecordSaved: "FIRST_COMPLETE_RECORD_SAVED",
@@ -150,6 +152,19 @@ describe("today record route", () => {
     expect(data.record.waterMl).toBe(2000);
     expect(data.record.contextTags.energyLevel).toBe("GOOD");
     expect(data.qualityWarnings).toEqual([]);
+    expect(trackProductEventSafely).toHaveBeenCalledWith({
+      userId: "user_1",
+      eventName: "RECORD_SAVE_ATTEMPTED",
+      path: "/today",
+      metadata: {
+        date: "2026-04-03",
+        completedMetrics: 3,
+        isToday: true,
+        contextTagCount: 3,
+        hasContextTags: true,
+        platform: "web",
+      },
+    });
     expect(trackProductEventSafely).toHaveBeenCalledWith({
       userId: "user_1",
       eventName: "DAILY_RECORD_SAVED",
