@@ -145,6 +145,9 @@ describe("miniprogram structure", () => {
     expect(databaseDoctorScript).toContain("--database-url-env");
     expect(databaseDoctorScript).toContain("docker compose up -d postgres");
     expect(alphaReadinessScript).toContain("launch:check");
+    expect(alphaReadinessScript).toContain("runGitWorkingTreeCheck");
+    expect(alphaReadinessScript).toContain("Git working tree");
+    expect(alphaReadinessScript).toContain("uncommitted change(s)");
     expect(alphaReadinessScript).toContain("miniprogram:check");
     expect(alphaReadinessScript).toContain("miniprogram:check:experience");
     expect(alphaReadinessScript).toContain("research:check");

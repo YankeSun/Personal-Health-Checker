@@ -32,6 +32,35 @@ function runCommand(label: string, args: string[]): ReadinessCheck {
   };
 }
 
+function runGitWorkingTreeCheck(): ReadinessCheck {
+  const result = spawnSync("git", ["status", "--short"], {
+    cwd: process.cwd(),
+    encoding: "utf8",
+    maxBuffer: 1024 * 1024,
+  });
+  const output = [result.stdout, result.stderr].filter(Boolean).join("\n").trim();
+
+  if (result.status !== 0) {
+    return {
+      label: "Git working tree",
+      command: ["git", "status", "--short"],
+      status: "fail",
+      summary: output || `git status failed with exit=${result.status ?? "unknown"}`,
+      output,
+    };
+  }
+
+  const changedFiles = output.split(/\r?\n/).filter(Boolean);
+
+  return {
+    label: "Git working tree",
+    command: ["git", "status", "--short"],
+    status: changedFiles.length === 0 ? "pass" : "fail",
+    summary: changedFiles.length === 0 ? "clean" : `${changedFiles.length} uncommitted change(s)`,
+    output,
+  };
+}
+
 function summarizeOutput(label: string, output: string, exitCode: number) {
   if (label === "Launch readiness") {
     const match = output.match(/Launch readiness:\s*(\d+) blocker\(s\),\s*(\d+) warning\(s\)/);
@@ -160,6 +189,12 @@ function manualActionsFor(check: ReadinessCheck) {
     ];
   }
 
+  if (check.status === "fail" && check.label === "Git working tree") {
+    return [
+      "Git working tree: Commit and push all intended changes, or stash unrelated local files, before generating Day 0 evidence or uploading an Experience build.",
+    ];
+  }
+
   return [];
 }
 
@@ -170,6 +205,7 @@ if (includeVercel) {
 }
 
 const checks = [
+  runGitWorkingTreeCheck(),
   classifyLaunchReadiness(runCommand("Launch readiness", launchReadinessArgs)),
   runCommand("Mini program structure", ["run", "miniprogram:check"]),
   runCommand("Research evidence kit", ["run", "research:check"]),

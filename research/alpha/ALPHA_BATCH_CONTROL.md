@@ -28,6 +28,7 @@ Do not invite external users until every P0 gate is green.
 
 | Gate | Evidence | Status | Owner | Notes |
 |---|---|---|---|---|
+| Git working tree clean | `npm run alpha:readiness -- --vercel --remote` includes `Git working tree: clean` | blocked / ready |  |  |
 | Local evidence pack generated | `npm run alpha:evidence-pack -- --batch Alpha-001 --vercel --remote` | blocked / ready |  |  |
 | Experience gate passed | `npm run alpha:gate:experience -- --batch Alpha-001` | blocked / ready |  |  |
 | Alpha readiness summary reviewed | `npm run alpha:readiness -- --vercel --remote` output | blocked / ready |  |  |

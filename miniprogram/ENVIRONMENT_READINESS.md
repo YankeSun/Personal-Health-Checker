@@ -39,6 +39,7 @@ npm run alpha:gate:experience -- --batch Alpha-001
 
 `launch:check` 会检查：
 
+- 当前 Git working tree 是否干净，确保体验版能追溯到明确 commit
 - Vercel 项目是否已 link 到当前仓库
 - 小程序 `apiBaseUrl` 是否是 HTTPS
 - `project.config.json` 是否还是游客 AppID
@@ -102,6 +103,7 @@ npm run miniprogram:check:experience
 
 | 失败项 | 含义 | 下一步 |
 |---|---|---|
+| `Git working tree` | 当前还有未提交文件，体验版证据无法可靠对应到一个 commit | 先 `git commit` / `git push`，或 stash 无关本地文件，再生成 preflight / 上传体验版 |
 | `project.config.json uses a real AppID` | 当前仍是 `touristappid` | 到微信公众平台复制真实 AppID，写入 `project.config.json` |
 | `WECHAT_MINI_PROGRAM_APP_ID` | 后端不知道当前小程序 AppID | 在 Vercel 环境变量中配置 |
 | `WECHAT_MINI_PROGRAM_APP_SECRET` | 后端无法完成 `code2Session` | 在 Vercel 环境变量中配置 |
