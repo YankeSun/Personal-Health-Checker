@@ -75,9 +75,10 @@ npm run miniprogram:smoke -- --base-url http://localhost:3000
 
 ```bash
 npm run analytics:miniprogram -- --days=30
+npm run analytics:miniprogram -- --days=30 --format=markdown --real-device-evidence --user-quotes --competitor-fieldwork --out research/alpha/reports/Alpha-001-day10.md
 ```
 
-报告会输出次日回访率、7 日平均记录天数、体重填写率、上下文标签填写率、Dashboard / Trends 使用率、付费意愿点击率、alpha 反馈提交率和 `decision`。`continue_candidate` 只代表数据达标，仍需要反馈文本能说明产品价值后再规划 beta。
+报告会输出次日回访率、7 日平均记录天数、体重填写率、上下文标签填写率、Dashboard / Trends 使用率、付费意愿点击率、alpha 反馈提交率、`decision` 和 `decisionReview`。`continue_candidate` 只代表数据达标，`decisionReview.recommendation` 仍会检查真机证据、用户原话和竞品真机样本。
 
 ## 2. 微信后台准备
 

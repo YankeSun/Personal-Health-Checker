@@ -217,6 +217,14 @@ describe("miniprogram structure", () => {
     expect(reportScript).toContain("--out");
     expect(reportScript).toContain("--sample");
     expect(reportScript).toContain("SAMPLE REPORT");
+    expect(reportScript).toContain("buildDecisionReview");
+    expect(reportScript).toContain("decisionReview");
+    expect(reportScript).toContain("--real-device-evidence");
+    expect(reportScript).toContain("--user-quotes");
+    expect(reportScript).toContain("--competitor-fieldwork");
+    expect(reportScript).toContain("Release recommendation");
+    expect(reportScript).toContain("Evidence Checklist");
+    expect(reportScript).toContain("beta_candidate");
     expect(reportScript).toContain("db:doctor");
     expect(reportScript).toContain("--verbose");
     expect(validationPlan).toContain("npm run analytics:miniprogram");

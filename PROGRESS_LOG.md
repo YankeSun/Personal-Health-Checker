@@ -244,6 +244,7 @@ npm run analytics:report -- --days=30
 
 ## 2026-06-12
 
+- 收紧小程序 Alpha 复盘决策报告：`analytics:miniprogram` 新增 `decisionReview`，把 10 人样本、首次完整记录率、留存、体重 / 背景填写、付费意向、反馈率和人工证据标记汇总成 `needs_data / hold_and_improve / beta_candidate` 建议；Day 10 文档命令同步支持 `--real-device-evidence --user-quotes --competitor-fieldwork`，避免只凭 `continue_candidate` 误判可以商业化。
 - 强化小程序真机错误态与重试：小程序请求 helper 现在会把 401、HTTP 非 2xx 和网络 / request 合法域名失败转成可读诊断；Today、Dashboard、Trends、Me 和登录页会展示错误详情，加载失败可重新加载，Today 保存失败可重新保存，便于 Day 1 真机验收快速定位 AppID、域名、API 或数据库问题。
 - 整合 sub-agent 评审为小程序 Alpha 执行简报：新增 `MINIPROGRAM_ALPHA_EXECUTION_BRIEF.md`，明确当前仍是体验版发放前配置与验收阶段，不可宣称小程序上线 / 商业化完成；文档沉淀竞品真机证据缺口、P0 blocker、7 天最短路径和下一轮最值得做的 3 个代码改动。
 - 增加本地 alpha 证据包生成器：新增 `npm run alpha:evidence-pack -- --batch Alpha-001`，一键生成 preflight、internal-01 / internal-02 真机会话、Day 10 样例报告和本地索引，全部落到已忽略的私有证据目录，减少体验版前手工串命令漏步骤。

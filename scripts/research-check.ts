@@ -99,6 +99,8 @@ for (const snippet of [
   "alpha:preflight",
   "alpha:phone-session",
   "Alpha-001-day10.md",
+  "--real-device-evidence",
+  "decisionReview.recommendation",
   "Real AppID configured",
   "2 real-device sessions passed",
   "npm run analytics:miniprogram -- --days=30",

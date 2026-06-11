@@ -212,6 +212,12 @@ npm run analytics:miniprogram -- --days=30
 npm run analytics:miniprogram -- --days=30 --format=markdown --out research/alpha/reports/Alpha-001-day10.md
 ```
 
+如果已经补齐 2 台真机验收、3-5 条用户原话和微信竞品真机样本，可以显式带上人工证据标记，让报告输出更接近最终 beta 判断：
+
+```bash
+npm run analytics:miniprogram -- --days=30 --format=markdown --real-device-evidence --user-quotes --competitor-fieldwork --out research/alpha/reports/Alpha-001-day10.md
+```
+
 如果报告生成失败，先运行 `npm run db:doctor -- --timeout-ms 5000` 定位当前数据库连接；需要查看底层错误时再给报告命令追加 `--verbose`。
 
 如果只是想在没有数据库时预览 Day 10 报告版式，可以运行 `npm run analytics:miniprogram -- --sample --format=markdown --out /tmp/alpha-sample.md`。样例报告不能作为真实复盘证据。
@@ -229,6 +235,8 @@ npm run analytics:miniprogram -- --days=30 --format=markdown --out research/alph
 - `payIntentRate`
 - `feedbackRate`
 - `decision`
+- `decisionReview.recommendation`
+- `decisionReview.blockers`
 
 继续进入 beta 规划的最低候选信号：
 

@@ -85,6 +85,7 @@ Paste the Day 10 summary from:
 ```bash
 npm run analytics:miniprogram -- --days=30
 npm run analytics:miniprogram -- --days=30 --format=markdown --out research/alpha/reports/Alpha-001-day10.md
+npm run analytics:miniprogram -- --days=30 --format=markdown --real-device-evidence --user-quotes --competitor-fieldwork --out research/alpha/reports/Alpha-001-day10.md
 ```
 
 Before uploading an Experience build, generate the Day 0 preflight report:
@@ -115,6 +116,8 @@ npm run alpha:phone-session -- --batch Alpha-001 --tester internal-02 --device "
 | trendsViewRate |  |
 | payIntentRate |  |
 | feedbackRate |  |
+| decisionReview.recommendation |  |
+| decisionReview.blockers |  |
 | decision |  |
 
 ## 7. Decision Rule
