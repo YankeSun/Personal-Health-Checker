@@ -189,4 +189,5 @@ mkdirSync(path.dirname(resolvedIndexPath), { recursive: true });
 writeFileSync(resolvedIndexPath, index, "utf8");
 
 console.log(`[alpha-pack] Experience build gate: ${preflightGate.state}`);
+console.log(`[alpha-pack] Release note: ${releaseGuidance}`);
 console.log(`[alpha-pack] Evidence pack index written to ${indexPath}`);
