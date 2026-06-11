@@ -5,8 +5,8 @@ import { getProfileByUserId, updateProfileByUserId } from "@/lib/services/profil
 import { jsonError, getZodErrorMessage } from "@/lib/utils/api";
 import { profileSchema } from "@/lib/validations/profile";
 
-export async function GET() {
-  const user = await getCurrentUser();
+export async function GET(request?: Request) {
+  const user = await getCurrentUser(request);
 
   if (!user) {
     return jsonError("未登录", 401);
@@ -31,7 +31,7 @@ export async function GET() {
 }
 
 export async function PATCH(request: Request) {
-  const user = await getCurrentUser();
+  const user = await getCurrentUser(request);
 
   if (!user) {
     return jsonError("未登录", 401);

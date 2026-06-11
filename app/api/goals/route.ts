@@ -5,8 +5,8 @@ import { getGoalsByUserId, upsertGoalsByUserId } from "@/lib/services/goals-serv
 import { jsonError, getZodErrorMessage } from "@/lib/utils/api";
 import { goalsSchema } from "@/lib/validations/goals";
 
-export async function GET() {
-  const user = await getCurrentUser();
+export async function GET(request?: Request) {
+  const user = await getCurrentUser(request);
 
   if (!user) {
     return jsonError("未登录", 401);
@@ -18,7 +18,7 @@ export async function GET() {
 }
 
 export async function PUT(request: Request) {
-  const user = await getCurrentUser();
+  const user = await getCurrentUser(request);
 
   if (!user) {
     return jsonError("未登录", 401);

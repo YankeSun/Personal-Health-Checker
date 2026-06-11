@@ -244,6 +244,7 @@ npm run analytics:report -- --days=30
 
 ## 2026-06-12
 
+- 扩大小程序 alpha API 兼容面：`profile/goals/trends/export` 也改为支持 `Authorization: Bearer`，加上上一轮的 `records/dashboard` 后，最小小程序壳需要的主要数据接口已可复用现有后端；Web Cookie 路径保持不变。
 - 推进小程序 alpha 技术底座第一步：新增 `WechatIdentity`、`POST /api/mp/auth/wechat-login` 和 Bearer Session 兼容；小程序登录返回自定义 token，不下发微信 `session_key`，`records/dashboard` API 已可通过 `Authorization: Bearer` 访问，Web Cookie 登录不受影响。
 - 推进 Web 轻体重管理验证版第四步：History 月度回看新增“体重背景”摘要和每日背景标签列，让用户能从月度明细回看体重记录背后的饮食、活动和称重时段线索；仍保持为记录辅助信息，不做因果判断。
 - 推进 Web 轻体重管理验证版第三步：Trends 体重趋势新增“体重背景回看”，统计当前窗口中带有背景标签的体重记录天数和最常见背景；睡眠/饮水趋势不展示背景摘要，继续避免泛健康分析和因果化解读。

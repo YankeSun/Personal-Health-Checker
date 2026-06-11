@@ -52,7 +52,7 @@ function escapeCsvCell(value: string | number | null) {
 }
 
 export async function GET(request: Request) {
-  const user = await getCurrentUser();
+  const user = await getCurrentUser(request);
 
   if (!user) {
     return jsonError("未登录", 401);
