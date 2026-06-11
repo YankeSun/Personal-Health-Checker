@@ -156,6 +156,19 @@ npm run miniprogram:check:remote
 npm run miniprogram:smoke:local
 ```
 
+如果 smoke 卡在 database health，可以先诊断当前 `DATABASE_URL` 的来源和可达性：
+
+```bash
+npm run db:doctor
+```
+
+如果你想让本地 smoke 使用 `.env.local` 里的另一个数据库变量，可以指定变量名，脚本只会打印 host，不会打印连接串：
+
+```bash
+npm run db:doctor -- --database-url-env DATABASE_URL_UNPOOLED
+npm run miniprogram:smoke:local -- --database-url-env DATABASE_URL_UNPOOLED
+```
+
 如果已有后端服务在运行，也可以指定 API 地址：
 
 ```bash

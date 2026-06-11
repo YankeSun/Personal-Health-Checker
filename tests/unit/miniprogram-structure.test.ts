@@ -51,7 +51,14 @@ describe("miniprogram structure", () => {
       path.join(projectRoot, "scripts", "miniprogram-check.ts"),
       "utf8",
     );
+    const databaseDoctorScript = readFileSync(
+      path.join(projectRoot, "scripts", "database-doctor.ts"),
+      "utf8",
+    );
 
+    expect(packageJson.scripts["db:doctor"]).toBe(
+      "tsx scripts/database-doctor.ts",
+    );
     expect(packageJson.scripts["miniprogram:check"]).toBe(
       "tsx scripts/miniprogram-check.ts",
     );
@@ -86,6 +93,9 @@ describe("miniprogram structure", () => {
     expect(checkScript).toContain("describeRemoteError");
     expect(checkScript).toContain("url=${healthUrl}");
     expect(checkScript).toContain("mockLoginEnabled");
+    expect(databaseDoctorScript).toContain("resolveNextLikeEnvValue");
+    expect(databaseDoctorScript).toContain("--database-url-env");
+    expect(databaseDoctorScript).toContain("docker compose up -d postgres");
   });
 
   it("documents environment readiness checks for mini program launch prep", () => {
@@ -132,6 +142,7 @@ describe("miniprogram structure", () => {
     expect(localSmokeScript).toContain("WECHAT_MINI_PROGRAM_MOCK_LOGIN_ENABLED");
     expect(localSmokeScript).toContain('"run", "dev"');
     expect(localSmokeScript).toContain("--cleanup");
+    expect(localSmokeScript).toContain("--database-url-env");
     expect(localSmokeScript).toContain("/api/health");
     expect(localSmokeScript).toContain("database=");
   });

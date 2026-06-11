@@ -115,6 +115,19 @@ npm run miniprogram:smoke:local
 
 它会自动启动本地 Next 服务、设置 `WECHAT_MINI_PROGRAM_MOCK_LOGIN_ENABLED=true`、等待 `/api/health`、跑登录到反馈的主路径，并默认删除 smoke 账号。
 
+如果 `/api/health` 卡在 `database=error` 或 `health=degraded`，先跑：
+
+```bash
+npm run db:doctor
+```
+
+如果当前 `.env.local` 默认数据库不可达，但同一个文件里有可用的备用连接，可以让 smoke 使用指定变量名：
+
+```bash
+npm run db:doctor -- --database-url-env DATABASE_URL_UNPOOLED
+npm run miniprogram:smoke:local -- --database-url-env DATABASE_URL_UNPOOLED
+```
+
 如果已经有 local 或 preview API 在运行，也可以直接指定地址：
 
 ```bash

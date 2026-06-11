@@ -10,6 +10,7 @@
     "lint": "eslint .",
     "test": "vitest run",
     "test:watch": "vitest",
+    "db:doctor": "tsx scripts/database-doctor.ts",
     "smoke": "bash scripts/smoke.sh",
     "analytics:report": "tsx scripts/usage-report.ts",
     "analytics:miniprogram": "tsx scripts/miniprogram-alpha-report.ts",

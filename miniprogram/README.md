@@ -34,6 +34,8 @@ npm run miniprogram:smoke:local
 
 这个命令会临时启动本地 Next 服务、开启内部 mock 登录、跑完整小程序后端主路径，并在结束后删除 smoke 账号。
 
+如果 smoke 卡在数据库 health，可以先跑 `npm run db:doctor`；如果需要使用备用数据库变量，可以追加 `--database-url-env DATABASE_URL_UNPOOLED`。
+
 如果已经有 local 或 preview API 在运行，也可以直接指定地址：
 
 ```bash

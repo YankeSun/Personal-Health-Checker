@@ -1,10 +1,17 @@
 import { spawn, type ChildProcess } from "node:child_process";
 import { setTimeout as delay } from "node:timers/promises";
 
+import {
+  describeDatabaseUrl,
+  getEnvFileValue,
+  resolveNextLikeEnvValue,
+} from "./env-diagnostics";
+
 const host = getArgValue("--host") ?? "127.0.0.1";
 const port = Number(getArgValue("--port") ?? process.env.MINIPROGRAM_SMOKE_PORT ?? 3300);
 const timeoutMs = Number(getArgValue("--timeout-ms") ?? 60_000);
 const mockCode = getArgValue("--mock-code") ?? `mock:alpha-local-smoke-${Date.now()}`;
+const databaseUrlEnvKey = getArgValue("--database-url-env");
 const shouldCleanup = !process.argv.includes("--no-cleanup");
 const npmCommand = process.platform === "win32" ? "npm.cmd" : "npm";
 const baseUrl = `http://${host}:${port}`;
@@ -24,8 +31,49 @@ function printStep(message: string) {
   console.log(`[mini-local-smoke] ${message}`);
 }
 
+function getServerEnv() {
+  const env: NodeJS.ProcessEnv = {
+    ...process.env,
+    WECHAT_MINI_PROGRAM_MOCK_LOGIN_ENABLED: "true",
+  };
+
+  if (databaseUrlEnvKey) {
+    const databaseUrl = process.env[databaseUrlEnvKey] ?? getEnvFileValue(databaseUrlEnvKey).value;
+
+    if (!databaseUrl) {
+      throw new Error(`--database-url-env ${databaseUrlEnvKey} was provided, but no value was found`);
+    }
+
+    env.DATABASE_URL = databaseUrl;
+  }
+
+  return env;
+}
+
+function printDatabaseTarget(env: NodeJS.ProcessEnv) {
+  const resolved = env.DATABASE_URL
+    ? {
+        value: env.DATABASE_URL,
+        source: databaseUrlEnvKey ? `--database-url-env ${databaseUrlEnvKey}` : "process.env",
+      }
+    : resolveNextLikeEnvValue("DATABASE_URL");
+  const database = describeDatabaseUrl(resolved.value);
+
+  printStep(
+    `database target source=${resolved.source ?? "missing"}, host=${database.host}, database=${database.database}`,
+  );
+
+  if (database.isLocal) {
+    printStep("local database target detected; if it is not running, start Postgres before smoke");
+  } else if (resolved.value) {
+    printStep("remote database target detected; network, Neon status, or SSL settings can block local smoke");
+  }
+}
+
 function startServer() {
   printStep(`starting Next dev server at ${baseUrl}`);
+  const serverEnv = getServerEnv();
+  printDatabaseTarget(serverEnv);
 
   serverProcess = spawn(
     npmCommand,
@@ -33,10 +81,7 @@ function startServer() {
     {
       cwd: process.cwd(),
       detached: process.platform !== "win32",
-      env: {
-        ...process.env,
-        WECHAT_MINI_PROGRAM_MOCK_LOGIN_ENABLED: "true",
-      },
+      env: serverEnv,
       stdio: ["ignore", "pipe", "pipe"],
     },
   );
@@ -123,10 +168,7 @@ async function runSmoke() {
   await new Promise<void>((resolve, reject) => {
     const smoke = spawn(npmCommand, args, {
       cwd: process.cwd(),
-      env: {
-        ...process.env,
-        WECHAT_MINI_PROGRAM_MOCK_LOGIN_ENABLED: "true",
-      },
+      env: getServerEnv(),
       stdio: "inherit",
     });
 
