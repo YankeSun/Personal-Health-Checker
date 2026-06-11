@@ -7,6 +7,7 @@ import {
 } from "@/lib/services/daily-record-service";
 import { jsonError, getZodErrorMessage } from "@/lib/utils/api";
 import { getDateStringInTimezone } from "@/lib/utils/dates";
+import { getDefaultRecordContextTags } from "@/lib/utils/record-context";
 import { dailyRecordInputSchema } from "@/lib/validations/daily-record";
 
 export async function GET() {
@@ -29,6 +30,7 @@ export async function GET() {
       sleepHours: null,
       weightKg: null,
       waterMl: null,
+      contextTags: getDefaultRecordContextTags(),
     },
   });
 }

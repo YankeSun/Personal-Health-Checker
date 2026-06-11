@@ -1,8 +1,26 @@
 import { z } from "zod";
 
+import {
+  ACTIVITY_LEVEL_VALUES,
+  DIET_TAG_VALUES,
+  ENERGY_LEVEL_VALUES,
+  WEIGH_TIMING_VALUES,
+  normalizeRecordContextTags,
+} from "@/lib/utils/record-context";
+
 export const dailyRecordDateSchema = z
   .string()
   .regex(/^\d{4}-\d{2}-\d{2}$/, "日期格式不正确");
+
+export const dailyRecordContextTagsSchema = z
+  .object({
+    dietTags: z.array(z.enum(DIET_TAG_VALUES)).max(3, "饮食状态最多选择 3 项").optional(),
+    activityLevel: z.enum(ACTIVITY_LEVEL_VALUES).nullable().optional(),
+    energyLevel: z.enum(ENERGY_LEVEL_VALUES).nullable().optional(),
+    weighTiming: z.enum(WEIGH_TIMING_VALUES).nullable().optional(),
+  })
+  .optional()
+  .transform((value) => normalizeRecordContextTags(value));
 
 const dailyRecordFieldsObjectSchema = z.object({
   sleepHours: z
@@ -21,6 +39,7 @@ const dailyRecordFieldsObjectSchema = z.object({
     .min(0, "饮水量不能小于 0 ml")
     .max(20000, "饮水量不能超过 20000 ml")
     .nullable(),
+  contextTags: dailyRecordContextTagsSchema,
 });
 
 function withAtLeastOneMetric<

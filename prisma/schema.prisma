@@ -103,6 +103,7 @@ model DailyRecord {
   sleepHours Decimal? @db.Decimal(4, 2)
   weightKg   Decimal? @db.Decimal(5, 2)
   waterMl    Int?
+  contextTags Json?
   createdAt  DateTime @default(now())
   updatedAt  DateTime @updatedAt
   user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)

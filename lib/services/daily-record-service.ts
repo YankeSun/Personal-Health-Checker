@@ -9,6 +9,10 @@ import {
   shiftDateString,
   storageDateToDateString,
 } from "@/lib/utils/dates";
+import {
+  type RecordContextTags,
+  normalizeRecordContextTags,
+} from "@/lib/utils/record-context";
 
 export type DailyRecordView = {
   id: string;
@@ -17,6 +21,7 @@ export type DailyRecordView = {
   weightKg: number | null;
   waterMl: number | null;
   isBackfilled: boolean;
+  contextTags: RecordContextTags;
 };
 
 export type DailyRecordSummaryView = {
@@ -56,6 +61,7 @@ function serializeDailyRecord(record: {
   weightKg: Prisma.Decimal | number | null;
   waterMl: number | null;
   isBackfilled: boolean;
+  contextTags?: Prisma.JsonValue | null;
 }) {
   return {
     id: record.id,
@@ -64,6 +70,7 @@ function serializeDailyRecord(record: {
     weightKg: record.weightKg === null ? null : Number(record.weightKg),
     waterMl: record.waterMl,
     isBackfilled: record.isBackfilled,
+    contextTags: normalizeRecordContextTags(record.contextTags),
   } satisfies DailyRecordView;
 }
 
@@ -252,12 +259,14 @@ export async function upsertDailyRecordByUserId(
       sleepHours: input.sleepHours,
       weightKg: input.weightKg,
       waterMl: input.waterMl,
+      contextTags: input.contextTags as Prisma.InputJsonValue,
       isBackfilled: options?.isBackfilled ?? false,
     },
     update: {
       sleepHours: input.sleepHours,
       weightKg: input.weightKg,
       waterMl: input.waterMl,
+      contextTags: input.contextTags as Prisma.InputJsonValue,
       isBackfilled: options?.isBackfilled ?? false,
     },
   });

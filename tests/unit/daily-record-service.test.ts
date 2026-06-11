@@ -21,6 +21,13 @@ vi.mock("@/lib/db", () => ({
   },
 }));
 
+const emptyContextTags = {
+  dietTags: [],
+  activityLevel: null,
+  energyLevel: null,
+  weighTiming: null,
+};
+
 describe("daily-record-service", () => {
   beforeEach(() => {
     vi.clearAllMocks();
@@ -56,6 +63,7 @@ describe("daily-record-service", () => {
       weightKg: 63.2,
       waterMl: 1800,
       isBackfilled: false,
+      contextTags: emptyContextTags,
     });
   });
 
@@ -68,6 +76,12 @@ describe("daily-record-service", () => {
       weightKg: new Prisma.Decimal("64.10"),
       waterMl: 2100,
       isBackfilled: true,
+      contextTags: {
+        dietTags: ["LIGHT"],
+        activityLevel: "HIGH",
+        energyLevel: "GOOD",
+        weighTiming: "MORNING",
+      },
       createdAt: new Date(),
       updatedAt: new Date(),
     });
@@ -77,6 +91,12 @@ describe("daily-record-service", () => {
       sleepHours: 6.8,
       weightKg: 64.1,
       waterMl: 2100,
+      contextTags: {
+        dietTags: ["LIGHT"],
+        activityLevel: "HIGH",
+        energyLevel: "GOOD",
+        weighTiming: "MORNING",
+      },
     }, {
       isBackfilled: true,
     });
@@ -94,18 +114,31 @@ describe("daily-record-service", () => {
         sleepHours: 6.8,
         weightKg: 64.1,
         waterMl: 2100,
+        contextTags: {
+          dietTags: ["LIGHT"],
+          activityLevel: "HIGH",
+          energyLevel: "GOOD",
+          weighTiming: "MORNING",
+        },
         isBackfilled: true,
       },
       update: {
         sleepHours: 6.8,
         weightKg: 64.1,
         waterMl: 2100,
+        contextTags: {
+          dietTags: ["LIGHT"],
+          activityLevel: "HIGH",
+          energyLevel: "GOOD",
+          weighTiming: "MORNING",
+        },
         isBackfilled: true,
       },
     });
     expect(record.sleepHours).toBe(6.8);
     expect(record.weightKg).toBe(64.1);
     expect(record.isBackfilled).toBe(true);
+    expect(record.contextTags.dietTags).toEqual(["LIGHT"]);
   });
 
   it("loads records within a date range in ascending order", async () => {
@@ -158,6 +191,7 @@ describe("daily-record-service", () => {
         weightKg: null,
         waterMl: 1800,
         isBackfilled: false,
+        contextTags: emptyContextTags,
       },
       {
         id: "record_2",
@@ -166,6 +200,7 @@ describe("daily-record-service", () => {
         weightKg: 63.1,
         waterMl: 2000,
         isBackfilled: true,
+        contextTags: emptyContextTags,
       },
     ]);
   });

@@ -15,6 +15,7 @@ import {
   getEditableRecordDateBounds,
   shiftDateString,
 } from "@/lib/utils/dates";
+import { getDefaultRecordContextTags } from "@/lib/utils/record-context";
 import { toDisplaySleep, toDisplayWater, toDisplayWeight } from "@/lib/utils/units";
 import { normalizeRecordDateForTimezone } from "@/lib/validations/record-date";
 
@@ -68,6 +69,7 @@ export default async function TodayPage({ searchParams }: TodayPageProps) {
         sleepHours: toDisplaySleep(record?.sleepHours ?? null),
         weight: toDisplayWeight(record?.weightKg ?? null, profile.weightUnit),
         water: toDisplayWater(record?.waterMl ?? null, profile.waterUnit),
+        contextTags: record?.contextTags ?? getDefaultRecordContextTags(),
         weightUnit: profile.weightUnit,
         waterUnit: profile.waterUnit,
         reminderEnabled: profile.reminderEnabled,

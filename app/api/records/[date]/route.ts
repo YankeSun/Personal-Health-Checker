@@ -13,6 +13,10 @@ import {
 } from "@/lib/services/observability-service";
 import { getZodErrorMessage, jsonError } from "@/lib/utils/api";
 import { getDateStringInTimezone } from "@/lib/utils/dates";
+import {
+  countRecordContextTags,
+  getDefaultRecordContextTags,
+} from "@/lib/utils/record-context";
 import { getRecordQualityWarnings } from "@/lib/utils/record-quality";
 import { dailyRecordFieldsSchema } from "@/lib/validations/daily-record";
 import {
@@ -81,6 +85,7 @@ export async function GET(_: Request, context: RouteContext) {
       weightKg: null,
       waterMl: null,
       isBackfilled: false,
+      contextTags: getDefaultRecordContextTags(),
     },
     qualityWarnings: record
       ? getRecordQualityWarnings({
@@ -128,6 +133,7 @@ export async function PUT(request: Request, context: RouteContext) {
       weightKg: record.weightKg,
       waterMl: record.waterMl,
     });
+    const contextTagCount = countRecordContextTags(record.contextTags);
 
     await trackProductEventSafely({
       userId: user.id,
@@ -138,8 +144,23 @@ export async function PUT(request: Request, context: RouteContext) {
         completedMetrics,
         isToday,
         isBackfilled: record.isBackfilled,
+        contextTagCount,
+        hasContextTags: contextTagCount > 0,
       },
     });
+
+    if (contextTagCount > 0) {
+      await trackProductEventSafely({
+        userId: user.id,
+        eventName: PRODUCT_EVENT_NAMES.contextTagsSaved,
+        path: isToday ? "/today" : "/history",
+        metadata: {
+          date: parsedDate.date,
+          contextTagCount,
+          isToday,
+        },
+      });
+    }
 
     if (!milestones.hasAnyRecord) {
       await trackProductEventSafely({

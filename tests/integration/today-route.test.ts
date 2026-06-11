@@ -43,6 +43,12 @@ describe("today record route", () => {
       sleepHours: 7.2,
       weightKg: 63.4,
       waterMl: 1900,
+      contextTags: {
+        dietTags: ["NORMAL"],
+        activityLevel: "NORMAL",
+        energyLevel: null,
+        weighTiming: "MORNING",
+      },
     });
 
     const { GET } = await import("@/app/api/records/today/route");
@@ -52,6 +58,7 @@ describe("today record route", () => {
     expect(response.status).toBe(200);
     expect(getTodayRecordByUserId).toHaveBeenCalledWith("user_1", "Asia/Shanghai");
     expect(data.record.sleepHours).toBe(7.2);
+    expect(data.record.contextTags.dietTags).toEqual(["NORMAL"]);
   });
 
   it("updates today's record for the active user", async () => {
@@ -71,6 +78,12 @@ describe("today record route", () => {
       sleepHours: 7.5,
       weightKg: 63.2,
       waterMl: 2000,
+      contextTags: {
+        dietTags: ["LIGHT"],
+        activityLevel: null,
+        energyLevel: "GOOD",
+        weighTiming: "MORNING",
+      },
     });
 
     const { PUT } = await import("@/app/api/records/today/route");
@@ -85,6 +98,12 @@ describe("today record route", () => {
           sleepHours: 7.5,
           weightKg: 63.2,
           waterMl: 2000,
+          contextTags: {
+            dietTags: ["LIGHT"],
+            activityLevel: null,
+            energyLevel: "GOOD",
+            weighTiming: "MORNING",
+          },
         }),
       }),
     );
@@ -96,8 +115,15 @@ describe("today record route", () => {
       sleepHours: 7.5,
       weightKg: 63.2,
       waterMl: 2000,
+      contextTags: {
+        dietTags: ["LIGHT"],
+        activityLevel: null,
+        energyLevel: "GOOD",
+        weighTiming: "MORNING",
+      },
     });
     expect(data.record.waterMl).toBe(2000);
+    expect(data.record.contextTags.energyLevel).toBe("GOOD");
 
     vi.useRealTimers();
   });

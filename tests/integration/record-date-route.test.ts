@@ -23,6 +23,7 @@ vi.mock("@/lib/services/observability-service", () => ({
     dailyRecordSaved: "DAILY_RECORD_SAVED",
     firstRecordSaved: "FIRST_RECORD_SAVED",
     firstCompleteRecordSaved: "FIRST_COMPLETE_RECORD_SAVED",
+    contextTagsSaved: "CONTEXT_TAGS_SAVED",
   },
   trackProductEventSafely,
 }));
@@ -78,6 +79,12 @@ describe("record-by-date route", () => {
       weightKg: null,
       waterMl: null,
       isBackfilled: false,
+      contextTags: {
+        dietTags: [],
+        activityLevel: null,
+        energyLevel: null,
+        weighTiming: null,
+      },
     });
     expect(data.qualityWarnings).toEqual([]);
   });
@@ -100,6 +107,12 @@ describe("record-by-date route", () => {
       weightKg: 63.2,
       waterMl: 1800,
       isBackfilled: true,
+      contextTags: {
+        dietTags: ["DINING_OUT"],
+        activityLevel: "LOW",
+        energyLevel: null,
+        weighTiming: "MORNING",
+      },
     });
 
     const { PUT } = await import("@/app/api/records/[date]/route");
@@ -113,6 +126,12 @@ describe("record-by-date route", () => {
           sleepHours: 7.1,
           weightKg: 63.2,
           waterMl: 1800,
+          contextTags: {
+            dietTags: ["DINING_OUT"],
+            activityLevel: "LOW",
+            energyLevel: null,
+            weighTiming: "MORNING",
+          },
         }),
       }),
       {
@@ -129,12 +148,19 @@ describe("record-by-date route", () => {
       sleepHours: 7.1,
       weightKg: 63.2,
       waterMl: 1800,
+      contextTags: {
+        dietTags: ["DINING_OUT"],
+        activityLevel: "LOW",
+        energyLevel: null,
+        weighTiming: "MORNING",
+      },
     }, {
       isBackfilled: true,
     });
-    expect(trackProductEventSafely).toHaveBeenCalledTimes(3);
+    expect(trackProductEventSafely).toHaveBeenCalledTimes(4);
     expect(data.record.date).toBe("2026-04-02");
     expect(data.record.isBackfilled).toBe(true);
+    expect(data.record.contextTags.dietTags).toEqual(["DINING_OUT"]);
     expect(data.qualityWarnings).toEqual([]);
   });
 

@@ -10,6 +10,19 @@ import type { ReminderFeed } from "@/lib/services/reminder-service";
 import { getApiErrorMessage } from "@/lib/utils/client-api";
 import type { GoalView } from "@/lib/utils/goals";
 import {
+  ACTIVITY_LEVEL_OPTIONS,
+  DIET_TAG_OPTIONS,
+  ENERGY_LEVEL_OPTIONS,
+  WEIGH_TIMING_OPTIONS,
+  type ActivityLevel,
+  type DietTag,
+  type EnergyLevel,
+  type RecordContextTags,
+  type WeighTiming,
+  countRecordContextTags,
+  getDefaultRecordContextTags,
+} from "@/lib/utils/record-context";
+import {
   getRecordQualityWarnings,
   type RecordQualityWarning,
 } from "@/lib/utils/record-quality";
@@ -32,6 +45,7 @@ type TodayRecordFormProps = {
     sleepHours: string;
     weight: string;
     water: string;
+    contextTags: RecordContextTags;
     weightUnit: "KG" | "LB";
     waterUnit: "ML" | "OZ";
     reminderEnabled: boolean;
@@ -68,6 +82,7 @@ type FormState = {
   sleepHours: string;
   weight: string;
   water: string;
+  contextTags: RecordContextTags;
 };
 
 export function TodayRecordForm({
@@ -87,6 +102,7 @@ export function TodayRecordForm({
     sleepHours: initialValues.sleepHours,
     weight: initialValues.weight,
     water: initialValues.water,
+    contextTags: initialValues.contextTags,
   });
   const [isPending, setIsPending] = useState(false);
   const [isClearing, setIsClearing] = useState(false);
@@ -112,6 +128,7 @@ export function TodayRecordForm({
     waterUnit: initialValues.waterUnit,
   });
   const goalInsightsByMetric = new Map(goalInsights.map((insight) => [insight.metric, insight]));
+  const contextTagCount = countRecordContextTags(form.contextTags);
 
   const sleepQuickOptions = buildQuickOptions([
     quickFillDefaults?.sleepHours
@@ -163,6 +180,7 @@ export function TodayRecordForm({
       sleepHours: initialValues.sleepHours,
       weight: initialValues.weight,
       water: initialValues.water,
+      contextTags: initialValues.contextTags,
     });
     setHasRecord(hasExistingRecord);
     setError("");
@@ -204,6 +222,7 @@ export function TodayRecordForm({
           sleepHours: fromDisplaySleep(form.sleepHours),
           weightKg: fromDisplayWeight(form.weight, initialValues.weightUnit),
           waterMl: fromDisplayWater(form.water, initialValues.waterUnit),
+          contextTags: form.contextTags,
         }),
       });
 
@@ -252,6 +271,7 @@ export function TodayRecordForm({
         sleepHours: "",
         weight: "",
         water: "",
+        contextTags: getDefaultRecordContextTags(),
       });
       setHasRecord(false);
       setSavedQualityWarnings([]);
@@ -274,6 +294,7 @@ export function TodayRecordForm({
         sleepHours: "",
         weight: "",
         water: "",
+        contextTags: getDefaultRecordContextTags(),
       });
       setHasRecord(false);
       setSavedQualityWarnings([]);
@@ -288,10 +309,41 @@ export function TodayRecordForm({
     }
   }
 
-  function updateField(field: keyof FormState, value: string) {
+  function updateField(field: Exclude<keyof FormState, "contextTags">, value: string) {
     setForm((current) => ({
       ...current,
       [field]: value,
+    }));
+  }
+
+  function toggleDietTag(tag: DietTag) {
+    setForm((current) => {
+      const currentTags = current.contextTags.dietTags;
+      const nextTags = currentTags.includes(tag)
+        ? currentTags.filter((item) => item !== tag)
+        : currentTags.length >= 3
+          ? currentTags
+          : [...currentTags, tag];
+
+      return {
+        ...current,
+        contextTags: {
+          ...current.contextTags,
+          dietTags: nextTags,
+        },
+      };
+    });
+  }
+
+  function updateContextTag<
+    T extends Exclude<keyof RecordContextTags, "dietTags">,
+  >(field: T, value: NonNullable<RecordContextTags[T]>) {
+    setForm((current) => ({
+      ...current,
+      contextTags: {
+        ...current.contextTags,
+        [field]: current.contextTags[field] === value ? null : value,
+      },
     }));
   }
 
@@ -523,6 +575,47 @@ export function TodayRecordForm({
           </label>
         </div>
 
+        <section className="mt-6 rounded-3xl border border-slate-200 bg-slate-50/80 p-5">
+          <div className="flex flex-wrap items-start justify-between gap-3">
+            <div>
+              <h2 className="text-base font-semibold text-slate-900">体重背景</h2>
+              <p className="mt-1 text-sm leading-6 text-slate-600">
+                可选填写，用来帮助回看体重波动，不会作为医疗判断。
+              </p>
+            </div>
+            <span className="rounded-full bg-white px-3 py-1.5 text-xs font-medium text-slate-600 ring-1 ring-slate-200">
+              已选 {contextTagCount}
+            </span>
+          </div>
+          <div className="mt-5 grid gap-4 lg:grid-cols-2">
+            <ContextMultiTagGroup
+              title="饮食状态"
+              description="最多选 3 项"
+              selectedValues={form.contextTags.dietTags}
+              options={DIET_TAG_OPTIONS}
+              onToggle={toggleDietTag}
+            />
+            <ContextSingleTagGroup
+              title="称重时段"
+              selectedValue={form.contextTags.weighTiming}
+              options={WEIGH_TIMING_OPTIONS}
+              onToggle={(value) => updateContextTag("weighTiming", value)}
+            />
+            <ContextSingleTagGroup
+              title="活动量"
+              selectedValue={form.contextTags.activityLevel}
+              options={ACTIVITY_LEVEL_OPTIONS}
+              onToggle={(value) => updateContextTag("activityLevel", value)}
+            />
+            <ContextSingleTagGroup
+              title="精神状态"
+              selectedValue={form.contextTags.energyLevel}
+              options={ENERGY_LEVEL_OPTIONS}
+              onToggle={(value) => updateContextTag("energyLevel", value)}
+            />
+          </div>
+        </section>
+
         {error ? (
           <p className="mt-4 rounded-2xl bg-rose-50 px-4 py-3 text-sm text-rose-600">
             {error}
@@ -695,6 +788,94 @@ function buildQuickOptions(
     seen.add(option.value);
     return true;
   });
+}
+
+type ContextOption<T extends string> = {
+  value: T;
+  label: string;
+};
+
+function ContextMultiTagGroup({
+  title,
+  description,
+  selectedValues,
+  options,
+  onToggle,
+}: {
+  title: string;
+  description: string;
+  selectedValues: DietTag[];
+  options: ContextOption<DietTag>[];
+  onToggle: (value: DietTag) => void;
+}) {
+  return (
+    <div className="rounded-2xl border border-slate-200 bg-white p-4">
+      <div className="flex items-center justify-between gap-3">
+        <p className="text-sm font-semibold text-slate-900">{title}</p>
+        <span className="text-xs text-slate-500">{description}</span>
+      </div>
+      <div className="mt-3 flex flex-wrap gap-2">
+        {options.map((option) => {
+          const selected = selectedValues.includes(option.value);
+          const disabled = !selected && selectedValues.length >= 3;
+
+          return (
+            <button
+              className={`rounded-full px-3 py-1.5 text-xs font-medium transition ${
+                selected
+                  ? "bg-slate-900 text-white"
+                  : "bg-slate-50 text-slate-700 ring-1 ring-slate-200 hover:bg-emerald-50 hover:text-emerald-900"
+              } disabled:cursor-not-allowed disabled:opacity-50`}
+              disabled={disabled}
+              key={option.value}
+              type="button"
+              onClick={() => onToggle(option.value)}
+            >
+              {option.label}
+            </button>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+
+function ContextSingleTagGroup<T extends ActivityLevel | EnergyLevel | WeighTiming>({
+  title,
+  selectedValue,
+  options,
+  onToggle,
+}: {
+  title: string;
+  selectedValue: T | null;
+  options: ContextOption<T>[];
+  onToggle: (value: T) => void;
+}) {
+  return (
+    <div className="rounded-2xl border border-slate-200 bg-white p-4">
+      <p className="text-sm font-semibold text-slate-900">{title}</p>
+      <div className="mt-3 flex flex-wrap gap-2">
+        {options.map((option) => {
+          const selected = selectedValue === option.value;
+
+          return (
+            <button
+              className={`rounded-full px-3 py-1.5 text-xs font-medium transition ${
+                selected
+                  ? "bg-slate-900 text-white"
+                  : "bg-slate-50 text-slate-700 ring-1 ring-slate-200 hover:bg-emerald-50 hover:text-emerald-900"
+              }`}
+              key={option.value}
+              type="button"
+              onClick={() => onToggle(option.value)}
+            >
+              {option.label}
+            </button>
+          );
+        })}
+      </div>
+    </div>
+  );
 }
 
 function QuickFillButton({

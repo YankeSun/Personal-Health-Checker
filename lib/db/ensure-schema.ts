@@ -137,6 +137,7 @@ const schemaStatements = [
     "sleepHours" DECIMAL(4, 2),
     "weightKg" DECIMAL(5, 2),
     "waterMl" INTEGER,
+    "contextTags" JSONB,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
     CONSTRAINT "DailyRecord_pkey" PRIMARY KEY ("id"),
@@ -145,6 +146,9 @@ const schemaStatements = [
   `,
   `
   ALTER TABLE "DailyRecord" ADD COLUMN IF NOT EXISTS "isBackfilled" BOOLEAN NOT NULL DEFAULT false;
+  `,
+  `
+  ALTER TABLE "DailyRecord" ADD COLUMN IF NOT EXISTS "contextTags" JSONB;
   `,
   `
   CREATE UNIQUE INDEX IF NOT EXISTS "DailyRecord_userId_date_key" ON "DailyRecord"("userId", "date");

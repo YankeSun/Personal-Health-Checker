@@ -10,6 +10,7 @@ import {
   formatGoalShortLabel,
 } from "@/lib/utils/goal-copy";
 import type { GoalView } from "@/lib/utils/goals";
+import { getDefaultRecordContextTags } from "@/lib/utils/record-context";
 import {
   toDisplaySleep,
   toDisplaySleepValue,
@@ -421,6 +422,7 @@ export const previewTodayValues = {
   sleepHours: toDisplaySleep(sleepSeries[PREVIEW_DATE]),
   weight: toDisplayWeight(weightSeries[PREVIEW_DATE], weightUnit),
   water: toDisplayWater(waterSeries[PREVIEW_DATE], waterUnit),
+  contextTags: getDefaultRecordContextTags(),
   weightUnit,
   waterUnit,
   reminderEnabled: true,

@@ -45,6 +45,12 @@ describe("export route", () => {
         sleepHours: 7.5,
         weightKg: 63.2,
         waterMl: 1800,
+        contextTags: {
+          dietTags: ["LIGHT", "DINING_OUT"],
+          activityLevel: "LOW",
+          energyLevel: null,
+          weighTiming: "MORNING",
+        },
       },
     ]);
 
@@ -57,8 +63,8 @@ describe("export route", () => {
     expect(response.status).toBe(200);
     expect(response.headers.get("content-type")).toContain("text/csv");
     expect(response.headers.get("content-disposition")).toContain(".csv");
-    expect(text).toContain("date,sleepHours,weight,weightUnit,water,waterUnit");
-    expect(text).toContain("2026-04-01,7.5,63.2,KG,1800,ML");
+    expect(text).toContain("date,sleepHours,weight,weightUnit,water,waterUnit,contextSummary");
+    expect(text).toContain("2026-04-01,7.5,63.2,KG,1800,ML,清淡 / 外食 / 偏少 / 晨起");
   });
 
   it("exports records as json when requested", async () => {
@@ -77,6 +83,12 @@ describe("export route", () => {
         sleepHours: 7.5,
         weightKg: 63.5,
         waterMl: 1800,
+        contextTags: {
+          dietTags: ["NORMAL"],
+          activityLevel: "NORMAL",
+          energyLevel: "GOOD",
+          weighTiming: "AFTER_WORKOUT",
+        },
       },
     ]);
 
@@ -94,6 +106,13 @@ describe("export route", () => {
       sleepHours: 7.5,
       weightUnit: "LB",
       waterUnit: "OZ",
+      contextTags: {
+        dietTags: ["NORMAL"],
+        activityLevel: "NORMAL",
+        energyLevel: "GOOD",
+        weighTiming: "AFTER_WORKOUT",
+      },
+      contextSummary: "正常 / 正常 / 不错 / 运动后",
     });
   });
 

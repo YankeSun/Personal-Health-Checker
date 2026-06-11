@@ -1,6 +1,7 @@
 import { getCurrentUser } from "@/lib/auth/session";
 import { getDailyRecordsByUserAndDateRange } from "@/lib/services/daily-record-service";
 import { getZodErrorMessage, jsonError } from "@/lib/utils/api";
+import { formatRecordContextTags } from "@/lib/utils/record-context";
 import {
   toDisplaySleepValue,
   toDisplayWaterValue,
@@ -31,6 +32,8 @@ function buildExportRows(
         ? null
         : toDisplayWaterValue(record.waterMl, profile.waterUnit),
     waterUnit: profile.waterUnit,
+    contextTags: record.contextTags,
+    contextSummary: formatRecordContextTags(record.contextTags),
   }));
 }
 
@@ -101,7 +104,15 @@ export async function GET(request: Request) {
   }
 
   const csvRows = [
-    ["date", "sleepHours", "weight", "weightUnit", "water", "waterUnit"].join(","),
+    [
+      "date",
+      "sleepHours",
+      "weight",
+      "weightUnit",
+      "water",
+      "waterUnit",
+      "contextSummary",
+    ].join(","),
     ...exportRows.map((record) =>
       [
         record.date,
@@ -110,6 +121,7 @@ export async function GET(request: Request) {
         record.weightUnit,
         record.water,
         record.waterUnit,
+        record.contextSummary,
       ]
         .map(escapeCsvCell)
         .join(","),

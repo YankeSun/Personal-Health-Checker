@@ -9,6 +9,7 @@ export const PRODUCT_EVENT_NAMES = {
   dailyRecordSaved: "DAILY_RECORD_SAVED",
   firstRecordSaved: "FIRST_RECORD_SAVED",
   firstCompleteRecordSaved: "FIRST_COMPLETE_RECORD_SAVED",
+  contextTagsSaved: "CONTEXT_TAGS_SAVED",
 } as const;
 
 type ProductEventName =
@@ -147,6 +148,7 @@ export async function getObservationSnapshot(days = 30) {
                   PRODUCT_EVENT_NAMES.dailyRecordSaved,
                   PRODUCT_EVENT_NAMES.firstRecordSaved,
                   PRODUCT_EVENT_NAMES.firstCompleteRecordSaved,
+                  PRODUCT_EVENT_NAMES.contextTagsSaved,
                 ],
               },
             },
