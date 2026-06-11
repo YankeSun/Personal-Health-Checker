@@ -160,6 +160,14 @@ describe("miniprogram structure", () => {
       path.join(miniprogramRoot, "pages", "dashboard", "dashboard.wxml"),
       "utf8",
     );
+    const trendsPage = readFileSync(
+      path.join(miniprogramRoot, "pages", "trends", "trends.js"),
+      "utf8",
+    );
+    const trendsMarkup = readFileSync(
+      path.join(miniprogramRoot, "pages", "trends", "trends.wxml"),
+      "utf8",
+    );
     const loginMarkup = readFileSync(
       path.join(miniprogramRoot, "pages", "login", "login.wxml"),
       "utf8",
@@ -193,6 +201,14 @@ describe("miniprogram structure", () => {
     expect(dashboardMarkup).toContain("今天先做什么");
     expect(dashboardMarkup).toContain("体重变化线索");
     expect(dashboardMarkup).toContain("今日三项");
+    expect(trendsPage).toContain("buildInsight");
+    expect(trendsPage).toContain("buildComparison");
+    expect(trendsPage).toContain("buildSparkPoints");
+    expect(trendsPage).toContain("buildTrendAction");
+    expect(trendsMarkup).toContain("趋势结论");
+    expect(trendsMarkup).toContain("最近走势");
+    expect(trendsMarkup).toContain("体重背景");
+    expect(trendsMarkup).toContain("最近记录");
     expect(mePage).toContain("/api/intent/pay");
     expect(mePage).toContain("/api/feedback");
     expect(mePage).toContain("submitFeedback");
