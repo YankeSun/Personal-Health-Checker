@@ -157,7 +157,7 @@ npm run miniprogram:check:remote
 npm run alpha:readiness
 ```
 
-准备上传体验版前，可以把 Vercel Production 变量名和远程 API 健康检查也并入同一份 readiness，或直接写入 Day 0 预检报告：
+准备上传体验版前，可以把 Vercel Production 变量名和体验版级远程小程序检查并入同一份 readiness；远程检查会覆盖线上 API health、数据库状态和微信后端凭证状态，也可以直接写入 Day 0 预检报告：
 
 ```bash
 npm run alpha:readiness -- --vercel --remote

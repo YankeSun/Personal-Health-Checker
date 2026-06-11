@@ -19,7 +19,7 @@ npm run launch:check
 npm run alpha:readiness -- --vercel --remote
 ```
 
-其中 `--vercel` 会把 Vercel Production 环境变量名称检查并入 readiness，`--remote` 会把线上 API health 检查并入同一份输出。
+其中 `--vercel` 会把 Vercel Production 环境变量名称检查并入 readiness，`--remote` 会把体验版级远程小程序检查并入同一份输出，包括线上 API health、数据库状态和远程微信后端凭证状态。
 
 如果要把同一组检查留成 Day 0 私有证据报告：
 

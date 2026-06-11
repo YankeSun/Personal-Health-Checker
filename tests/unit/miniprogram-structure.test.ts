@@ -146,6 +146,7 @@ describe("miniprogram structure", () => {
     expect(databaseDoctorScript).toContain("docker compose up -d postgres");
     expect(alphaReadinessScript).toContain("launch:check");
     expect(alphaReadinessScript).toContain("miniprogram:check");
+    expect(alphaReadinessScript).toContain("miniprogram:check:experience");
     expect(alphaReadinessScript).toContain("research:check");
     expect(alphaReadinessScript).toContain("db:doctor");
     expect(alphaReadinessScript).toContain("Experience build gate");
@@ -212,6 +213,7 @@ describe("miniprogram structure", () => {
     expect(readinessDoc).toContain("Experience build gate");
     expect(readinessDoc).toContain("WECHAT_MINI_PROGRAM_APP_ID");
     expect(readinessDoc).toContain("WECHAT_MINI_PROGRAM_APP_SECRET");
+    expect(readinessDoc).toContain("远程微信后端凭证状态");
     expect(readinessDoc).toContain("主体、联系方式、生效日期、收费规则");
     expect(readinessScript).toContain("DATABASE_URL");
     expect(readinessScript).toContain("SESSION_SECRET");
@@ -231,6 +233,7 @@ describe("miniprogram structure", () => {
     expect(releasePack).toContain("npm run alpha:evidence-pack");
     expect(releasePack).toContain("npm run alpha:readiness");
     expect(releasePack).toContain("Experience build gate");
+    expect(releasePack).toContain("远程微信后端凭证状态");
     expect(releasePack).toContain("npm run alpha:preflight");
     expect(releasePack).toContain("npm run alpha:phone-session");
     expect(releasePack).toContain("Manual next actions");

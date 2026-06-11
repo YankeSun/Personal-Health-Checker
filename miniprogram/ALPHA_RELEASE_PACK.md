@@ -40,7 +40,7 @@ npm run alpha:phone-session -- --batch Alpha-001 --tester internal-01
 
 如果 `alpha:readiness` 输出了 `Manual next actions`，先按动作清单处理 AppID、Vercel env、request 合法域名、mock 开关、数据库可达性和发放材料，再进入严格闸门。
 
-`npm run alpha:readiness -- --vercel --remote` 是体验版上传前更接近真实环境的总览：它会在同一份红绿灯里纳入 Vercel Production 变量名和线上 API health。
+`npm run alpha:readiness -- --vercel --remote` 是体验版上传前更接近真实环境的总览：它会在同一份红绿灯里纳入 Vercel Production 变量名、线上 API health、数据库状态和远程微信后端凭证状态。
 
 如果要一键生成 Day 0 / Day 1 本地私有证据包，使用 `npm run alpha:evidence-pack -- --batch Alpha-001 --vercel --remote`；它只生成 preflight 和两份真机会话模板，不生成 Day 10 报告。
 

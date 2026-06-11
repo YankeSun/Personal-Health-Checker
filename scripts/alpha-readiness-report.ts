@@ -154,9 +154,9 @@ function manualActionsFor(check: ReadinessCheck) {
     ];
   }
 
-  if (check.status === "fail" && check.label === "Remote mini program API") {
+  if (check.status === "fail" && check.label === "Remote mini program experience check") {
     return [
-      "Remote mini program API: Verify the Vercel production domain resolves from this network and rerun `npm run miniprogram:check:remote`.",
+      "Remote mini program experience check: Verify the Vercel production domain, database, AppID/AppSecret, and request domain, then rerun `npm run miniprogram:check:experience`.",
     ];
   }
 
@@ -177,7 +177,7 @@ const checks = [
 ];
 
 if (includeRemote) {
-  checks.push(runCommand("Remote mini program API", ["run", "miniprogram:check:remote"]));
+  checks.push(runCommand("Remote mini program experience check", ["run", "miniprogram:check:experience"]));
 }
 
 const experienceGate = buildExperienceGate(checks);
