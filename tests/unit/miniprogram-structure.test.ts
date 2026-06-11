@@ -138,8 +138,11 @@ describe("miniprogram structure", () => {
     expect(readinessScript).toContain("DATABASE_URL");
     expect(readinessScript).toContain("SESSION_SECRET");
     expect(readinessScript).toContain("WECHAT_MINI_PROGRAM_MOCK_LOGIN_ENABLED");
+    expect(readinessScript).toContain("nextActionFor");
+    expect(readinessScript).toContain("Next actions");
     expect(readinessScript).toContain("vercel");
     expect(readinessScript).toContain("miniprogram/ALPHA_RELEASE_PACK.md");
+    expect(readinessScript).toContain("research/alpha/ALPHA_BATCH_CONTROL.md");
     expect(readinessScript).toContain("research/WECHAT_COMPETITOR_FIELDWORK.md");
     expect(readinessScript).toContain("research/alpha/ALPHA_USER_EVIDENCE.md");
     expect(releasePack).toContain("7 天任务卡");

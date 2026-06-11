@@ -13,6 +13,8 @@ npm run launch:check
 
 `alpha:readiness` 会聚合 launch 配置、小程序结构、研究材料和数据库可达性；`launch:check` 则专门展开体验版配置项。
 
+如果 `launch:check` 发现 blocker 或 warning，输出末尾会给出 `Next actions`，把每个失败项翻译成下一步要去哪里配置或修改什么。
+
 `launch:check` 会检查：
 
 - Vercel 项目是否已 link 到当前仓库
@@ -22,6 +24,7 @@ npm run launch:check
 - 本地是否能看到 `DATABASE_URL`、`SESSION_SECRET`、微信小程序 AppID / AppSecret
 - `WECHAT_MINI_PROGRAM_MOCK_LOGIN_ENABLED` 是否没有为正式体验版开启
 - 合规草案、测试清单、验证方案是否存在
+- alpha 批次控制台是否存在，避免体验版发放后版本、证据和指标脱节
 
 准备体验版前跑严格检查：
 

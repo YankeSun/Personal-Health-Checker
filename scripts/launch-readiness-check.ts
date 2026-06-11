@@ -58,6 +58,81 @@ function warn(label: string, ok: boolean, detail?: string) {
   addCheck(label, ok, "warn", detail);
 }
 
+function nextActionFor(result: CheckResult) {
+  const label = result.label;
+
+  if (label === "Vercel project is linked") {
+    return "Run `vercel link` in the project root and link it to the existing health-tracker-web project.";
+  }
+
+  if (label === "Vercel project name matches health-tracker-web") {
+    return "Re-run `vercel link` and select the existing `health-tracker-web` project instead of creating a new one.";
+  }
+
+  if (label === "mini program apiBaseUrl is HTTPS" || label === "mini program apiBaseUrl is not localhost") {
+    return "Set `apiBaseUrl` in `miniprogram/src/config.js` to the HTTPS Vercel production domain that WeChat will request.";
+  }
+
+  if (label === "mini program mock login button is disabled for launch") {
+    return "Keep `mockLoginEnabled: false` in `miniprogram/src/config.js` before uploading an Experience build.";
+  }
+
+  if (label === "mini program project uses a real AppID") {
+    return "Copy the real AppID from the WeChat public platform and replace `touristappid` in `miniprogram/project.config.json`.";
+  }
+
+  if (label === "DATABASE_URL is configured locally") {
+    return "Add a production-like Postgres `DATABASE_URL` to `.env.local` for local checks, and configure it in Vercel Production before release.";
+  }
+
+  if (label === "DATABASE_URL is not a localhost URL for launch") {
+    return "Use the production Postgres URL for launch checks; localhost is only acceptable for internal development.";
+  }
+
+  if (label === "SESSION_SECRET is configured and not a placeholder") {
+    return "Generate a strong session secret and set `SESSION_SECRET` locally and in Vercel Production. Do not commit the value.";
+  }
+
+  if (label === "WECHAT_MINI_PROGRAM_APP_ID is configured locally") {
+    return "Set `WECHAT_MINI_PROGRAM_APP_ID` locally and in Vercel Production to the same AppID used by `project.config.json`.";
+  }
+
+  if (label === "WECHAT_MINI_PROGRAM_APP_SECRET is configured locally") {
+    return "Set `WECHAT_MINI_PROGRAM_APP_SECRET` locally and in Vercel Production from the WeChat public platform. Do not commit it.";
+  }
+
+  if (label === "EMAIL_FROM is configured for account email flows") {
+    return "Optional for mini program alpha: configure `EMAIL_FROM` if Web email verification and password reset should send real email.";
+  }
+
+  if (label === "RESEND_API_KEY is configured for real email delivery") {
+    return "Optional for mini program alpha: configure `RESEND_API_KEY` if Web email flows should use Resend in production.";
+  }
+
+  if (label === "WECHAT_MINI_PROGRAM_MOCK_LOGIN_ENABLED is not enabled for launch") {
+    return "Remove `WECHAT_MINI_PROGRAM_MOCK_LOGIN_ENABLED=true` from launch environments before uploading or sharing an Experience build.";
+  }
+
+  if (label === "local WECHAT_MINI_PROGRAM_APP_ID matches project.config.json AppID") {
+    return "Make `.env.local` and Vercel `WECHAT_MINI_PROGRAM_APP_ID` match `miniprogram/project.config.json` exactly.";
+  }
+
+  if (label.startsWith("Vercel ") && label.includes(" has ")) {
+    const key = label.split(" has ").at(-1) ?? "the missing variable";
+    return `Run \`vercel env add ${key} ${vercelEnvironment} --scope ${scope}\` or add it in the Vercel dashboard.`;
+  }
+
+  if (label === "Vercel environment variables can be listed") {
+    return "Run `vercel login`, confirm the scope, and retry from a network that can reach vercel.com.";
+  }
+
+  if (label.endsWith(" exists")) {
+    return "Restore or create this required readiness document before sharing the alpha with external testers.";
+  }
+
+  return "Fix this item before using the build for external alpha testing.";
+}
+
 function readJson<T>(filePath: string): T | null {
   try {
     return JSON.parse(readFileSync(filePath, "utf8")) as T;
@@ -227,6 +302,7 @@ for (const filePath of [
   "miniprogram/TESTING_CHECKLIST.md",
   "research/WECHAT_COMPETITOR_FIELDWORK.md",
   "research/WECHAT_COMPETITOR_SYNTHESIS.md",
+  "research/alpha/ALPHA_BATCH_CONTROL.md",
   "research/alpha/ALPHA_USER_EVIDENCE.md",
   "research/alpha/PHONE_TEST_SESSION_TEMPLATE.md",
   "WECHAT_MINI_PROGRAM_VALIDATION_PLAN.md",
@@ -282,6 +358,17 @@ for (const result of results) {
 }
 
 console.log(`\nLaunch readiness: ${blockers} blocker(s), ${warnings} warning(s).`);
+
+const openItems = results.filter((result) => !result.ok);
+
+if (openItems.length > 0) {
+  console.log("\nNext actions:");
+
+  openItems.forEach((result, index) => {
+    const severity = result.severity === "blocker" ? "blocker" : "warning";
+    console.log(`${index + 1}. [${severity}] ${result.label}: ${nextActionFor(result)}`);
+  });
+}
 
 if (blockers > 0 && !strict) {
   console.log("Run with --strict when you want blockers to fail the command.");
