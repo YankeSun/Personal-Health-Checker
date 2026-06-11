@@ -53,6 +53,14 @@ npm run miniprogram:check:remote
 - 数据库是否可连接
 - 严格模式下，微信小程序后端密钥是否已在远端配置
 
+如果还没有真实微信 AppID / AppSecret，但已经在 local 或 preview 环境显式开启 mock 登录，可以跑小程序主路径 smoke：
+
+```bash
+npm run miniprogram:smoke -- --base-url http://localhost:3000
+```
+
+这会用 `mock:alpha-smoke` 登录，并依次验证今日记录保存、Dashboard、体重趋势、资料/目标、账号导出和报告内测意向接口。
+
 ## 2. 微信后台准备
 
 在微信公众平台确认：
@@ -79,6 +87,7 @@ npm run miniprogram:check:remote
 - 点击隐私保护指引、用户协议、健康免责声明，应进入对应说明。
 - 勾选协议后微信登录，应进入今日记录页。
 - 如果暂时没有真实微信 AppID / AppSecret，可按 [ENVIRONMENT_READINESS.md](./ENVIRONMENT_READINESS.md) 临时开启内部 mock 登录测试主路径；正式体验版前必须关闭。
+- 如果只想先验证后端主路径，可在 mock 环境跑 `npm run miniprogram:smoke`。
 
 ### 今日记录
 

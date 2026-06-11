@@ -70,6 +70,9 @@ describe("miniprogram structure", () => {
     expect(packageJson.scripts["miniprogram:check:remote"]).toBe(
       "tsx scripts/miniprogram-check.ts --remote",
     );
+    expect(packageJson.scripts["miniprogram:smoke"]).toBe(
+      "tsx scripts/miniprogram-alpha-smoke.ts",
+    );
     expect(checkScript).toContain("WECHAT_MINI_PROGRAM_APP_ID");
     expect(checkScript).toContain("WECHAT_MINI_PROGRAM_APP_SECRET");
     expect(checkScript).toContain("apiBaseUrl uses HTTPS");
@@ -86,6 +89,10 @@ describe("miniprogram structure", () => {
       path.join(projectRoot, "scripts", "launch-readiness-check.ts"),
       "utf8",
     );
+    const smokeScript = readFileSync(
+      path.join(projectRoot, "scripts", "miniprogram-alpha-smoke.ts"),
+      "utf8",
+    );
 
     expect(readinessDoc).toContain("npm run launch:check:vercel");
     expect(readinessDoc).toContain("WECHAT_MINI_PROGRAM_APP_ID");
@@ -94,6 +101,11 @@ describe("miniprogram structure", () => {
     expect(readinessScript).toContain("SESSION_SECRET");
     expect(readinessScript).toContain("WECHAT_MINI_PROGRAM_MOCK_LOGIN_ENABLED");
     expect(readinessScript).toContain("vercel");
+    expect(smokeScript).toContain("/api/mp/auth/wechat-login");
+    expect(smokeScript).toContain("/api/records/today");
+    expect(smokeScript).toContain("/api/dashboard?days=7");
+    expect(smokeScript).toContain("/api/trends?metric=weight&days=30");
+    expect(smokeScript).toContain("/api/intent/pay");
   });
 
   it("calls the existing backend through bearer-token API helpers", () => {

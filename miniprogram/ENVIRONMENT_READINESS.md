@@ -106,3 +106,15 @@ npm run miniprogram:check:remote
 - Vercel Production 中不应开启 `WECHAT_MINI_PROGRAM_MOCK_LOGIN_ENABLED=true`。
 - 提交代码前应把 `mockLoginEnabled` 改回 `false`。
 - mock 登录不能替代真实微信 `wx.login` 和 `code2Session` 验证。
+
+开启 mock 后，可以先用脚本验证后端主路径：
+
+```bash
+npm run miniprogram:smoke -- --base-url http://localhost:3000
+```
+
+如果要在测试结束后删除 smoke 账号，可以加：
+
+```bash
+npm run miniprogram:smoke -- --base-url http://localhost:3000 --cleanup
+```

@@ -148,6 +148,12 @@ npm run launch:check:vercel
 npm run miniprogram:check:remote
 ```
 
+如果在 local/preview 环境临时开启了 mock 登录，可以跑小程序主路径 smoke：
+
+```bash
+npm run miniprogram:smoke -- --base-url http://localhost:3000
+```
+
 当前小程序壳仅用于 alpha 内测，不包含支付、订阅消息、设备接入或正式上线合规材料。
 
 ## Deployment
