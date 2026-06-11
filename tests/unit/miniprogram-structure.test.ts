@@ -111,6 +111,9 @@ describe("miniprogram structure", () => {
     expect(packageJson.scripts["miniprogram:smoke:local"]).toBe(
       "tsx scripts/miniprogram-alpha-local-smoke.ts",
     );
+    expect(packageJson.scripts["miniprogram:smoke:docker"]).toBe(
+      "tsx scripts/miniprogram-alpha-local-smoke.ts --docker-db",
+    );
     expect(packageJson.scripts["analytics:miniprogram"]).toBe(
       "tsx scripts/miniprogram-alpha-report.ts",
     );
@@ -203,6 +206,9 @@ describe("miniprogram structure", () => {
     expect(localSmokeScript).toContain('"run", "dev"');
     expect(localSmokeScript).toContain("--cleanup");
     expect(localSmokeScript).toContain("--database-url-env");
+    expect(localSmokeScript).toContain("--docker-db");
+    expect(localSmokeScript).toContain("docker");
+    expect(localSmokeScript).toContain("compose");
     expect(localSmokeScript).toContain("/api/health");
     expect(localSmokeScript).toContain("database=");
   });

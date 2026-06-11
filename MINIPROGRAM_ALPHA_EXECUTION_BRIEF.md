@@ -77,6 +77,7 @@ Web 端已经可体验：
 - 本地和 Vercel Production 需要配置 `WECHAT_MINI_PROGRAM_APP_SECRET`
 - Vercel Production 需要确认 `DATABASE_URL`、`SESSION_SECRET`、邮件相关环境变量
 - 当前数据库连接在本地 readiness 中仍可能超时，需要先跑 `npm run db:doctor -- --timeout-ms 5000`
+- 如果远程数据库网络不可达，可以用 `npm run miniprogram:smoke:docker` 先验证本地小程序主路径
 - 微信公众平台需要配置 request 合法域名，且与 `miniprogram/src/config.js` 的 `apiBaseUrl` 一致
 - 微信公众平台隐私保护指引、类目、备案、客服入口仍需人工确认
 - 微信开发者工具需要导入 `miniprogram/`，上传体验版

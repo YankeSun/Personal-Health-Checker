@@ -1,4 +1,4 @@
-import { spawn, type ChildProcess } from "node:child_process";
+import { spawn, spawnSync, type ChildProcess } from "node:child_process";
 import { setTimeout as delay } from "node:timers/promises";
 
 import {
@@ -12,6 +12,10 @@ const port = Number(getArgValue("--port") ?? process.env.MINIPROGRAM_SMOKE_PORT 
 const timeoutMs = Number(getArgValue("--timeout-ms") ?? 60_000);
 const mockCode = getArgValue("--mock-code") ?? `mock:alpha-local-smoke-${Date.now()}`;
 const databaseUrlEnvKey = getArgValue("--database-url-env");
+const useDockerDb = process.argv.includes("--docker-db");
+const dockerDatabaseUrl =
+  getArgValue("--docker-database-url") ??
+  "postgresql://postgres:postgres@127.0.0.1:5432/health_tracker?schema=public";
 const shouldCleanup = !process.argv.includes("--no-cleanup");
 const npmCommand = process.platform === "win32" ? "npm.cmd" : "npm";
 const baseUrl = `http://${host}:${port}`;
@@ -31,12 +35,7 @@ function printStep(message: string) {
   console.log(`[mini-local-smoke] ${message}`);
 }
 
-function getServerEnv() {
-  const env: NodeJS.ProcessEnv = {
-    ...process.env,
-    WECHAT_MINI_PROGRAM_MOCK_LOGIN_ENABLED: "true",
-  };
-
+function resolveSmokeDatabaseUrl() {
   if (databaseUrlEnvKey) {
     const databaseUrl = process.env[databaseUrlEnvKey] ?? getEnvFileValue(databaseUrlEnvKey).value;
 
@@ -44,6 +43,24 @@ function getServerEnv() {
       throw new Error(`--database-url-env ${databaseUrlEnvKey} was provided, but no value was found`);
     }
 
+    return databaseUrl;
+  }
+
+  if (useDockerDb) {
+    return dockerDatabaseUrl;
+  }
+
+  return null;
+}
+
+function getServerEnv() {
+  const env: NodeJS.ProcessEnv = {
+    ...process.env,
+    WECHAT_MINI_PROGRAM_MOCK_LOGIN_ENABLED: "true",
+  };
+  const databaseUrl = resolveSmokeDatabaseUrl();
+
+  if (databaseUrl) {
     env.DATABASE_URL = databaseUrl;
   }
 
@@ -64,10 +81,76 @@ function printDatabaseTarget(env: NodeJS.ProcessEnv) {
   );
 
   if (database.isLocal) {
-    printStep("local database target detected; if it is not running, start Postgres before smoke");
+    printStep(
+      useDockerDb
+        ? "local Docker database target detected; script will start docker compose postgres"
+        : "local database target detected; if it is not running, start Postgres before smoke",
+    );
   } else if (resolved.value) {
     printStep("remote database target detected; network, Neon status, or SSL settings can block local smoke");
   }
+}
+
+function runSync(label: string, command: string, args: string[], env: NodeJS.ProcessEnv = process.env) {
+  printStep(label);
+  const result = spawnSync(command, args, {
+    cwd: process.cwd(),
+    encoding: "utf8",
+    env,
+    stdio: "pipe",
+  });
+  const spawnError = result.error instanceof Error ? result.error.message : "";
+  const output = [result.stdout, result.stderr].filter(Boolean).join("\n").trim();
+
+  if (result.status !== 0) {
+    throw new Error(
+      `${label} failed with exit=${result.status ?? "unknown"}${spawnError ? ` (${spawnError})` : ""}${output ? `\n${output}` : ""}`,
+    );
+  }
+
+  if (output) {
+    console.log(output);
+  }
+}
+
+async function prepareDockerDatabase() {
+  if (!useDockerDb) {
+    return;
+  }
+
+  runSync("checking Docker CLI", "docker", ["--version"]);
+  runSync("starting Docker Postgres", "docker", ["compose", "up", "-d", "postgres"]);
+
+  const env = getServerEnv();
+  const deadline = Date.now() + timeoutMs;
+  let lastError = "not checked";
+
+  while (Date.now() < deadline) {
+    const result = spawnSync(
+      npmCommand,
+      ["run", "db:doctor", "--", "--timeout-ms", "5000"],
+      {
+        cwd: process.cwd(),
+        encoding: "utf8",
+        env,
+        stdio: "pipe",
+      },
+    );
+    const output = [result.stdout, result.stderr].filter(Boolean).join("\n").trim();
+
+    if (result.status === 0) {
+      printStep("Docker Postgres is reachable");
+      if (output) {
+        console.log(output);
+      }
+      return;
+    }
+
+    lastError = output || `exit=${result.status ?? "unknown"}`;
+    await delay(1_000);
+  }
+
+  throw new Error(`Docker Postgres did not become reachable within ${timeoutMs}ms (${lastError})`);
 }
 
 function startServer() {
@@ -207,6 +290,7 @@ async function main() {
     throw new Error(`invalid --port value: ${String(port)}`);
   }
 
+  await prepareDockerDatabase();
   startServer();
   await waitForHealth();
   await runSmoke();

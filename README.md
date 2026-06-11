@@ -162,6 +162,12 @@ npm run alpha:readiness
 npm run miniprogram:smoke:local
 ```
 
+如果 `.env.local` 默认指向 Neon 且当前网络连不上，可以直接用 Docker Postgres 跑本地小程序 smoke；这需要本机已安装 Docker Desktop / Docker CLI：
+
+```bash
+npm run miniprogram:smoke:docker
+```
+
 如果 smoke 卡在 database health，可以先诊断当前 `DATABASE_URL` 的来源和可达性：
 
 ```bash

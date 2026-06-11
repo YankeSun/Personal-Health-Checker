@@ -59,6 +59,7 @@ npm run miniprogram:check:remote
 
 ```bash
 npm run miniprogram:smoke:local
+npm run miniprogram:smoke:docker
 ```
 
 它会自动启动本地服务、临时开启 mock 登录、跑主路径并默认清理 smoke 账号。

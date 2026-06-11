@@ -121,6 +121,12 @@ npm run miniprogram:smoke:local
 
 它会自动启动本地 Next 服务、设置 `WECHAT_MINI_PROGRAM_MOCK_LOGIN_ENABLED=true`、等待 `/api/health`、跑登录到反馈的主路径，并默认删除 smoke 账号。
 
+如果默认 `DATABASE_URL` 指向 Neon 但当前网络不可达，可以使用 Docker Postgres 跑完整本地主路径；这需要本机已安装 Docker Desktop / Docker CLI：
+
+```bash
+npm run miniprogram:smoke:docker
+```
+
 如果 `/api/health` 卡在 `database=error` 或 `health=degraded`，先跑：
 
 ```bash
