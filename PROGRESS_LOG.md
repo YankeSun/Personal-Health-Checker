@@ -244,6 +244,7 @@ npm run analytics:report -- --days=30
 
 ## 2026-06-12
 
+- 收紧小程序体验版合规 readiness：`launch:check` 现在不只检查合规草案文件是否存在，还会把隐私保护指引、用户协议和提交清单里的主体、联系方式、生效日期、收费模式 / 收费规则占位列为 blocker 或 warning，避免把“有草稿”误判成“可发体验版”。
 - 补强小程序体验版前防回归测试：`miniprogram-page-behavior` 现在覆盖登录协议拦截、`wx.login` 失败诊断、Dashboard 行动卡跳转、Trends 空状态 / 低记录密度行动入口、Me 页报告曝光去重；账号导出测试也明确覆盖 goals、dailyRecords.contextTags、wechatIdentities 和 productEvents，减少体验版前主路径和数据权利入口的隐性回归。
 - 强化小程序 alpha 样例报告防误判：`analytics:miniprogram -- --sample` 即使带上手动 evidence flags，也会强制输出 `decisionReview.recommendation = needs_data` 并写入 sample blocker，确保样例报告只能预览版式，不能被误当作 beta / 商业化决策证据。
 - 修正研究材料 README 的 Day 0 / Day 10 边界：`research/README.md` 现在明确 `alpha:evidence-pack` 只生成 preflight、phone session 和 pack index，不生成 Day 10 analytics report；单测同步覆盖该说明，避免后续把样例报告误写回发放证据包。

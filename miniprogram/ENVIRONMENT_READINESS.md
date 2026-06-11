@@ -46,6 +46,7 @@ npm run alpha:gate:experience -- --batch Alpha-001
 - 本地是否能看到 `DATABASE_URL`、`SESSION_SECRET`、微信小程序 AppID / AppSecret
 - `WECHAT_MINI_PROGRAM_MOCK_LOGIN_ENABLED` 是否没有为正式体验版开启
 - 合规草案、测试清单、验证方案是否存在
+- 隐私保护指引、用户协议和提交清单是否仍有主体、联系方式、生效日期、收费规则等占位
 - alpha 批次控制台是否存在，避免体验版发放后版本、证据和指标脱节
 
 准备体验版前跑严格检查：

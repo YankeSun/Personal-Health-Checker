@@ -130,6 +130,18 @@ function nextActionFor(result: CheckResult) {
     return "Restore or create this required readiness document before sharing the alpha with external testers.";
   }
 
+  if (label === "privacy policy subject/contact placeholders resolved") {
+    return "Replace privacy policy placeholders for operator name, contact method, effective date, and contact channel before sharing the Experience build.";
+  }
+
+  if (label === "user agreement contact/commercial placeholders resolved") {
+    return "Fill the user agreement operator, customer support contact, dispute resolution, applicable law, and commercial terms before sharing the Experience build.";
+  }
+
+  if (label === "mini program submission legal checklist reviewed") {
+    return "Review the submission checklist and mark legal placeholders as resolved only after the WeChat public platform and legal copy are updated.";
+  }
+
   return "Fix this item before using the build for external alpha testing.";
 }
 
@@ -205,6 +217,18 @@ function collectKeys(value: unknown, keys = new Set<string>()) {
   }
 
   return keys;
+}
+
+function findCompliancePlaceholders(filePath: string, placeholders: string[]) {
+  const resolvedPath = path.join(projectRoot, filePath);
+
+  if (!existsSync(resolvedPath)) {
+    return [];
+  }
+
+  const text = readFileSync(resolvedPath, "utf8");
+
+  return placeholders.filter((placeholder) => text.includes(placeholder));
 }
 
 function listVercelEnvKeys(environment: string) {
@@ -308,6 +332,52 @@ for (const filePath of [
   "WECHAT_MINI_PROGRAM_VALIDATION_PLAN.md",
 ]) {
   blocker(`${filePath} exists`, existsSync(path.join(projectRoot, filePath)));
+}
+
+const compliancePlaceholderRules: Array<{
+  label: string;
+  filePath: string;
+  severity: Severity;
+  placeholders: string[];
+}> = [
+  {
+    label: "privacy policy subject/contact placeholders resolved",
+    filePath: "compliance/PRIVACY_POLICY_DRAFT.md",
+    severity: "blocker",
+    placeholders: [
+      "运营主体：待填写",
+      "联系方式：待填写",
+      "生效日期：待填写",
+      "待填写联系方式",
+    ],
+  },
+  {
+    label: "user agreement contact/commercial placeholders resolved",
+    filePath: "compliance/USER_AGREEMENT_DRAFT.md",
+    severity: "blocker",
+    placeholders: [
+      "运营主体、客服邮箱、争议解决方式和适用法律待正式上线前填写",
+      "收费模式",
+    ],
+  },
+  {
+    label: "mini program submission legal checklist reviewed",
+    filePath: "compliance/MINIPROGRAM_SUBMISSION_CHECKLIST.md",
+    severity: "warn",
+    placeholders: [
+      "主体、联系方式和第三方服务清单",
+      "收费规则占位",
+    ],
+  },
+];
+
+for (const rule of compliancePlaceholderRules) {
+  const matches = findCompliancePlaceholders(rule.filePath, rule.placeholders);
+  const detail = matches.length > 0
+    ? `${rule.filePath}: ${matches.join(", ")}`
+    : rule.filePath;
+
+  addCheck(rule.label, matches.length === 0, rule.severity, detail);
 }
 
 if (checkVercel) {

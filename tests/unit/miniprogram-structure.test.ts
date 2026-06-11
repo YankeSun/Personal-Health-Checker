@@ -210,11 +210,16 @@ describe("miniprogram structure", () => {
     expect(readinessDoc).toContain("Experience build gate");
     expect(readinessDoc).toContain("WECHAT_MINI_PROGRAM_APP_ID");
     expect(readinessDoc).toContain("WECHAT_MINI_PROGRAM_APP_SECRET");
+    expect(readinessDoc).toContain("主体、联系方式、生效日期、收费规则");
     expect(readinessScript).toContain("DATABASE_URL");
     expect(readinessScript).toContain("SESSION_SECRET");
     expect(readinessScript).toContain("WECHAT_MINI_PROGRAM_MOCK_LOGIN_ENABLED");
     expect(readinessScript).toContain("nextActionFor");
     expect(readinessScript).toContain("Next actions");
+    expect(readinessScript).toContain("findCompliancePlaceholders");
+    expect(readinessScript).toContain("privacy policy subject/contact placeholders resolved");
+    expect(readinessScript).toContain("user agreement contact/commercial placeholders resolved");
+    expect(readinessScript).toContain("mini program submission legal checklist reviewed");
     expect(readinessScript).toContain("vercel");
     expect(readinessScript).toContain("miniprogram/ALPHA_RELEASE_PACK.md");
     expect(readinessScript).toContain("research/alpha/ALPHA_BATCH_CONTROL.md");
