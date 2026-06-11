@@ -91,8 +91,11 @@ describe("research materials", () => {
     expect(alphaEvidence).toContain("Value Quote");
     expect(alphaBatchControl).toContain("Release Gates");
     expect(alphaBatchControl).toContain("Alpha-001");
-    expect(alphaBatchControl).toContain("alpha:evidence-pack");
+    expect(alphaBatchControl).toContain("alpha:evidence-pack -- --batch Alpha-001 --vercel --remote");
+    expect(alphaBatchControl).toContain("alpha:readiness -- --vercel --remote");
     expect(alphaBatchControl).toContain("alpha:preflight");
+    expect(alphaBatchControl).toContain("Remote experience check passed");
+    expect(alphaBatchControl).toContain("miniprogram:check:experience");
     expect(alphaBatchControl).toContain("alpha:phone-session");
     expect(alphaBatchControl).toContain("Alpha-001-day10.md");
     expect(alphaBatchControl).toContain("--real-device-evidence");

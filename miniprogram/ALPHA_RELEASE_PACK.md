@@ -40,7 +40,7 @@ npm run alpha:phone-session -- --batch Alpha-001 --tester internal-01
 
 如果 `alpha:readiness` 输出了 `Manual next actions`，先按动作清单处理 AppID、Vercel env、request 合法域名、mock 开关、数据库可达性和发放材料，再进入严格闸门。
 
-`npm run alpha:readiness -- --vercel --remote` 是体验版上传前更接近真实环境的总览：它会在同一份红绿灯里纳入 Vercel Production 变量名、线上 API health、数据库状态和远程微信后端凭证状态。
+`npm run alpha:readiness -- --vercel --remote` 是体验版上传前更接近真实环境的总览：它会在同一份红绿灯里纳入 Vercel Production 变量名、线上 API health、数据库状态、真实 AppID / AppSecret 和远程微信后端凭证状态。
 
 如果要一键生成 Day 0 / Day 1 本地私有证据包，使用 `npm run alpha:evidence-pack -- --batch Alpha-001 --vercel --remote`；它只生成 preflight 和两份真机会话模板，不生成 Day 10 报告。
 
@@ -48,7 +48,7 @@ npm run alpha:phone-session -- --batch Alpha-001 --tester internal-01
 
 这些命令生成的 preflight 和 phone session 文件默认是本地私有证据，已被 `.gitignore` 忽略。只把脱敏后的摘要写入 `research/alpha/ALPHA_BATCH_CONTROL.md`，不要提交截图、录屏、手机号、可识别用户原话、密钥或数据库 URL。
 
-`npm run alpha:gate:experience -- --batch Alpha-001` 是体验版上传前的硬闸门：它会先生成包含 Vercel 和远程体验版检查的 Day 0 preflight，再用 strict readiness 和 strict remote mini program check 阻断非 GREEN 状态。
+`npm run alpha:gate:experience -- --batch Alpha-001` 是体验版上传前的硬闸门：它会先生成包含 Vercel 和远程体验版检查的 Day 0 preflight，再用 strict readiness 和 strict remote experience check 阻断非 GREEN 状态。
 
 再按发放前严格闸门逐项清零：
 
@@ -56,7 +56,7 @@ npm run alpha:phone-session -- --batch Alpha-001 --tester internal-01
 npm run launch:check:strict
 npm run launch:check:vercel
 npm run miniprogram:check:strict
-npm run miniprogram:check:remote
+npm run miniprogram:check:experience
 ```
 
 必须通过：

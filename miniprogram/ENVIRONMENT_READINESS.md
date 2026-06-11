@@ -19,7 +19,7 @@ npm run launch:check
 npm run alpha:readiness -- --vercel --remote
 ```
 
-其中 `--vercel` 会把 Vercel Production 环境变量名称检查并入 readiness，`--remote` 会把体验版级远程小程序检查并入同一份输出，包括线上 API health、数据库状态和远程微信后端凭证状态。
+其中 `--vercel` 会把 Vercel Production 环境变量名称检查并入 readiness，`--remote` 会把体验版级远程小程序检查并入同一份输出，包括线上 API health、数据库状态、真实 AppID / AppSecret 和远程微信后端凭证状态。
 
 如果要把同一组检查留成 Day 0 私有证据报告：
 
@@ -33,7 +33,7 @@ npm run alpha:preflight -- --vercel --remote --out research/alpha/preflight/Alph
 npm run alpha:gate:experience -- --batch Alpha-001
 ```
 
-这个命令会生成 Day 0 preflight，并在 readiness 或严格远程小程序检查不是 GREEN 时直接失败。
+这个命令会生成 Day 0 preflight，并在 readiness 或严格远程体验版检查不是 GREEN 时直接失败。
 
 如果 `launch:check` 发现 blocker 或 warning，输出末尾会给出 `Next actions`，把每个失败项翻译成下一步要去哪里配置或修改什么。
 
@@ -89,14 +89,14 @@ npm run launch:check:vercel
 ```bash
 npm run launch:check:vercel
 npm run miniprogram:check:strict
-npm run miniprogram:check:remote
+npm run miniprogram:check:experience
 ```
 
 如果 `launch:check:vercel` 通过，说明 Vercel 变量名齐全。
 
 如果 `miniprogram:check:strict` 通过，说明本地小程序 AppID 和微信后端变量齐全。
 
-如果 `miniprogram:check:remote` 通过，说明线上 API 和数据库可达。
+如果 `miniprogram:check:experience` 通过，说明线上 API、数据库和远程微信后端凭证都满足体验版级检查。`miniprogram:check:remote` 只用于单独定位线上 API / 数据库可达性，不作为发放真实用户的通过标准。
 
 ## 4. 常见失败解释
 

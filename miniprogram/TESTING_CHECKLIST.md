@@ -43,7 +43,7 @@ npm run miniprogram:check:strict
 npm run launch:check:vercel
 ```
 
-如果要检查线上 API 是否真的可访问，再运行：
+如果要检查线上 API 是否真的可访问，可以单独运行：
 
 ```bash
 npm run miniprogram:check:remote
@@ -54,6 +54,14 @@ npm run miniprogram:check:remote
 - API 是否返回健康状态
 - 数据库是否可连接
 - 严格模式下，微信小程序后端密钥是否已在远端配置
+
+体验版上传或分享给真实用户前，不要只看远程 health；必须改跑体验版级远程检查：
+
+```bash
+npm run miniprogram:check:experience
+```
+
+这个命令会同时要求真实 AppID / AppSecret、本地严格结构检查、线上 API、数据库和远程微信后端凭证都通过。
 
 如果还没有真实微信 AppID / AppSecret，但已经在 local 或 preview 环境显式开启 mock 登录，可以跑小程序主路径 smoke：
 

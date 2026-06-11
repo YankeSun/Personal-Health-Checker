@@ -62,7 +62,7 @@ runStep("Run strict alpha readiness", [
   "--remote",
 ]);
 
-runStep("Run strict remote mini program check", [
+runStep("Run strict remote experience check", [
   "run",
   "miniprogram:check:experience",
 ]);

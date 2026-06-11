@@ -186,6 +186,7 @@ describe("miniprogram structure", () => {
     expect(alphaExperienceGateScript).toContain("--vercel");
     expect(alphaExperienceGateScript).toContain("--remote");
     expect(alphaExperienceGateScript).toContain("miniprogram:check:experience");
+    expect(alphaExperienceGateScript).toContain("strict remote experience check");
   });
 
   it("documents environment readiness checks for mini program launch prep", () => {
@@ -213,9 +214,11 @@ describe("miniprogram structure", () => {
     expect(readinessDoc).toContain("npm run launch:check:vercel");
     expect(readinessDoc).toContain("npm run alpha:readiness");
     expect(readinessDoc).toContain("npm run alpha:readiness -- --vercel --remote");
+    expect(readinessDoc).toContain("npm run miniprogram:check:experience");
     expect(readinessDoc).toContain("Experience build gate");
     expect(readinessDoc).toContain("WECHAT_MINI_PROGRAM_APP_ID");
     expect(readinessDoc).toContain("WECHAT_MINI_PROGRAM_APP_SECRET");
+    expect(readinessDoc).toContain("真实 AppID / AppSecret");
     expect(readinessDoc).toContain("远程微信后端凭证状态");
     expect(readinessDoc).toContain("主体、联系方式、生效日期、收费规则");
     expect(readinessScript).toContain("DATABASE_URL");
@@ -236,6 +239,8 @@ describe("miniprogram structure", () => {
     expect(releasePack).toContain("npm run alpha:evidence-pack");
     expect(releasePack).toContain("npm run alpha:readiness");
     expect(releasePack).toContain("Experience build gate");
+    expect(releasePack).toContain("npm run miniprogram:check:experience");
+    expect(releasePack).toContain("strict remote experience check");
     expect(releasePack).toContain("远程微信后端凭证状态");
     expect(releasePack).toContain("npm run alpha:preflight");
     expect(releasePack).toContain("npm run alpha:phone-session");

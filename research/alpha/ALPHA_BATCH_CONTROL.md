@@ -28,13 +28,13 @@ Do not invite external users until every P0 gate is green.
 
 | Gate | Evidence | Status | Owner | Notes |
 |---|---|---|---|---|
-| Local evidence pack generated | `npm run alpha:evidence-pack -- --batch Alpha-001` | blocked / ready |  |  |
+| Local evidence pack generated | `npm run alpha:evidence-pack -- --batch Alpha-001 --vercel --remote` | blocked / ready |  |  |
 | Experience gate passed | `npm run alpha:gate:experience -- --batch Alpha-001` | blocked / ready |  |  |
-| Alpha readiness summary reviewed | `npm run alpha:readiness` output | blocked / ready |  |  |
-| Alpha preflight report saved | `npm run alpha:preflight -- --out research/alpha/preflight/Alpha-001.md` | blocked / ready |  |  |
+| Alpha readiness summary reviewed | `npm run alpha:readiness -- --vercel --remote` output | blocked / ready |  |  |
+| Alpha preflight report saved | `npm run alpha:preflight -- --vercel --remote --out research/alpha/preflight/Alpha-001.md` | blocked / ready |  |  |
 | Phone session notes created | `npm run alpha:phone-session -- --batch Alpha-001 --tester internal-01` and `internal-02` | blocked / ready |  |  |
 | Strict launch check passed | `npm run launch:check:strict` | blocked / ready |  |  |
-| Remote API health passed | `npm run miniprogram:check:remote` | blocked / ready |  |  |
+| Remote experience check passed | `npm run miniprogram:check:experience` | blocked / ready |  |  |
 | Real AppID configured | `miniprogram/project.config.json` is not `touristappid` | blocked / ready |  |  |
 | Vercel production env configured | Vercel env screenshot or CLI confirmation | blocked / ready |  |  |
 | Request domain configured | WeChat public platform screenshot | blocked / ready |  |  |
@@ -113,7 +113,7 @@ npm run alpha:preflight -- --vercel --remote --out research/alpha/preflight/Alph
 
 `alpha:evidence-pack` intentionally does not generate a Day 10 analytics report. Use the analytics commands above only after real users have completed the alpha window.
 
-If you also want to include Vercel Production env names and remote API health in the same readiness gate, run `npm run alpha:readiness -- --vercel --remote`.
+If you also want to include Vercel Production env names and the remote experience check in the same readiness gate, run `npm run alpha:readiness -- --vercel --remote`.
 
 Before Day 1 internal real-device smoke, generate two phone-session files:
 

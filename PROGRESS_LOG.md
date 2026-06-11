@@ -244,6 +244,7 @@ npm run analytics:report -- --days=30
 
 ## 2026-06-12
 
+- 收口体验版远程闸门文档口径：README、环境就绪说明、Alpha 发放包和批次控制台现在都把发放前标准指向 `alpha:gate:experience` / `miniprogram:check:experience`，明确 `miniprogram:check:remote` 只用于定位 API / 数据库可达性，避免只凭 health 通过就邀请真实用户。
 - 增强 Day 0 preflight 证据口径：`alpha:preflight` 现在会从 `alpha:readiness` 中提取 `Experience build gate` 状态和 gate guidance，并把 `--remote` 标记为 remote experience check，避免私有预检报告只留下汇总数字却看不出体验版是否 GREEN / RED。
 - 收紧 `alpha:readiness --remote` 的远程验收口径：现在会调用体验版级 `miniprogram:check:experience`，把线上 API health、数据库状态、真实 AppID / AppSecret 和远程微信后端凭证状态纳入同一份红绿灯，避免只证明 API 可访问就误以为体验版远程链路可发。
 - 收紧小程序 smoke 的账号导出验收：`miniprogram:smoke` 现在会在保存记录、报告曝光 / 点击和 alpha 反馈之后再导出账号数据，并断言导出包含 goals 数组、带 contextTags 的 daily record、wechatIdentities 以及 PAY_INTENT_SHOWN / PAY_INTENT_CLICKED / ALPHA_FEEDBACK_SUBMITTED 事件，确保体验版前数据权利闭环覆盖真实 alpha 数据。
@@ -258,9 +259,9 @@ npm run analytics:report -- --days=30
 - 增加 Day 10 alpha 证据检查：新增 `npm run alpha:evidence-check -- --batch Alpha-001 --strict`，会检查 2 份真机会话、10 人用户证据、3 条以上用户原话和竞品实测 synthesis；`analytics:miniprogram -- --evidence-check --batch Alpha-001` 可自动读取检查结果，减少仅靠手动 evidence flag 误判 beta 候选的风险。
 - 补齐 Today 记录摩擦埋点：新增 `RECORD_FORM_STARTED` 和 `RECORD_SAVE_ATTEMPTED`，Web / 小程序进入记录页和保存尝试都会进入 ProductEvent；小程序 alpha report 新增 `recordFormStartRate`、`recordSaveAttemptRate`、`recordSaveSuccessRate`，便于区分用户没进入、没尝试保存或保存失败。
 - 补齐商业意向曝光口径：`/api/intent/pay` 支持 `action: "shown" | "clicked"`，Web Dashboard 和小程序“我的”页会记录 30 天报告入口曝光；小程序 alpha report 新增 `payIntentShownUsers`、`payIntentExposureRate` 和 `payIntentClickThroughRate`，避免只用点击人数误判商业意向。
-- 增加体验版硬闸门命令：新增 `npm run alpha:gate:experience -- --batch Alpha-001`，会先生成包含 Vercel env 和远程 API 的 Day 0 preflight，再执行 strict readiness 和 strict remote mini program check；非 GREEN 会直接失败，减少人工误读红灯 / 黄灯后发体验版的风险。
-- 打通 alpha preflight 的完整远程闸门参数：`alpha:preflight` 和 `alpha:evidence-pack` 现在都支持 `--vercel --remote`，Day 0 私有预检报告可以同步包含 Vercel Production 环境变量名称、远程 API health、数据库和 AppID 状态，避免只在终端看到红灯但证据包漏掉关键 blocker。
-- 增强 alpha readiness 总闸门：`npm run alpha:readiness -- --vercel --remote` 现在可把 Vercel Production 环境变量名称和远程 API health 合并进同一份红绿灯输出；体验版上传前不必再在多个命令之间拼判断，Day 0 阻塞项会更集中。
+- 增加体验版硬闸门命令：新增 `npm run alpha:gate:experience -- --batch Alpha-001`，会先生成包含 Vercel env 和远程体验版检查的 Day 0 preflight，再执行 strict readiness 和 strict remote experience check；非 GREEN 会直接失败，减少人工误读红灯 / 黄灯后发体验版的风险。
+- 打通 alpha preflight 的完整远程闸门参数：`alpha:preflight` 和 `alpha:evidence-pack` 现在都支持 `--vercel --remote`，Day 0 私有预检报告可以同步包含 Vercel Production 环境变量名称、远程体验版检查、数据库和真实 AppID / AppSecret 状态，避免只在终端看到红灯但证据包漏掉关键 blocker。
+- 增强 alpha readiness 总闸门：`npm run alpha:readiness -- --vercel --remote` 现在可把 Vercel Production 环境变量名称和远程体验版检查合并进同一份红绿灯输出；体验版上传前不必再在多个命令之间拼判断，Day 0 阻塞项会更集中。
 - 补齐 Web 设置页数据权利入口：Settings 新增“数据与账号”卡片，支持导出个人资料、目标、记录、体重背景、微信身份映射和 ProductEvent，并要求输入 `DELETE` 后才能删除账号；这样 Web 与小程序都具备账号导出 / 删除入口，减少 alpha 前的合规体验断点。
 - 增加 Docker Postgres 本地小程序 smoke：新增 `npm run miniprogram:smoke:docker`，会显式使用 docker-compose 中的本地 Postgres、等待 `db:doctor` 通过，再启动本地 Next 和 mock 小程序登录主路径；当 `.env.local` 默认 Neon 连接超时时，仍可先验证登录、记录、Dashboard、Trends、导出、意向和反馈链路。
 - 增加体验版 readiness 红绿灯：`alpha:readiness` 现在会在顶部输出 `Experience build gate: GREEN / YELLOW / RED` 和 Gate checklist，明确 RED / YELLOW 时不要邀请外部 alpha 用户；保留原有子检查和 Manual next actions，便于 Day 0 一眼判断体验版是否可发。
@@ -274,7 +275,7 @@ npm run analytics:report -- --days=30
 - 增强小程序 alpha 复盘报告：`npm run analytics:miniprogram` 新增 `--format=markdown` 和 `--out`，可在 Day 10 输出 `research/alpha/reports/Alpha-001-day10.md`，把核心指标、决策门槛、价值 cue、阻力 cue 和注意事项变成可贴进批次控制台的复盘材料。
 - 增加真机测试会话生成器：新增 `npm run alpha:phone-session`，可基于 `PHONE_TEST_SESSION_TEMPLATE.md` 自动生成 Day 1 真机验收记录，并预填日期、tester、设备、微信版本、API 域名、Git commit 和 AppID 状态；发体验版前可快速生成 internal-01 / internal-02 两份证据文件。
 - 增加 alpha 预检报告生成器：新增 `npm run alpha:preflight`，可把当前 Git commit、API 域名、AppID 状态、`alpha:readiness` 摘要和 `Manual next actions` 生成 Markdown；发体验版前可用 `--out research/alpha/preflight/Alpha-001.md` 留档，避免 Day 0 配置和后续真机证据脱节。
-- 把 alpha readiness 变成 Day 0 操作入口：`npm run alpha:readiness` 现在会提取 `launch:check` 的动作清单，并为数据库 / 远程 API 失败补充 `Manual next actions`，让体验版前配置不只显示红灯，也能直接看到下一步该处理什么。
+- 把 alpha readiness 变成 Day 0 操作入口：`npm run alpha:readiness` 现在会提取 `launch:check` 的动作清单，并为数据库 / 远程体验版检查失败补充 `Manual next actions`，让体验版前配置不只显示红灯，也能直接看到下一步该处理什么。
 - 增强体验版 blocker 行动清单：`launch:check` 现在会在 blocker / warning 后输出 `Next actions`，把真实 AppID、Vercel env、request 域名、mock 开关、缺失文档等问题翻译成具体处理动作；同时把 `ALPHA_BATCH_CONTROL.md` 纳入发放前文件检查。
 - 增加小程序 alpha 批次控制台：新增 `research/alpha/ALPHA_BATCH_CONTROL.md`，把 release gates、真实 AppID / Vercel env / request 域名、2 台真机证据、10 人 7 天跟踪、`analytics:miniprogram` 快照和 beta / 继续优化决策放到同一张操作台里，避免体验版发放后版本、证据和指标脱节。
 - 增加 alpha readiness 总览：新增 `npm run alpha:readiness`，聚合 `launch:check`、`miniprogram:check`、`research:check` 和 `db:doctor`，用于体验版前快速判断当前 blocker 集中在哪里；当前总览显示小程序结构和研究包通过，launch 仍有 3 个外部配置 blocker，数据库连接仍超时。
