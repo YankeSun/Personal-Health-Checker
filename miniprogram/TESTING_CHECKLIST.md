@@ -150,6 +150,8 @@ npm run analytics:miniprogram -- --days=30
 
 每次体验版测试至少记录：
 
+可以先运行 `npm run alpha:phone-session -- --batch Alpha-001 --tester internal-01` 生成会话记录文件，再补截图 / 录屏证据。
+
 | 项目 | 内容 |
 |---|---|
 | 测试日期 |  |

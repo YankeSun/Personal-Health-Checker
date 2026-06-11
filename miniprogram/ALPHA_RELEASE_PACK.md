@@ -30,6 +30,7 @@
 ```bash
 npm run alpha:readiness
 npm run alpha:preflight -- --out research/alpha/preflight/Alpha-001.md
+npm run alpha:phone-session -- --batch Alpha-001 --tester internal-01
 ```
 
 如果 `alpha:readiness` 输出了 `Manual next actions`，先按动作清单处理 AppID、Vercel env、request 合法域名、mock 开关、数据库可达性和发放材料，再进入严格闸门。

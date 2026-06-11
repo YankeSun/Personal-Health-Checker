@@ -82,6 +82,7 @@ describe("research materials", () => {
     expect(alphaBatchControl).toContain("Release Gates");
     expect(alphaBatchControl).toContain("Alpha-001");
     expect(alphaBatchControl).toContain("alpha:preflight");
+    expect(alphaBatchControl).toContain("alpha:phone-session");
     expect(alphaBatchControl).toContain("2 real-device sessions passed");
     expect(alphaBatchControl).toContain("beta_candidate");
     expect(phoneTestTemplate).toContain("Today record");

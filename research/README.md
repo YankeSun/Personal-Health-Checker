@@ -17,3 +17,9 @@ Generate a Day 0 alpha preflight report before uploading an Experience build:
 ```bash
 npm run alpha:preflight -- --out research/alpha/preflight/Alpha-001.md
 ```
+
+Generate a real-device phone test session note before Day 1 internal smoke:
+
+```bash
+npm run alpha:phone-session -- --batch Alpha-001 --tester internal-01
+```

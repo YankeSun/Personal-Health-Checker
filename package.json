@@ -16,6 +16,7 @@
     "analytics:miniprogram": "tsx scripts/miniprogram-alpha-report.ts",
     "alpha:readiness": "tsx scripts/alpha-readiness-report.ts",
     "alpha:preflight": "tsx scripts/alpha-preflight-report.ts",
+    "alpha:phone-session": "tsx scripts/alpha-phone-session.ts",
     "research:check": "tsx scripts/research-check.ts",
     "launch:check": "tsx scripts/launch-readiness-check.ts",
     "launch:check:strict": "tsx scripts/launch-readiness-check.ts --strict",

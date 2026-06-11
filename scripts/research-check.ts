@@ -91,6 +91,7 @@ for (const snippet of [
   "Alpha-001",
   "Release Gates",
   "alpha:preflight",
+  "alpha:phone-session",
   "Real AppID configured",
   "2 real-device sessions passed",
   "npm run analytics:miniprogram -- --days=30",
@@ -102,6 +103,10 @@ for (const snippet of [
 check(
   "package exposes alpha preflight report",
   packageJson.includes("\"alpha:preflight\""),
+);
+check(
+  "package exposes alpha phone session generator",
+  packageJson.includes("\"alpha:phone-session\""),
 );
 
 for (const snippet of ["Login", "Today record", "Dashboard", "Trends", "Delete account guard"]) {

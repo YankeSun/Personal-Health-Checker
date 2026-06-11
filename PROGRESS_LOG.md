@@ -244,6 +244,7 @@ npm run analytics:report -- --days=30
 
 ## 2026-06-12
 
+- 增加真机测试会话生成器：新增 `npm run alpha:phone-session`，可基于 `PHONE_TEST_SESSION_TEMPLATE.md` 自动生成 Day 1 真机验收记录，并预填日期、tester、设备、微信版本、API 域名、Git commit 和 AppID 状态；发体验版前可快速生成 internal-01 / internal-02 两份证据文件。
 - 增加 alpha 预检报告生成器：新增 `npm run alpha:preflight`，可把当前 Git commit、API 域名、AppID 状态、`alpha:readiness` 摘要和 `Manual next actions` 生成 Markdown；发体验版前可用 `--out research/alpha/preflight/Alpha-001.md` 留档，避免 Day 0 配置和后续真机证据脱节。
 - 把 alpha readiness 变成 Day 0 操作入口：`npm run alpha:readiness` 现在会提取 `launch:check` 的动作清单，并为数据库 / 远程 API 失败补充 `Manual next actions`，让体验版前配置不只显示红灯，也能直接看到下一步该处理什么。
 - 增强体验版 blocker 行动清单：`launch:check` 现在会在 blocker / warning 后输出 `Next actions`，把真实 AppID、Vercel env、request 域名、mock 开关、缺失文档等问题翻译成具体处理动作；同时把 `ALPHA_BATCH_CONTROL.md` 纳入发放前文件检查。

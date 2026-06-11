@@ -28,6 +28,7 @@ Do not invite external users until every P0 gate is green.
 |---|---|---|---|---|
 | Alpha readiness summary reviewed | `npm run alpha:readiness` output | blocked / ready |  |  |
 | Alpha preflight report saved | `npm run alpha:preflight -- --out research/alpha/preflight/Alpha-001.md` | blocked / ready |  |  |
+| Phone session notes created | `npm run alpha:phone-session -- --batch Alpha-001 --tester internal-01` and `internal-02` | blocked / ready |  |  |
 | Strict launch check passed | `npm run launch:check:strict` | blocked / ready |  |  |
 | Remote API health passed | `npm run miniprogram:check:remote` | blocked / ready |  |  |
 | Real AppID configured | `miniprogram/project.config.json` is not `touristappid` | blocked / ready |  |  |
@@ -87,6 +88,13 @@ npm run alpha:preflight -- --out research/alpha/preflight/Alpha-001.md
 ```
 
 If you also want to include remote API health, add `--remote`.
+
+Before Day 1 internal real-device smoke, generate two phone-session files:
+
+```bash
+npm run alpha:phone-session -- --batch Alpha-001 --tester internal-01 --device "iPhone" --wechat "8.x"
+npm run alpha:phone-session -- --batch Alpha-001 --tester internal-02 --device "Android" --wechat "8.x"
+```
 
 | Metric | Result |
 |---|---|
