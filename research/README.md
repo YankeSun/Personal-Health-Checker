@@ -65,3 +65,5 @@ Preview the markdown layout without database access:
 ```bash
 npm run analytics:miniprogram -- --sample --format=markdown --out /tmp/alpha-sample.md
 ```
+
+Sample reports are format previews only. They are forced to `needs_data` even if manual evidence flags are passed.

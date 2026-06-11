@@ -236,7 +236,7 @@ npm run analytics:miniprogram -- --days=30 --format=markdown --real-device-evide
 
 如果报告生成失败，先运行 `npm run db:doctor -- --timeout-ms 5000` 定位当前数据库连接；需要查看底层错误时再给报告命令追加 `--verbose`。
 
-如果只是想在没有数据库时预览 Day 10 报告版式，可以运行 `npm run analytics:miniprogram -- --sample --format=markdown --out /tmp/alpha-sample.md`。样例报告不能作为真实复盘证据。
+如果只是想在没有数据库时预览 Day 10 报告版式，可以运行 `npm run analytics:miniprogram -- --sample --format=markdown --out /tmp/alpha-sample.md`。样例报告不能作为真实复盘证据，并且会被强制标记为 `needs_data`。
 
 需要一起看：
 

@@ -189,6 +189,19 @@ function buildDecisionReview(
   };
 }
 
+function applySampleDecisionGuard(review: DecisionReview): DecisionReview {
+  const sampleBlocker =
+    "Sample report is not decision evidence: generate a database-backed report after real alpha users complete the test window.";
+
+  return {
+    ...review,
+    recommendation: "needs_data",
+    blockers: review.blockers.includes(sampleBlocker)
+      ? review.blockers
+      : [sampleBlocker, ...review.blockers],
+  };
+}
+
 function readEvidenceCheck(batch: string) {
   const result = spawnSync(
     npmCommand,
@@ -500,7 +513,9 @@ async function main() {
   const snapshot = sample
     ? createSampleSnapshot(normalizedDays)
     : await getMiniProgramAlphaSnapshot(normalizedDays);
-  const decisionReview = buildDecisionReview(snapshot, resolvedEvidence);
+  const decisionReview = sample
+    ? applySampleDecisionGuard(buildDecisionReview(snapshot, resolvedEvidence))
+    : buildDecisionReview(snapshot, resolvedEvidence);
   const output =
     format === "markdown" || format === "md"
       ? renderMarkdown(snapshot, decisionReview, { sample })
