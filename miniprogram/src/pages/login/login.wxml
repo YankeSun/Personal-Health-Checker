@@ -9,6 +9,11 @@
     </button>
 
     <text class="privacy">仅用于个人记录和趋势回看，不提供医疗诊断、治疗建议或设备同步。</text>
+    <view class="legal-links">
+      <text data-type="privacy" bindtap="openLegal">隐私保护指引</text>
+      <text data-type="terms" bindtap="openLegal">用户协议</text>
+      <text data-type="health" bindtap="openLegal">健康免责声明</text>
+    </view>
   </view>
 
   <view wx:if="{{error}}" class="error-card">{{error}}</view>

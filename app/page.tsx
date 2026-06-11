@@ -101,6 +101,24 @@ export default async function HomePage() {
             </article>
           </div>
         </section>
+
+        <footer className="flex flex-col gap-4 border-t border-slate-200/70 py-6 text-sm text-slate-600 md:flex-row md:items-center md:justify-between">
+          <p>个人记录与趋势回看工具，不提供医疗诊断。</p>
+          <div className="flex flex-wrap gap-4">
+            <AppLink className="transition hover:text-slate-950" href="/legal/privacy">
+              隐私保护指引
+            </AppLink>
+            <AppLink className="transition hover:text-slate-950" href="/legal/terms">
+              用户协议
+            </AppLink>
+            <AppLink
+              className="transition hover:text-slate-950"
+              href="/legal/health-disclaimer"
+            >
+              健康免责声明
+            </AppLink>
+          </div>
+        </footer>
       </div>
     </main>
   );

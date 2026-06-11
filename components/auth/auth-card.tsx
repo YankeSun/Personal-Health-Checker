@@ -27,6 +27,20 @@ export function AuthCard({ title, description, children }: AuthCardProps) {
           进入体验
         </AppLink>
       </div>
+      <div className="mt-6 flex flex-wrap gap-x-4 gap-y-2 border-t border-slate-100 pt-5 text-xs text-slate-500">
+        <AppLink className="transition hover:text-slate-900" href="/legal/privacy">
+          隐私保护指引
+        </AppLink>
+        <AppLink className="transition hover:text-slate-900" href="/legal/terms">
+          用户协议
+        </AppLink>
+        <AppLink
+          className="transition hover:text-slate-900"
+          href="/legal/health-disclaimer"
+        >
+          健康免责声明
+        </AppLink>
+      </div>
     </div>
   );
 }

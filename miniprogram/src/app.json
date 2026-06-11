@@ -4,7 +4,8 @@
     "pages/today/today",
     "pages/dashboard/dashboard",
     "pages/trends/trends",
-    "pages/me/me"
+    "pages/me/me",
+    "pages/legal/legal"
   ],
   "window": {
     "navigationBarTitleText": "Personal Health Checker",

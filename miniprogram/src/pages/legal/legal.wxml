@@ -1,0 +1,15 @@
+<view class="page legal-page">
+  <view class="card legal-card">
+    <text class="eyebrow">LEGAL</text>
+    <text class="title">{{doc.title}}</text>
+    <text class="summary">{{doc.summary}}</text>
+    <text class="updated">更新日期 {{doc.updatedAt}}</text>
+  </view>
+
+  <view wx:for="{{doc.sections}}" wx:key="title" class="card section-card">
+    <text class="section-title">{{item.title}}</text>
+    <view class="item-list">
+      <text wx:for="{{item.items}}" wx:for-item="bullet" wx:key="*this" class="legal-item">{{bullet}}</text>
+    </view>
+  </view>
+</view>

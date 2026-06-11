@@ -150,4 +150,12 @@ Page({
       url: "/pages/login/login",
     });
   },
+
+  openLegal(event) {
+    const type = event.currentTarget.dataset.type;
+
+    wx.navigateTo({
+      url: `/pages/legal/legal?type=${type}`,
+    });
+  },
 });

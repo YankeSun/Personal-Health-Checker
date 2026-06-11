@@ -27,6 +27,15 @@
     <text wx:if="{{message}}" class="message">{{message}}</text>
   </view>
 
+  <view class="card block">
+    <text class="section-title">协议与说明</text>
+    <view class="legal-list">
+      <text data-type="privacy" bindtap="openLegal">隐私保护指引</text>
+      <text data-type="terms" bindtap="openLegal">用户协议</text>
+      <text data-type="health" bindtap="openLegal">健康免责声明</text>
+    </view>
+  </view>
+
   <button class="ghost-button logout-button" bindtap="logout">退出登录</button>
   <text wx:if="{{error}}" class="error">{{error}}</text>
 </view>

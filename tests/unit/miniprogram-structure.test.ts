@@ -23,6 +23,7 @@ describe("miniprogram structure", () => {
       "pages/dashboard/dashboard",
       "pages/trends/trends",
       "pages/me/me",
+      "pages/legal/legal",
     ];
 
     expect(appJson.pages).toEqual(requiredPages);
@@ -57,6 +58,18 @@ describe("miniprogram structure", () => {
       path.join(miniprogramRoot, "pages", "me", "me.js"),
       "utf8",
     );
+    const loginMarkup = readFileSync(
+      path.join(miniprogramRoot, "pages", "login", "login.wxml"),
+      "utf8",
+    );
+    const meMarkup = readFileSync(
+      path.join(miniprogramRoot, "pages", "me", "me.wxml"),
+      "utf8",
+    );
+    const legalPage = readFileSync(
+      path.join(miniprogramRoot, "pages", "legal", "legal.js"),
+      "utf8",
+    );
 
     expect(apiHelper).toContain("Authorization: `Bearer ${token}`");
     expect(loginPage).toContain("/api/mp/auth/wechat-login");
@@ -65,5 +78,14 @@ describe("miniprogram structure", () => {
     expect(mePage).toContain("/api/intent/pay");
     expect(mePage).toContain("/api/account/export");
     expect(mePage).toContain("/api/account");
+    expect(loginPage).toContain("/pages/legal/legal?type=${type}");
+    expect(mePage).toContain("/pages/legal/legal?type=${type}");
+    expect(loginMarkup).toContain("隐私保护指引");
+    expect(loginMarkup).toContain("用户协议");
+    expect(loginMarkup).toContain("健康免责声明");
+    expect(meMarkup).toContain("协议与说明");
+    expect(legalPage).toContain("privacy");
+    expect(legalPage).toContain("terms");
+    expect(legalPage).toContain("health");
   });
 });

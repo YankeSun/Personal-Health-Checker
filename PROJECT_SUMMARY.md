@@ -143,12 +143,23 @@
 - `GET /api/account/export` 可导出个人资料、目标、每日记录、上下文标签和微信身份映射
 - `DELETE /api/account` 可删除当前账号，并通过数据库级联清理相关资料、记录、目标、会话和微信身份映射
 
+### 3.15 协议与健康边界说明
+
+- Web 端提供 `/legal`、`/legal/privacy`、`/legal/terms`、`/legal/health-disclaimer`
+- 首页、登录页和注册页均可进入隐私保护指引、用户协议和健康免责声明
+- 小程序 alpha 壳提供协议与说明页，登录页和“我的”页均可进入
+- 产品内明确保持非医疗定位：记录、趋势、目标反馈和提醒不构成医疗诊断或治疗建议
+
 ## 4. 已完成的核心页面
 
 当前已经完成并可访问的核心页面有：
 
 - `/`
 - `/experience`
+- `/legal`
+- `/legal/privacy`
+- `/legal/terms`
+- `/legal/health-disclaimer`
 - `/register`
 - `/login`
 - `/today`

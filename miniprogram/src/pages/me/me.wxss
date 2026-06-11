@@ -68,6 +68,15 @@
   margin-top: 22rpx;
 }
 
+.legal-list {
+  display: grid;
+  gap: 18rpx;
+  margin-top: 22rpx;
+  color: #172033;
+  font-size: 28rpx;
+  font-weight: 700;
+}
+
 .danger-button {
   background: #fff1f2;
   color: #be123c;
