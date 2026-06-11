@@ -244,6 +244,7 @@ npm run analytics:report -- --days=30
 
 ## 2026-06-12
 
+- 增加小程序页面行为防回归测试：新增 `miniprogram-page-behavior` 单测，通过模拟 `wx`、`Page` 和 Bearer 请求覆盖 Today 完整保存反馈、空记录拦截、Me 页 alpha 反馈提交后清空状态、删除账号必须二次确认，减少真实体验版前的交互回归风险。
 - 增加数据库可达性诊断：新增 `npm run db:doctor`，按 Next env 优先级识别 `DATABASE_URL` 来源和数据库 host，只输出非敏感信息并实际测试连接；本地 smoke 也支持 `--database-url-env` 切换备用连接变量。当前 `db:doctor` 定位到 `.env.local` 的 Neon pooler 和 unpooled 连接都超时，解释了本地 alpha smoke 卡在 database health 的原因。
 - 增加一键本地小程序 alpha smoke：新增 `npm run miniprogram:smoke:local`，会自动启动本地 Next、临时开启 mock 登录、等待 `/api/health`、跑登录/记录/Dashboard/Trends/导出/意向/反馈主路径并默认清理 smoke 账号；当前实际运行卡在本地数据库 health `degraded`，脚本已输出 database / wechat / mockLogin 诊断，便于继续定位环境问题。
 - 收紧小程序 alpha 漏斗归因：记录保存服务现在会给 `FIRST_RECORD_SAVED` 和 `FIRST_COMPLETE_RECORD_SAVED` 里程碑事件补充 `platform` metadata；Bearer 保存 `/api/records/[date]` 的测试覆盖 `wechat_mp` 归因，避免首次记录率 / 首次完整记录率在小程序 alpha 报表里被漏算或混入 Web。

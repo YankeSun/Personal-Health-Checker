@@ -1,0 +1,279 @@
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import { createRequire } from "node:module";
+import path from "node:path";
+
+const requireFromTest = createRequire(import.meta.url);
+const projectRoot = process.cwd();
+
+type MiniProgramGlobals = typeof globalThis & {
+  Page: (config: Record<string, unknown>) => void;
+  getApp: () => {
+    globalData: Record<string, unknown>;
+  };
+  wx: Record<string, ReturnType<typeof vi.fn>>;
+  __capturedPage?: Record<string, unknown>;
+};
+
+function clone<T>(value: T): T {
+  return JSON.parse(JSON.stringify(value)) as T;
+}
+
+function setByPath(target: Record<string, unknown>, pathExpression: string, value: unknown) {
+  const parts = pathExpression.split(".");
+  let current: Record<string, unknown> = target;
+
+  for (const part of parts.slice(0, -1)) {
+    const existing = current[part];
+
+    if (!existing || typeof existing !== "object") {
+      current[part] = {};
+    }
+
+    current = current[part] as Record<string, unknown>;
+  }
+
+  current[parts[parts.length - 1]] = value;
+}
+
+function installMiniProgramGlobals(responseByPath: Record<string, unknown> = {}) {
+  const storage = new Map<string, unknown>([["authToken", "mini-token"]]);
+  const globalRef = globalThis as MiniProgramGlobals;
+
+  globalRef.__capturedPage = undefined;
+  globalRef.getApp = () => ({
+    globalData: {
+      apiBaseUrl: "https://api.example.test",
+      token: "mini-token",
+      user: {
+        id: "user_1",
+      },
+    },
+  });
+  globalRef.Page = (config) => {
+    globalRef.__capturedPage = config;
+  };
+  globalRef.wx = {
+    getStorageSync: vi.fn((key: string) => storage.get(key) ?? ""),
+    setStorageSync: vi.fn((key: string, value: unknown) => storage.set(key, value)),
+    removeStorageSync: vi.fn((key: string) => storage.delete(key)),
+    request: vi.fn((options: Record<string, unknown>) => {
+      const url = String(options.url);
+      const pathname = url.replace("https://api.example.test", "");
+      const data = responseByPath[pathname] ?? {
+        success: true,
+        message: "ok",
+      };
+      const success = options.success as ((response: unknown) => void) | undefined;
+
+      success?.({
+        statusCode: 200,
+        data,
+      });
+    }),
+    reLaunch: vi.fn(),
+    switchTab: vi.fn(),
+    navigateTo: vi.fn(),
+    pageScrollTo: vi.fn(),
+    showModal: vi.fn(),
+  };
+}
+
+function loadPage(relativePath: string) {
+  const pagePath = path.join(projectRoot, relativePath);
+  const utilsPath = path.join(projectRoot, "miniprogram", "src", "utils", "api.js");
+
+  delete requireFromTest.cache[requireFromTest.resolve(pagePath)];
+  delete requireFromTest.cache[requireFromTest.resolve(utilsPath)];
+  requireFromTest(pagePath);
+
+  const pageConfig = (globalThis as MiniProgramGlobals).__capturedPage;
+
+  if (!pageConfig) {
+    throw new Error(`Page config was not captured for ${relativePath}`);
+  }
+
+  const instance = {
+    ...pageConfig,
+    data: clone(pageConfig.data),
+    setData(patch: Record<string, unknown>) {
+      for (const [key, value] of Object.entries(patch)) {
+        setByPath(this.data as Record<string, unknown>, key, value);
+      }
+    },
+  } as Record<string, unknown> & {
+    data: Record<string, unknown>;
+    setData: (patch: Record<string, unknown>) => void;
+  };
+
+  for (const [key, value] of Object.entries(pageConfig)) {
+    if (typeof value === "function") {
+      instance[key] = value.bind(instance);
+    }
+  }
+
+  return instance;
+}
+
+describe("mini program page behavior", () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
+
+  afterEach(() => {
+    const globalRef = globalThis as Partial<MiniProgramGlobals>;
+
+    delete globalRef.Page;
+    delete globalRef.getApp;
+    delete globalRef.wx;
+    delete globalRef.__capturedPage;
+  });
+
+  it("saves a complete Today record and keeps the dashboard CTA state", async () => {
+    installMiniProgramGlobals({
+      "/api/records/2026-06-12": {
+        record: {
+          date: "2026-06-12",
+          sleepHours: 7.5,
+          weightKg: 68.4,
+          waterMl: 1800,
+        },
+        qualityWarnings: [{ id: "weight-outlier" }],
+      },
+    });
+    const page = loadPage("miniprogram/src/pages/today/today.js") as {
+      data: {
+        record: Record<string, unknown>;
+        form: Record<string, unknown>;
+        completedCount: number;
+        message: string;
+        saving: boolean;
+        qualityWarnings: Array<Record<string, unknown>>;
+      };
+      refreshDerivedState: () => void;
+      saveRecord: () => Promise<void>;
+    };
+
+    page.setData({
+      record: {
+        date: "2026-06-12",
+      },
+      form: {
+        sleepHours: "7.5",
+        weightKg: "68.4",
+        waterMl: "1800",
+        contextTags: {
+          dietTags: ["NORMAL"],
+          activityLevel: "NORMAL",
+          energyLevel: "GOOD",
+          weighTiming: "MORNING",
+        },
+      },
+    });
+    page.refreshDerivedState();
+    await page.saveRecord();
+
+    expect(page.data.completedCount).toBe(3);
+    expect(page.data.message).toBe("今日三项已完成");
+    expect(page.data.saving).toBe(false);
+    expect(page.data.qualityWarnings).toEqual([{ id: "weight-outlier" }]);
+    expect((globalThis as MiniProgramGlobals).wx.request).toHaveBeenCalledWith(
+      expect.objectContaining({
+        url: "https://api.example.test/api/records/2026-06-12",
+        method: "PUT",
+        header: expect.objectContaining({
+          Authorization: "Bearer mini-token",
+        }),
+      }),
+    );
+  });
+
+  it("does not save an empty Today form", async () => {
+    installMiniProgramGlobals();
+    const page = loadPage("miniprogram/src/pages/today/today.js") as {
+      data: {
+        error: string;
+      };
+      saveRecord: () => Promise<void>;
+    };
+
+    page.setData({
+      record: {
+        date: "2026-06-12",
+      },
+    });
+    await page.saveRecord();
+
+    expect(page.data.error).toBe("至少先记录一项数据");
+    expect((globalThis as MiniProgramGlobals).wx.request).not.toHaveBeenCalled();
+  });
+
+  it("clears Me feedback form after a successful alpha feedback submission", async () => {
+    installMiniProgramGlobals({
+      "/api/feedback": {
+        success: true,
+        message: "已收到反馈，谢谢。",
+      },
+    });
+    const page = loadPage("miniprogram/src/pages/me/me.js") as {
+      data: {
+        feedback: {
+          rating: number;
+          valueCue: string;
+          friction: string;
+          comment: string;
+        };
+        feedbackValueOptions: Array<{ active: boolean }>;
+        feedbackFrictionOptions: Array<{ active: boolean }>;
+        message: string;
+        submittingFeedback: boolean;
+      };
+      submitFeedback: () => Promise<void>;
+    };
+
+    page.setData({
+      feedback: {
+        rating: 5,
+        valueCue: "UNDERSTAND_WEIGHT",
+        friction: "NO_FRICTION",
+        comment: "愿意继续用",
+      },
+    });
+    await page.submitFeedback();
+
+    expect(page.data.message).toBe("已收到反馈，谢谢。");
+    expect(page.data.submittingFeedback).toBe(false);
+    expect(page.data.feedback).toEqual({
+      rating: 0,
+      valueCue: "",
+      friction: "",
+      comment: "",
+    });
+    expect(page.data.feedbackValueOptions.some((item) => item.active)).toBe(false);
+    expect(page.data.feedbackFrictionOptions.some((item) => item.active)).toBe(false);
+  });
+
+  it("requires confirmation before deleting the account from Me", () => {
+    installMiniProgramGlobals();
+    const page = loadPage("miniprogram/src/pages/me/me.js") as {
+      confirmDeleteAccount: () => void;
+      deleteAccount: ReturnType<typeof vi.fn>;
+    };
+
+    page.deleteAccount = vi.fn();
+    (globalThis as MiniProgramGlobals).wx.showModal.mockImplementationOnce((options) => {
+      options.success({
+        confirm: false,
+      });
+    });
+    page.confirmDeleteAccount();
+    expect(page.deleteAccount).not.toHaveBeenCalled();
+
+    (globalThis as MiniProgramGlobals).wx.showModal.mockImplementationOnce((options) => {
+      options.success({
+        confirm: true,
+      });
+    });
+    page.confirmDeleteAccount();
+    expect(page.deleteAccount).toHaveBeenCalledTimes(1);
+  });
+});
