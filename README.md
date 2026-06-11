@@ -56,6 +56,7 @@ npm run dev
 ```bash
 npm test
 npm run smoke
+npm run miniprogram:check
 npm run analytics:report -- --days=30
 ```
 
@@ -118,6 +119,18 @@ npm run analytics:report -- --days=30
    - `WECHAT_MINI_PROGRAM_APP_SECRET`
 4. 在微信公众平台后台配置 request 合法域名
 
+导入微信开发者工具前先运行：
+
+```bash
+npm run miniprogram:check
+```
+
+准备体验版前运行严格检查：
+
+```bash
+npm run miniprogram:check:strict
+```
+
 当前小程序壳仅用于 alpha 内测，不包含支付、订阅消息、设备接入或正式上线合规材料。
 
 ## Deployment
@@ -171,6 +184,7 @@ npm run deploy:prod -- "这次版本相比上一个版本的改动说明"
 - 开发推进日志见 [PROGRESS_LOG.md](./PROGRESS_LOG.md)
 - 项目整体总结见 [PROJECT_SUMMARY.md](./PROJECT_SUMMARY.md)
 - 小程序上线前验证方案见 [WECHAT_MINI_PROGRAM_VALIDATION_PLAN.md](./WECHAT_MINI_PROGRAM_VALIDATION_PLAN.md)
+- 小程序 Alpha 测试清单见 [miniprogram/TESTING_CHECKLIST.md](./miniprogram/TESTING_CHECKLIST.md)
 - 小程序审核前合规草案见 [compliance/](./compliance)
 
 ## CI

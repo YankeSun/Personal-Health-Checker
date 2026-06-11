@@ -41,6 +41,28 @@ describe("miniprogram structure", () => {
     }
   });
 
+  it("exposes preflight checks for experience-build readiness", () => {
+    const packageJson = JSON.parse(
+      readFileSync(path.join(projectRoot, "package.json"), "utf8"),
+    ) as {
+      scripts: Record<string, string>;
+    };
+    const checkScript = readFileSync(
+      path.join(projectRoot, "scripts", "miniprogram-check.ts"),
+      "utf8",
+    );
+
+    expect(packageJson.scripts["miniprogram:check"]).toBe(
+      "tsx scripts/miniprogram-check.ts",
+    );
+    expect(packageJson.scripts["miniprogram:check:strict"]).toBe(
+      "tsx scripts/miniprogram-check.ts --strict",
+    );
+    expect(checkScript).toContain("WECHAT_MINI_PROGRAM_APP_ID");
+    expect(checkScript).toContain("WECHAT_MINI_PROGRAM_APP_SECRET");
+    expect(checkScript).toContain("apiBaseUrl uses HTTPS");
+  });
+
   it("calls the existing backend through bearer-token API helpers", () => {
     const apiHelper = readFileSync(
       path.join(miniprogramRoot, "utils", "api.js"),

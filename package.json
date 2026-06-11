@@ -12,6 +12,8 @@
     "test:watch": "vitest",
     "smoke": "bash scripts/smoke.sh",
     "analytics:report": "tsx scripts/usage-report.ts",
+    "miniprogram:check": "tsx scripts/miniprogram-check.ts",
+    "miniprogram:check:strict": "tsx scripts/miniprogram-check.ts --strict",
     "deploy:preview": "bash scripts/deploy-vercel.sh preview",
     "deploy:prod": "bash scripts/deploy-vercel.sh production",
     "prisma:generate": "prisma generate",
