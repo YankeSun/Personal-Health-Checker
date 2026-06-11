@@ -27,6 +27,7 @@ Do not invite external users until every P0 gate is green.
 | Gate | Evidence | Status | Owner | Notes |
 |---|---|---|---|---|
 | Alpha readiness summary reviewed | `npm run alpha:readiness` output | blocked / ready |  |  |
+| Alpha preflight report saved | `npm run alpha:preflight -- --out research/alpha/preflight/Alpha-001.md` | blocked / ready |  |  |
 | Strict launch check passed | `npm run launch:check:strict` | blocked / ready |  |  |
 | Remote API health passed | `npm run miniprogram:check:remote` | blocked / ready |  |  |
 | Real AppID configured | `miniprogram/project.config.json` is not `touristappid` | blocked / ready |  |  |
@@ -49,6 +50,7 @@ Do not invite external users until every P0 gate is green.
 
 | Evidence Type | Where To Store | Required Before Decision |
 |---|---|---|
+| Alpha preflight report | `research/alpha/preflight/Alpha-001.md` | yes |
 | Real-device smoke notes | `research/alpha/phone-sessions/` or copied from `PHONE_TEST_SESSION_TEMPLATE.md` | yes |
 | Alpha user table | `research/alpha/ALPHA_USER_EVIDENCE.md` | yes |
 | User quotes | `research/alpha/ALPHA_USER_EVIDENCE.md` | yes |
@@ -78,6 +80,14 @@ Paste the Day 10 summary from:
 npm run analytics:miniprogram -- --days=30
 ```
 
+Before uploading an Experience build, generate the Day 0 preflight report:
+
+```bash
+npm run alpha:preflight -- --out research/alpha/preflight/Alpha-001.md
+```
+
+If you also want to include remote API health, add `--remote`.
+
 | Metric | Result |
 |---|---|
 | alphaUsers |  |
@@ -101,4 +111,3 @@ npm run analytics:miniprogram -- --days=30
 | beta_candidate | Quantitative gates are met and users can repeat the value in their own words | Plan beta separately; do not jump directly to payment or device sync |
 
 Never treat `continue_candidate` or `beta_candidate` as permission to launch paid features. Payment, subscription messages, new health indicators, and device sync still require separate roadmap approval.
-

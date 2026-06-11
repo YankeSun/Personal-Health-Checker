@@ -16,6 +16,7 @@ const alphaEvidencePath = path.join(projectRoot, "research", "alpha", "ALPHA_USE
 const phoneTestTemplatePath = path.join(projectRoot, "research", "alpha", "PHONE_TEST_SESSION_TEMPLATE.md");
 const validationPlanPath = path.join(projectRoot, "WECHAT_MINI_PROGRAM_VALIDATION_PLAN.md");
 const progressLogPath = path.join(projectRoot, "PROGRESS_LOG.md");
+const packageJsonPath = path.join(projectRoot, "package.json");
 const results: CheckResult[] = [];
 
 function check(label: string, ok: boolean) {
@@ -35,6 +36,7 @@ const alphaEvidence = readText(alphaEvidencePath);
 const phoneTestTemplate = readText(phoneTestTemplatePath);
 const validationPlan = readText(validationPlanPath);
 const progressLog = readText(progressLogPath);
+const packageJson = readText(packageJsonPath);
 const sampleCount = Array.from(fieldwork.matchAll(/^### 样本 \d{2}：/gm)).length;
 
 check("research/WECHAT_COMPETITOR_FIELDWORK.md exists", existsSync(fieldworkPath));
@@ -88,6 +90,7 @@ for (const snippet of [
   "needs_config",
   "Alpha-001",
   "Release Gates",
+  "alpha:preflight",
   "Real AppID configured",
   "2 real-device sessions passed",
   "npm run analytics:miniprogram -- --days=30",
@@ -95,6 +98,11 @@ for (const snippet of [
 ]) {
   check(`alpha batch control includes ${snippet}`, alphaBatchControl.includes(snippet));
 }
+
+check(
+  "package exposes alpha preflight report",
+  packageJson.includes("\"alpha:preflight\""),
+);
 
 for (const snippet of ["Login", "Today record", "Dashboard", "Trends", "Delete account guard"]) {
   check(`phone test template covers ${snippet}`, phoneTestTemplate.includes(snippet));

@@ -11,3 +11,9 @@ Use these files to collect evidence before changing product scope. Do not treat 
 - [alpha/ALPHA_BATCH_CONTROL.md](./alpha/ALPHA_BATCH_CONTROL.md): batch control board for mini program alpha release gates, users, evidence, and decisions.
 - [alpha/ALPHA_USER_EVIDENCE.md](./alpha/ALPHA_USER_EVIDENCE.md): evidence table for 10-30 real alpha users.
 - [alpha/PHONE_TEST_SESSION_TEMPLATE.md](./alpha/PHONE_TEST_SESSION_TEMPLATE.md): phone test session template for internal and real-device checks.
+
+Generate a Day 0 alpha preflight report before uploading an Experience build:
+
+```bash
+npm run alpha:preflight -- --out research/alpha/preflight/Alpha-001.md
+```

@@ -59,12 +59,19 @@ describe("miniprogram structure", () => {
       path.join(projectRoot, "scripts", "alpha-readiness-report.ts"),
       "utf8",
     );
+    const alphaPreflightScript = readFileSync(
+      path.join(projectRoot, "scripts", "alpha-preflight-report.ts"),
+      "utf8",
+    );
 
     expect(packageJson.scripts["db:doctor"]).toBe(
       "tsx scripts/database-doctor.ts",
     );
     expect(packageJson.scripts["alpha:readiness"]).toBe(
       "tsx scripts/alpha-readiness-report.ts",
+    );
+    expect(packageJson.scripts["alpha:preflight"]).toBe(
+      "tsx scripts/alpha-preflight-report.ts",
     );
     expect(packageJson.scripts["miniprogram:check"]).toBe(
       "tsx scripts/miniprogram-check.ts",
@@ -109,6 +116,9 @@ describe("miniprogram structure", () => {
     expect(alphaReadinessScript).toContain("db:doctor");
     expect(alphaReadinessScript).toContain("Manual next actions");
     expect(alphaReadinessScript).toContain("extractLaunchNextActions");
+    expect(alphaPreflightScript).toContain("Alpha Preflight Report");
+    expect(alphaPreflightScript).toContain("alpha:readiness");
+    expect(alphaPreflightScript).toContain("--out");
   });
 
   it("documents environment readiness checks for mini program launch prep", () => {
@@ -149,6 +159,7 @@ describe("miniprogram structure", () => {
     expect(readinessScript).toContain("research/alpha/ALPHA_USER_EVIDENCE.md");
     expect(releasePack).toContain("7 天任务卡");
     expect(releasePack).toContain("npm run alpha:readiness");
+    expect(releasePack).toContain("npm run alpha:preflight");
     expect(releasePack).toContain("Manual next actions");
     expect(releasePack).toContain("可直接发送的邀请文案");
     expect(releasePack).toContain("npm run analytics:miniprogram");
