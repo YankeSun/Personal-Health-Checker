@@ -110,11 +110,19 @@ npm run miniprogram:check:remote
 开启 mock 后，可以先用脚本验证后端主路径：
 
 ```bash
-npm run miniprogram:smoke -- --base-url http://localhost:3000
+npm run miniprogram:smoke:local
 ```
 
-如果要在测试结束后删除 smoke 账号，可以加：
+它会自动启动本地 Next 服务、设置 `WECHAT_MINI_PROGRAM_MOCK_LOGIN_ENABLED=true`、等待 `/api/health`、跑登录到反馈的主路径，并默认删除 smoke 账号。
+
+如果已经有 local 或 preview API 在运行，也可以直接指定地址：
 
 ```bash
 npm run miniprogram:smoke -- --base-url http://localhost:3000 --cleanup
+```
+
+如果需要保留测试账号排查问题，可以让本地包装命令跳过清理：
+
+```bash
+npm run miniprogram:smoke:local -- --no-cleanup
 ```

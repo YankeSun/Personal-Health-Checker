@@ -73,6 +73,9 @@ describe("miniprogram structure", () => {
     expect(packageJson.scripts["miniprogram:smoke"]).toBe(
       "tsx scripts/miniprogram-alpha-smoke.ts",
     );
+    expect(packageJson.scripts["miniprogram:smoke:local"]).toBe(
+      "tsx scripts/miniprogram-alpha-local-smoke.ts",
+    );
     expect(packageJson.scripts["analytics:miniprogram"]).toBe(
       "tsx scripts/miniprogram-alpha-report.ts",
     );
@@ -102,6 +105,10 @@ describe("miniprogram structure", () => {
       path.join(projectRoot, "scripts", "miniprogram-alpha-smoke.ts"),
       "utf8",
     );
+    const localSmokeScript = readFileSync(
+      path.join(projectRoot, "scripts", "miniprogram-alpha-local-smoke.ts"),
+      "utf8",
+    );
 
     expect(readinessDoc).toContain("npm run launch:check:vercel");
     expect(readinessDoc).toContain("WECHAT_MINI_PROGRAM_APP_ID");
@@ -122,6 +129,11 @@ describe("miniprogram structure", () => {
     expect(smokeScript).toContain("/api/trends?metric=weight&days=30");
     expect(smokeScript).toContain("/api/intent/pay");
     expect(smokeScript).toContain("/api/feedback");
+    expect(localSmokeScript).toContain("WECHAT_MINI_PROGRAM_MOCK_LOGIN_ENABLED");
+    expect(localSmokeScript).toContain('"run", "dev"');
+    expect(localSmokeScript).toContain("--cleanup");
+    expect(localSmokeScript).toContain("/api/health");
+    expect(localSmokeScript).toContain("database=");
   });
 
   it("exposes mini program alpha reporting for commercial validation", () => {

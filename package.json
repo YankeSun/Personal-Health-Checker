@@ -21,6 +21,7 @@
     "miniprogram:check:strict": "tsx scripts/miniprogram-check.ts --strict",
     "miniprogram:check:remote": "tsx scripts/miniprogram-check.ts --remote",
     "miniprogram:smoke": "tsx scripts/miniprogram-alpha-smoke.ts",
+    "miniprogram:smoke:local": "tsx scripts/miniprogram-alpha-local-smoke.ts",
     "deploy:preview": "bash scripts/deploy-vercel.sh preview",
     "deploy:prod": "bash scripts/deploy-vercel.sh production",
     "prisma:generate": "prisma generate",

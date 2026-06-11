@@ -29,5 +29,13 @@
 后端主路径可用下面的脚本先验：
 
 ```bash
+npm run miniprogram:smoke:local
+```
+
+这个命令会临时启动本地 Next 服务、开启内部 mock 登录、跑完整小程序后端主路径，并在结束后删除 smoke 账号。
+
+如果已经有 local 或 preview API 在运行，也可以直接指定地址：
+
+```bash
 npm run miniprogram:smoke -- --base-url http://localhost:3000
 ```

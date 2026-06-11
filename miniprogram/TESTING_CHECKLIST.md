@@ -58,6 +58,14 @@ npm run miniprogram:check:remote
 如果还没有真实微信 AppID / AppSecret，但已经在 local 或 preview 环境显式开启 mock 登录，可以跑小程序主路径 smoke：
 
 ```bash
+npm run miniprogram:smoke:local
+```
+
+它会自动启动本地服务、临时开启 mock 登录、跑主路径并默认清理 smoke 账号。
+
+如果已经有后端服务在运行，也可以指定地址：
+
+```bash
 npm run miniprogram:smoke -- --base-url http://localhost:3000
 ```
 
