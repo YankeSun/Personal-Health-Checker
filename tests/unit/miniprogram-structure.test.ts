@@ -53,10 +53,16 @@ describe("miniprogram structure", () => {
       path.join(miniprogramRoot, "pages", "today", "today.js"),
       "utf8",
     );
+    const mePage = readFileSync(
+      path.join(miniprogramRoot, "pages", "me", "me.js"),
+      "utf8",
+    );
 
     expect(apiHelper).toContain("Authorization: `Bearer ${token}`");
     expect(loginPage).toContain("/api/mp/auth/wechat-login");
     expect(todayPage).toContain("/api/records/today");
     expect(todayPage).toContain("/api/records/${date}");
+    expect(mePage).toContain("/api/account/export");
+    expect(mePage).toContain("/api/account");
   });
 });

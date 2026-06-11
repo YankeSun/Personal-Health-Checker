@@ -30,7 +30,8 @@
 }
 
 .empty,
-.error {
+.error,
+.message {
   display: block;
   margin-top: 22rpx;
   color: #777064;
@@ -39,6 +40,20 @@
 
 .error {
   color: #be123c;
+}
+
+.message {
+  color: #047857;
+}
+
+.action-button {
+  margin-top: 22rpx;
+}
+
+.danger-button {
+  background: #fff1f2;
+  color: #be123c;
+  font-size: 28rpx;
 }
 
 .logout-button {

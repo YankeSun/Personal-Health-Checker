@@ -244,6 +244,7 @@ npm run analytics:report -- --days=30
 
 ## 2026-06-12
 
+- 补齐小程序上线前合规底座第一步：新增 `GET /api/account/export` 和 `DELETE /api/account`，支持导出个人资料、目标、记录、上下文标签和微信身份映射，并可删除账号及关联数据；小程序“我的”页已接入导出与删除入口。
 - 推进小程序最小前端壳：新增 `miniprogram/`，可导入微信开发者工具，覆盖登录、今日记录、简版 Dashboard、体重趋势、我的 / 设置 5 个页面；前端通过 `wx.login` 和 Bearer token 复用现有后端，当前仍不包含支付、订阅消息、设备接入或正式审核材料。
 - 扩大小程序 alpha API 兼容面：`profile/goals/trends/export` 也改为支持 `Authorization: Bearer`，加上上一轮的 `records/dashboard` 后，最小小程序壳需要的主要数据接口已可复用现有后端；Web Cookie 路径保持不变。
 - 推进小程序 alpha 技术底座第一步：新增 `WechatIdentity`、`POST /api/mp/auth/wechat-login` 和 Bearer Session 兼容；小程序登录返回自定义 token，不下发微信 `session_key`，`records/dashboard` API 已可通过 `Authorization: Bearer` 访问，Web Cookie 登录不受影响。
