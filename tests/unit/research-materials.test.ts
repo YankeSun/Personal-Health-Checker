@@ -76,6 +76,10 @@ describe("research materials", () => {
       path.join(projectRoot, "MINIPROGRAM_ALPHA_EXECUTION_BRIEF.md"),
       "utf8",
     );
+    const researchReadme = readFileSync(
+      path.join(projectRoot, "research", "README.md"),
+      "utf8",
+    );
 
     expect(evidenceGuide).toContain("01-search.png");
     expect(evidenceGuide).toContain("03-first-record.mov");
@@ -107,6 +111,8 @@ describe("research materials", () => {
     expect(alphaExecutionBrief).toContain("没有截图、录屏和 notes 时");
     expect(alphaExecutionBrief).toContain("只允许再做 3 个代码改动");
     expect(alphaExecutionBrief).toContain("Experience build gate");
+    expect(researchReadme).toContain("It intentionally does not generate a Day 10 analytics report");
+    expect(researchReadme).not.toContain("sample Day 10 report");
   });
 
   it("links fieldwork to the mini program validation plan", () => {
