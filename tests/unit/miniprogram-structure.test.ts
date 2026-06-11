@@ -55,6 +55,15 @@ describe("miniprogram structure", () => {
     expect(packageJson.scripts["miniprogram:check"]).toBe(
       "tsx scripts/miniprogram-check.ts",
     );
+    expect(packageJson.scripts["launch:check"]).toBe(
+      "tsx scripts/launch-readiness-check.ts",
+    );
+    expect(packageJson.scripts["launch:check:strict"]).toBe(
+      "tsx scripts/launch-readiness-check.ts --strict",
+    );
+    expect(packageJson.scripts["launch:check:vercel"]).toBe(
+      "tsx scripts/launch-readiness-check.ts --strict --vercel",
+    );
     expect(packageJson.scripts["miniprogram:check:strict"]).toBe(
       "tsx scripts/miniprogram-check.ts --strict",
     );
@@ -65,6 +74,24 @@ describe("miniprogram structure", () => {
     expect(checkScript).toContain("WECHAT_MINI_PROGRAM_APP_SECRET");
     expect(checkScript).toContain("apiBaseUrl uses HTTPS");
     expect(checkScript).toContain("/api/health");
+  });
+
+  it("documents environment readiness checks for mini program launch prep", () => {
+    const readinessDoc = readFileSync(
+      path.join(projectRoot, "miniprogram", "ENVIRONMENT_READINESS.md"),
+      "utf8",
+    );
+    const readinessScript = readFileSync(
+      path.join(projectRoot, "scripts", "launch-readiness-check.ts"),
+      "utf8",
+    );
+
+    expect(readinessDoc).toContain("npm run launch:check:vercel");
+    expect(readinessDoc).toContain("WECHAT_MINI_PROGRAM_APP_ID");
+    expect(readinessDoc).toContain("WECHAT_MINI_PROGRAM_APP_SECRET");
+    expect(readinessScript).toContain("DATABASE_URL");
+    expect(readinessScript).toContain("SESSION_SECRET");
+    expect(readinessScript).toContain("vercel");
   });
 
   it("calls the existing backend through bearer-token API helpers", () => {

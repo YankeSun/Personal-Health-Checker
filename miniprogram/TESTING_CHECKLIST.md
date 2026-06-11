@@ -9,6 +9,7 @@
 每次准备导入微信开发者工具前先运行：
 
 ```bash
+npm run launch:check
 npm run miniprogram:check
 ```
 
@@ -23,6 +24,7 @@ npm run miniprogram:check
 准备体验版前再运行：
 
 ```bash
+npm run launch:check:strict
 npm run miniprogram:check:strict
 ```
 
@@ -31,6 +33,12 @@ npm run miniprogram:check:strict
 - `project.config.json` 是否已经从 `touristappid` 改成真实 AppID
 - 后端环境变量是否有 `WECHAT_MINI_PROGRAM_APP_ID`
 - 后端环境变量是否有 `WECHAT_MINI_PROGRAM_APP_SECRET`
+
+如果要检查 Vercel Production 环境变量名称是否齐全：
+
+```bash
+npm run launch:check:vercel
+```
 
 如果要检查线上 API 是否真的可访问，再运行：
 

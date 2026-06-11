@@ -244,6 +244,7 @@ npm run analytics:report -- --days=30
 
 ## 2026-06-12
 
+- 增加小程序体验版环境就绪检查：新增 `npm run launch:check`、`npm run launch:check:strict`、`npm run launch:check:vercel` 和 `miniprogram/ENVIRONMENT_READINESS.md`，把真实 AppID、Vercel Production 环境变量、HTTPS API 域名、合规材料和测试清单纳入同一套检查；默认命令只报告缺口，strict 才失败，便于当前缺外部配置时继续推进。
 - 补小程序体验版 API 可达性定位：新增 `GET /api/health`，返回服务、数据库和微信小程序后端配置的最小健康状态；`npm run miniprogram:check:remote` 可按 `src/config.js` 的 API 域名检查线上 `/api/health`，用于区分 Vercel/API/数据库/微信密钥配置问题。
 - 增加小程序体验版自检能力：新增 `npm run miniprogram:check` 和 `npm run miniprogram:check:strict`，可检查小程序页面结构、HTTPS API 域名、Bearer token、协议确认、账号导出/删除和报告内测入口；同时新增 `miniprogram/TESTING_CHECKLIST.md`，把微信开发者工具导入、主路径验收和测试证据记录模板固化下来。
 - 收紧协议同意闭环：Web 注册表单新增隐私保护指引 / 用户协议确认，`POST /api/auth/register` 也会拒绝未同意的注册请求；小程序登录前新增同意确认，未确认时不会调用微信登录。这样从“有入口可看”推进到“账号创建前有明确确认”。

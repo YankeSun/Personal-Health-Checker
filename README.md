@@ -56,6 +56,7 @@ npm run dev
 ```bash
 npm test
 npm run smoke
+npm run launch:check
 npm run miniprogram:check
 npm run analytics:report -- --days=30
 ```
@@ -123,13 +124,21 @@ npm run analytics:report -- --days=30
 导入微信开发者工具前先运行：
 
 ```bash
+npm run launch:check
 npm run miniprogram:check
 ```
 
 准备体验版前运行严格检查：
 
 ```bash
+npm run launch:check:strict
 npm run miniprogram:check:strict
+```
+
+如果要检查 Vercel Production 环境变量名称是否齐全：
+
+```bash
+npm run launch:check:vercel
 ```
 
 如果要同时检查线上 API 和数据库是否可达：
@@ -191,6 +200,7 @@ npm run deploy:prod -- "这次版本相比上一个版本的改动说明"
 - 开发推进日志见 [PROGRESS_LOG.md](./PROGRESS_LOG.md)
 - 项目整体总结见 [PROJECT_SUMMARY.md](./PROJECT_SUMMARY.md)
 - 小程序上线前验证方案见 [WECHAT_MINI_PROGRAM_VALIDATION_PLAN.md](./WECHAT_MINI_PROGRAM_VALIDATION_PLAN.md)
+- 小程序环境就绪检查见 [miniprogram/ENVIRONMENT_READINESS.md](./miniprogram/ENVIRONMENT_READINESS.md)
 - 小程序 Alpha 测试清单见 [miniprogram/TESTING_CHECKLIST.md](./miniprogram/TESTING_CHECKLIST.md)
 - 小程序审核前合规草案见 [compliance/](./compliance)
 
