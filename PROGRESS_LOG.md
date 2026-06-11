@@ -244,6 +244,7 @@ npm run analytics:report -- --days=30
 
 ## 2026-06-12
 
+- 把 alpha readiness 变成 Day 0 操作入口：`npm run alpha:readiness` 现在会提取 `launch:check` 的动作清单，并为数据库 / 远程 API 失败补充 `Manual next actions`，让体验版前配置不只显示红灯，也能直接看到下一步该处理什么。
 - 增强体验版 blocker 行动清单：`launch:check` 现在会在 blocker / warning 后输出 `Next actions`，把真实 AppID、Vercel env、request 域名、mock 开关、缺失文档等问题翻译成具体处理动作；同时把 `ALPHA_BATCH_CONTROL.md` 纳入发放前文件检查。
 - 增加小程序 alpha 批次控制台：新增 `research/alpha/ALPHA_BATCH_CONTROL.md`，把 release gates、真实 AppID / Vercel env / request 域名、2 台真机证据、10 人 7 天跟踪、`analytics:miniprogram` 快照和 beta / 继续优化决策放到同一张操作台里，避免体验版发放后版本、证据和指标脱节。
 - 增加 alpha readiness 总览：新增 `npm run alpha:readiness`，聚合 `launch:check`、`miniprogram:check`、`research:check` 和 `db:doctor`，用于体验版前快速判断当前 blocker 集中在哪里；当前总览显示小程序结构和研究包通过，launch 仍有 3 个外部配置 blocker，数据库连接仍超时。

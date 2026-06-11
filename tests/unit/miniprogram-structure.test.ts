@@ -107,6 +107,8 @@ describe("miniprogram structure", () => {
     expect(alphaReadinessScript).toContain("miniprogram:check");
     expect(alphaReadinessScript).toContain("research:check");
     expect(alphaReadinessScript).toContain("db:doctor");
+    expect(alphaReadinessScript).toContain("Manual next actions");
+    expect(alphaReadinessScript).toContain("extractLaunchNextActions");
   });
 
   it("documents environment readiness checks for mini program launch prep", () => {
@@ -147,6 +149,7 @@ describe("miniprogram structure", () => {
     expect(readinessScript).toContain("research/alpha/ALPHA_USER_EVIDENCE.md");
     expect(releasePack).toContain("7 天任务卡");
     expect(releasePack).toContain("npm run alpha:readiness");
+    expect(releasePack).toContain("Manual next actions");
     expect(releasePack).toContain("可直接发送的邀请文案");
     expect(releasePack).toContain("npm run analytics:miniprogram");
     expect(smokeScript).toContain("/api/mp/auth/wechat-login");

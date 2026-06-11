@@ -80,6 +80,57 @@ function printCheck(check: ReadinessCheck) {
   console.log(`      ${check.command.join(" ")}`);
 }
 
+function extractLaunchNextActions(output: string) {
+  const actions: string[] = [];
+  let collecting = false;
+
+  for (const line of output.split(/\r?\n/)) {
+    if (line.trim() === "Next actions:") {
+      collecting = true;
+      continue;
+    }
+
+    if (!collecting) {
+      continue;
+    }
+
+    const match = line.match(/^\d+\.\s+\[(blocker|warning)\]\s+(.+)$/);
+
+    if (match) {
+      actions.push(match[2]);
+      continue;
+    }
+
+    if (!line.trim()) {
+      continue;
+    }
+
+    break;
+  }
+
+  return actions;
+}
+
+function manualActionsFor(check: ReadinessCheck) {
+  if (check.label === "Launch readiness") {
+    return extractLaunchNextActions(check.output);
+  }
+
+  if (check.status === "fail" && check.label === "Database connectivity") {
+    return [
+      "Database connectivity: Check the current `DATABASE_URL` / Neon network reachability, then rerun `npm run db:doctor` before smoke testing.",
+    ];
+  }
+
+  if (check.status === "fail" && check.label === "Remote mini program API") {
+    return [
+      "Remote mini program API: Verify the Vercel production domain resolves from this network and rerun `npm run miniprogram:check:remote`.",
+    ];
+  }
+
+  return [];
+}
+
 const checks = [
   downgradeExpectedBlocker(runCommand("Launch readiness", ["run", "launch:check"])),
   runCommand("Mini program structure", ["run", "miniprogram:check"]),
@@ -110,7 +161,15 @@ if (failures.length > 0) {
   console.log("Failures must be resolved before a reliable local or experience-build smoke test.");
 }
 
+const manualActions = checks.flatMap(manualActionsFor);
+
+if (manualActions.length > 0) {
+  console.log("\nManual next actions:");
+  manualActions.forEach((action, index) => {
+    console.log(`${index + 1}. ${action}`);
+  });
+}
+
 if (strict && (failures.length > 0 || warnings.length > 0)) {
   process.exit(1);
 }
-

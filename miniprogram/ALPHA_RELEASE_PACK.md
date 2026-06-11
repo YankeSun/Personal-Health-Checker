@@ -31,7 +31,7 @@
 npm run alpha:readiness
 ```
 
-如果 `launch:check` 输出了 `Next actions`，先按动作清单处理 AppID、Vercel env、request 合法域名、mock 开关和发放材料，再进入严格闸门。
+如果 `alpha:readiness` 输出了 `Manual next actions`，先按动作清单处理 AppID、Vercel env、request 合法域名、mock 开关、数据库可达性和发放材料，再进入严格闸门。
 
 再按发放前严格闸门逐项清零：
 
