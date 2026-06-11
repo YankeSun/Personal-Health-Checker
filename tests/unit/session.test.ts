@@ -14,6 +14,7 @@ vi.mock("@/lib/db", () => ({
       create: vi.fn(),
       findUnique: vi.fn(),
       delete: vi.fn(),
+      deleteMany: vi.fn(),
       update: vi.fn(),
     },
   },
@@ -81,6 +82,25 @@ describe("session", () => {
       },
       data: {
         lastAccessedAt: expect.any(Date),
+      },
+    });
+    expect(cookies).not.toHaveBeenCalled();
+  });
+
+  it("clears a bearer session without reading web cookies", async () => {
+    const { clearSession } = await import("@/lib/auth/session");
+
+    await clearSession(
+      new Request("http://localhost:3000/api/account", {
+        headers: {
+          Authorization: "Bearer raw-session-token",
+        },
+      }),
+    );
+
+    expect(prisma.session.deleteMany).toHaveBeenCalledWith({
+      where: {
+        sessionToken: expect.stringMatching(/^[a-f0-9]{64}$/),
       },
     });
     expect(cookies).not.toHaveBeenCalled();

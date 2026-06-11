@@ -11,7 +11,7 @@ export async function DELETE(request: Request) {
 
   try {
     await deleteUserAccountByUserId(user.id);
-    await clearSession();
+    await clearSession(request);
 
     return Response.json({
       success: true,

@@ -34,19 +34,20 @@ describe("account route", () => {
     expect(deleteUserAccountByUserId).not.toHaveBeenCalled();
   });
 
-  it("deletes the current account and clears the web session cookie", async () => {
+  it("deletes the current account and clears the request session", async () => {
     getCurrentUser.mockResolvedValue({
       id: "user_1",
     });
 
     const { DELETE } = await import("@/app/api/account/route");
+    const request = new Request("http://localhost:3000/api/account", {
+      method: "DELETE",
+      headers: {
+        Authorization: "Bearer token",
+      },
+    });
     const response = await DELETE(
-      new Request("http://localhost:3000/api/account", {
-        method: "DELETE",
-        headers: {
-          Authorization: "Bearer token",
-        },
-      }),
+      request,
     );
     const data = await response.json();
 
@@ -54,6 +55,6 @@ describe("account route", () => {
     expect(data.success).toBe(true);
     expect(getCurrentUser).toHaveBeenCalledWith(expect.any(Request));
     expect(deleteUserAccountByUserId).toHaveBeenCalledWith("user_1");
-    expect(clearSession).toHaveBeenCalledTimes(1);
+    expect(clearSession).toHaveBeenCalledWith(request);
   });
 });
