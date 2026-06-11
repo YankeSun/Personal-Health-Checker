@@ -92,6 +92,7 @@ for (const snippet of [
   "needs_config",
   "Alpha-001",
   "Release Gates",
+  "alpha:evidence-pack",
   "alpha:preflight",
   "alpha:phone-session",
   "Alpha-001-day10.md",
@@ -110,6 +111,10 @@ check(
 check(
   "package exposes alpha phone session generator",
   packageJson.includes("\"alpha:phone-session\""),
+);
+check(
+  "package exposes alpha evidence pack generator",
+  packageJson.includes("\"alpha:evidence-pack\""),
 );
 for (const snippet of [
   "research/evidence/**",

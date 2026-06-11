@@ -30,6 +30,14 @@ npm run alpha:preflight -- --out research/alpha/preflight/Alpha-001.md
 
 This output is private local evidence. Paste only a redacted summary into [alpha/ALPHA_BATCH_CONTROL.md](./alpha/ALPHA_BATCH_CONTROL.md).
 
+Generate the local Day 0 / Day 1 evidence pack in one command:
+
+```bash
+npm run alpha:evidence-pack -- --batch Alpha-001
+```
+
+This creates private local preflight, phone-session, sample Day 10 report, and pack-index files under ignored alpha evidence folders.
+
 Generate a real-device phone test session note before Day 1 internal smoke:
 
 ```bash

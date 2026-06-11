@@ -28,6 +28,7 @@ Do not invite external users until every P0 gate is green.
 
 | Gate | Evidence | Status | Owner | Notes |
 |---|---|---|---|---|
+| Local evidence pack generated | `npm run alpha:evidence-pack -- --batch Alpha-001` | blocked / ready |  |  |
 | Alpha readiness summary reviewed | `npm run alpha:readiness` output | blocked / ready |  |  |
 | Alpha preflight report saved | `npm run alpha:preflight -- --out research/alpha/preflight/Alpha-001.md` | blocked / ready |  |  |
 | Phone session notes created | `npm run alpha:phone-session -- --batch Alpha-001 --tester internal-01` and `internal-02` | blocked / ready |  |  |
@@ -89,6 +90,7 @@ npm run analytics:miniprogram -- --days=30 --format=markdown --out research/alph
 Before uploading an Experience build, generate the Day 0 preflight report:
 
 ```bash
+npm run alpha:evidence-pack -- --batch Alpha-001
 npm run alpha:preflight -- --out research/alpha/preflight/Alpha-001.md
 ```
 

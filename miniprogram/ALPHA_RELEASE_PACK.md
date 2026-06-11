@@ -28,6 +28,7 @@
 先跑总览，确认当前 blocker 集中在哪里：
 
 ```bash
+npm run alpha:evidence-pack -- --batch Alpha-001
 npm run alpha:readiness
 npm run alpha:preflight -- --out research/alpha/preflight/Alpha-001.md
 npm run alpha:phone-session -- --batch Alpha-001 --tester internal-01

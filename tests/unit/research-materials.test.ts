@@ -82,6 +82,7 @@ describe("research materials", () => {
     expect(alphaEvidence).toContain("Value Quote");
     expect(alphaBatchControl).toContain("Release Gates");
     expect(alphaBatchControl).toContain("Alpha-001");
+    expect(alphaBatchControl).toContain("alpha:evidence-pack");
     expect(alphaBatchControl).toContain("alpha:preflight");
     expect(alphaBatchControl).toContain("alpha:phone-session");
     expect(alphaBatchControl).toContain("Alpha-001-day10.md");

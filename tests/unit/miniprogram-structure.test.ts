@@ -67,6 +67,10 @@ describe("miniprogram structure", () => {
       path.join(projectRoot, "scripts", "alpha-phone-session.ts"),
       "utf8",
     );
+    const alphaEvidencePackScript = readFileSync(
+      path.join(projectRoot, "scripts", "alpha-evidence-pack.ts"),
+      "utf8",
+    );
 
     expect(packageJson.scripts["db:doctor"]).toBe(
       "tsx scripts/database-doctor.ts",
@@ -79,6 +83,9 @@ describe("miniprogram structure", () => {
     );
     expect(packageJson.scripts["alpha:phone-session"]).toBe(
       "tsx scripts/alpha-phone-session.ts",
+    );
+    expect(packageJson.scripts["alpha:evidence-pack"]).toBe(
+      "tsx scripts/alpha-evidence-pack.ts",
     );
     expect(packageJson.scripts["miniprogram:check"]).toBe(
       "tsx scripts/miniprogram-check.ts",
@@ -129,6 +136,10 @@ describe("miniprogram structure", () => {
     expect(alphaPhoneSessionScript).toContain("PHONE_TEST_SESSION_TEMPLATE.md");
     expect(alphaPhoneSessionScript).toContain("phone-sessions");
     expect(alphaPhoneSessionScript).toContain("Do not paste AppSecret");
+    expect(alphaEvidencePackScript).toContain("alpha:preflight");
+    expect(alphaEvidencePackScript).toContain("alpha:phone-session");
+    expect(alphaEvidencePackScript).toContain("analytics:miniprogram");
+    expect(alphaEvidencePackScript).toContain("local private evidence");
   });
 
   it("documents environment readiness checks for mini program launch prep", () => {
@@ -168,6 +179,7 @@ describe("miniprogram structure", () => {
     expect(readinessScript).toContain("research/WECHAT_COMPETITOR_FIELDWORK.md");
     expect(readinessScript).toContain("research/alpha/ALPHA_USER_EVIDENCE.md");
     expect(releasePack).toContain("7 天任务卡");
+    expect(releasePack).toContain("npm run alpha:evidence-pack");
     expect(releasePack).toContain("npm run alpha:readiness");
     expect(releasePack).toContain("npm run alpha:preflight");
     expect(releasePack).toContain("npm run alpha:phone-session");
