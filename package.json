@@ -18,6 +18,7 @@
     "alpha:preflight": "tsx scripts/alpha-preflight-report.ts",
     "alpha:phone-session": "tsx scripts/alpha-phone-session.ts",
     "alpha:evidence-pack": "tsx scripts/alpha-evidence-pack.ts",
+    "alpha:evidence-check": "tsx scripts/alpha-evidence-check.ts",
     "alpha:gate:experience": "tsx scripts/alpha-experience-gate.ts",
     "research:check": "tsx scripts/research-check.ts",
     "launch:check": "tsx scripts/launch-readiness-check.ts",

@@ -1,4 +1,5 @@
 import { getMiniProgramAlphaSnapshot } from "@/lib/services/observability-service";
+import { spawnSync } from "node:child_process";
 import { mkdirSync, writeFileSync } from "node:fs";
 import path from "node:path";
 
@@ -18,6 +19,13 @@ type DecisionReview = {
   }>;
   blockers: string[];
 };
+type EvidenceCheckSummary = {
+  realDeviceEvidence?: boolean;
+  userQuotes?: boolean;
+  competitorFieldwork?: boolean;
+};
+
+const npmCommand = process.platform === "win32" ? "npm.cmd" : "npm";
 
 function getArgValue(name: string) {
   const index = process.argv.indexOf(name);
@@ -179,6 +187,32 @@ function buildDecisionReview(
     evidenceChecklist,
     blockers,
   };
+}
+
+function readEvidenceCheck(batch: string) {
+  const result = spawnSync(
+    npmCommand,
+    [
+      "run",
+      "--silent",
+      "alpha:evidence-check",
+      "--",
+      "--batch",
+      batch,
+      "--json",
+    ],
+    {
+      cwd: process.cwd(),
+      encoding: "utf8",
+      maxBuffer: 1024 * 1024 * 8,
+    },
+  );
+
+  try {
+    return JSON.parse(result.stdout) as EvidenceCheckSummary;
+  } catch {
+    return {};
+  }
 }
 
 function createSampleSnapshot(days: number): AlphaSnapshot {
@@ -446,16 +480,27 @@ async function main() {
   const format = getInlineArgValue("--format") ?? getArgValue("--format") ?? "json";
   const outPath = getArgValue("--out");
   const sample = process.argv.includes("--sample");
+  const batch = getArgValue("--batch") ?? "Alpha-001";
+  const evidenceCheck = process.argv.includes("--evidence-check")
+    ? readEvidenceCheck(batch)
+    : null;
   const evidence = {
     realDeviceEvidence: process.argv.includes("--real-device-evidence"),
     userQuotes: process.argv.includes("--user-quotes"),
     competitorFieldwork: process.argv.includes("--competitor-fieldwork"),
   };
+  const resolvedEvidence = evidenceCheck
+    ? {
+        realDeviceEvidence: evidenceCheck.realDeviceEvidence === true,
+        userQuotes: evidenceCheck.userQuotes === true,
+        competitorFieldwork: evidenceCheck.competitorFieldwork === true,
+      }
+    : evidence;
   const normalizedDays = Number.isFinite(days) ? days : 30;
   const snapshot = sample
     ? createSampleSnapshot(normalizedDays)
     : await getMiniProgramAlphaSnapshot(normalizedDays);
-  const decisionReview = buildDecisionReview(snapshot, evidence);
+  const decisionReview = buildDecisionReview(snapshot, resolvedEvidence);
   const output =
     format === "markdown" || format === "md"
       ? renderMarkdown(snapshot, decisionReview, { sample })

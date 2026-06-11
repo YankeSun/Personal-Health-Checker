@@ -59,6 +59,7 @@ npm run smoke
 npm run launch:check
 npm run miniprogram:check
 npm run analytics:miniprogram -- --days=30
+npm run alpha:evidence-check -- --batch Alpha-001
 npm run analytics:report -- --days=30
 ```
 
@@ -204,6 +205,7 @@ npm run miniprogram:smoke -- --base-url http://localhost:3000
 
 ```bash
 npm run analytics:miniprogram -- --days=30
+npm run alpha:evidence-check -- --batch Alpha-001 --strict
 ```
 
 报告会同时包含量化行为和 alpha 反馈指标。

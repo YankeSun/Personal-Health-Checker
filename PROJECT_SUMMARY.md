@@ -124,6 +124,7 @@
 - 核心页面访问埋点
 - 内部可跑的漏斗观察报表脚本
 - 小程序 alpha 专用指标报告：`npm run analytics:miniprogram -- --days=30`
+- 小程序 Day 10 证据检查：`npm run alpha:evidence-check -- --batch Alpha-001 --strict`
 - 小程序 alpha 反馈埋点：评分、价值感、阻力和一句话说明
 
 ### 3.12 微信小程序 Alpha 壳

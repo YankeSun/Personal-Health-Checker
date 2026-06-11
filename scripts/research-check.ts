@@ -96,6 +96,7 @@ for (const snippet of [
   "Alpha-001",
   "Release Gates",
   "alpha:evidence-pack",
+  "alpha:evidence-check",
   "alpha:preflight",
   "alpha:phone-session",
   "Alpha-001-day10.md",
@@ -130,6 +131,10 @@ check(
 check(
   "package exposes alpha evidence pack generator",
   packageJson.includes("\"alpha:evidence-pack\""),
+);
+check(
+  "package exposes alpha evidence checker",
+  packageJson.includes("\"alpha:evidence-check\""),
 );
 for (const snippet of [
   "research/evidence/**",

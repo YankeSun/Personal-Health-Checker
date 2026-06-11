@@ -34,6 +34,7 @@ Do not invite external users until every P0 gate is green.
 | Alpha preflight report saved | `npm run alpha:preflight -- --out research/alpha/preflight/Alpha-001.md` | blocked / ready |  |  |
 | Phone session notes created | `npm run alpha:phone-session -- --batch Alpha-001 --tester internal-01` and `internal-02` | blocked / ready |  |  |
 | Alpha analytics report saved | `npm run analytics:miniprogram -- --days=30 --format=markdown --out research/alpha/reports/Alpha-001-day10.md` | blocked / ready |  |  |
+| Alpha evidence check passed | `npm run alpha:evidence-check -- --batch Alpha-001 --strict` | blocked / ready |  |  |
 | Strict launch check passed | `npm run launch:check:strict` | blocked / ready |  |  |
 | Remote API health passed | `npm run miniprogram:check:remote` | blocked / ready |  |  |
 | Real AppID configured | `miniprogram/project.config.json` is not `touristappid` | blocked / ready |  |  |
@@ -86,6 +87,8 @@ Paste the Day 10 summary from:
 ```bash
 npm run analytics:miniprogram -- --days=30
 npm run analytics:miniprogram -- --days=30 --format=markdown --out research/alpha/reports/Alpha-001-day10.md
+npm run alpha:evidence-check -- --batch Alpha-001 --strict
+npm run analytics:miniprogram -- --days=30 --format=markdown --evidence-check --batch Alpha-001 --out research/alpha/reports/Alpha-001-day10.md
 npm run analytics:miniprogram -- --days=30 --format=markdown --real-device-evidence --user-quotes --competitor-fieldwork --out research/alpha/reports/Alpha-001-day10.md
 ```
 

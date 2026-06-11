@@ -120,7 +120,7 @@ Web 端已经可体验：
 | Day 3 | 判断首次回访 | 如漏斗缺事件，只补最小埋点 | 跟踪次日是否回来、是否完成体重记录、是否看 Dashboard |
 | Day 4-5 | 判断回看价值 | 只修明显误导、空状态、错误态 | 收集 Dashboard / Trends 是否被打开，以及“最有用 / 最卡”的原话 |
 | Day 6 | 判断付费意向 | 确认报告意向点击被记录 | 提醒第 7 天提交 Alpha 反馈，可点击 30 天报告内测但不收费 |
-| Day 7 | 初步决策 | 跑 `analytics:miniprogram`，失败则先定位数据库 | 汇总 10 人 7 天记录、反馈率、访谈摘要，判断 `needs_data / hold_and_improve / beta_candidate` |
+| Day 7 | 初步决策 | 跑 `alpha:evidence-check -- --batch Alpha-001 --strict` 和 `analytics:miniprogram -- --evidence-check --batch Alpha-001`，失败则先定位数据库或补证据 | 汇总 10 人 7 天记录、反馈率、访谈摘要，判断 `needs_data / hold_and_improve / beta_candidate` |
 
 ## 7. 只允许再做 3 个代码改动时
 

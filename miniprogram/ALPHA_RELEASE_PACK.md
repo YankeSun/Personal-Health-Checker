@@ -221,6 +221,7 @@ npm run miniprogram:check:remote
 
 ```bash
 npm run analytics:miniprogram -- --days=30
+npm run alpha:evidence-check -- --batch Alpha-001 --strict
 npm run analytics:miniprogram -- --days=30 --format=markdown --out research/alpha/reports/Alpha-001-day10.md
 ```
 
@@ -228,7 +229,10 @@ npm run analytics:miniprogram -- --days=30 --format=markdown --out research/alph
 
 ```bash
 npm run analytics:miniprogram -- --days=30 --format=markdown --real-device-evidence --user-quotes --competitor-fieldwork --out research/alpha/reports/Alpha-001-day10.md
+npm run analytics:miniprogram -- --days=30 --format=markdown --evidence-check --batch Alpha-001 --out research/alpha/reports/Alpha-001-day10.md
 ```
+
+默认优先使用 `--evidence-check`，让报告自动读取真机会话、用户原话和竞品实测状态；三个手动 evidence flag 只用于临时复盘，不应替代证据文件。
 
 如果报告生成失败，先运行 `npm run db:doctor -- --timeout-ms 5000` 定位当前数据库连接；需要查看底层错误时再给报告命令追加 `--verbose`。
 
