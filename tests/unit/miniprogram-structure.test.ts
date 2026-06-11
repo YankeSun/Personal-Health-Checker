@@ -58,9 +58,13 @@ describe("miniprogram structure", () => {
     expect(packageJson.scripts["miniprogram:check:strict"]).toBe(
       "tsx scripts/miniprogram-check.ts --strict",
     );
+    expect(packageJson.scripts["miniprogram:check:remote"]).toBe(
+      "tsx scripts/miniprogram-check.ts --remote",
+    );
     expect(checkScript).toContain("WECHAT_MINI_PROGRAM_APP_ID");
     expect(checkScript).toContain("WECHAT_MINI_PROGRAM_APP_SECRET");
     expect(checkScript).toContain("apiBaseUrl uses HTTPS");
+    expect(checkScript).toContain("/api/health");
   });
 
   it("calls the existing backend through bearer-token API helpers", () => {

@@ -32,6 +32,18 @@ npm run miniprogram:check:strict
 - 后端环境变量是否有 `WECHAT_MINI_PROGRAM_APP_ID`
 - 后端环境变量是否有 `WECHAT_MINI_PROGRAM_APP_SECRET`
 
+如果要检查线上 API 是否真的可访问，再运行：
+
+```bash
+npm run miniprogram:check:remote
+```
+
+这会访问 `src/config.js` 中的 `apiBaseUrl`，并请求 `/api/health` 检查：
+
+- API 是否返回健康状态
+- 数据库是否可连接
+- 严格模式下，微信小程序后端密钥是否已在远端配置
+
 ## 2. 微信后台准备
 
 在微信公众平台确认：
@@ -111,7 +123,7 @@ npm run miniprogram:check:strict
 ## 6. 不通过时先看哪里
 
 - 登录失败：检查 `WECHAT_MINI_PROGRAM_APP_ID`、`WECHAT_MINI_PROGRAM_APP_SECRET`、request 合法域名。
-- 网络失败：检查 `src/config.js` 的 `apiBaseUrl` 和 Vercel 部署状态。
+- 网络失败：检查 `src/config.js` 的 `apiBaseUrl`、`npm run miniprogram:check:remote` 输出和 Vercel 部署状态。
 - 保存失败：检查后端数据库连接和 Bearer token 是否传入。
 - 协议页打不开：检查 `app.json` 是否包含 `pages/legal/legal`。
 - 趋势无数据：先完成一次今日记录，再重新进入趋势页。

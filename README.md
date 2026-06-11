@@ -84,6 +84,7 @@ npm run analytics:report -- --days=30
 - `POST /api/auth/register`
 - `POST /api/auth/login`
 - `POST /api/auth/logout`
+- `GET /api/health`
 - `POST /api/mp/auth/wechat-login`
 - `GET /api/account/export`
 - `DELETE /api/account`
@@ -129,6 +130,12 @@ npm run miniprogram:check
 
 ```bash
 npm run miniprogram:check:strict
+```
+
+如果要同时检查线上 API 和数据库是否可达：
+
+```bash
+npm run miniprogram:check:remote
 ```
 
 当前小程序壳仅用于 alpha 内测，不包含支付、订阅消息、设备接入或正式上线合规材料。

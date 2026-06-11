@@ -32,6 +32,7 @@ const requireFromProject = createRequire(path.join(projectRoot, "package.json"))
 const miniprogramRoot = path.join(projectRoot, "miniprogram");
 const srcRoot = path.join(miniprogramRoot, "src");
 const strict = process.argv.includes("--strict");
+const remote = process.argv.includes("--remote");
 const results: CheckResult[] = [];
 
 function addResult(result: CheckResult) {
@@ -189,31 +190,98 @@ if (strict) {
   );
 }
 
-let errorCount = 0;
-let warnCount = 0;
+type RemoteHealthPayload = {
+  status?: string;
+  checks?: {
+    database?: {
+      status?: string;
+    };
+    wechatMiniProgram?: {
+      status?: string;
+    };
+  };
+};
 
-for (const result of results) {
-  const isStrictWarningFailure = strict && result.level === "warn" && !result.ok;
-  const failed = !result.ok && (result.level === "error" || isStrictWarningFailure);
-
-  if (failed) {
-    errorCount += 1;
-  } else if (!result.ok) {
-    warnCount += 1;
+async function checkRemoteHealth() {
+  if (!apiBaseUrl) {
+    check("remote API health endpoint responds", false, "apiBaseUrl is missing");
+    return;
   }
 
-  const icon = result.ok ? "ok" : failed ? "fail" : "warn";
-  const detail = result.detail ? ` (${result.detail})` : "";
-  console.log(`[${icon}] ${result.label}${detail}`);
+  const healthUrl = `${apiBaseUrl.replace(/\/$/, "")}/api/health`;
+
+  try {
+    const response = await fetch(healthUrl, {
+      headers: {
+        Accept: "application/json",
+      },
+    });
+    const payload = (await response.json().catch(() => null)) as RemoteHealthPayload | null;
+
+    check(
+      "remote API health endpoint responds",
+      response.ok && payload?.status === "ok",
+      `status=${response.status}, health=${payload?.status ?? "missing"}`,
+    );
+    check(
+      "remote database check is ok",
+      payload?.checks?.database?.status === "ok",
+      `database=${payload?.checks?.database?.status ?? "missing"}`,
+    );
+
+    if (strict) {
+      check(
+        "remote WeChat backend credentials are configured",
+        payload?.checks?.wechatMiniProgram?.status === "configured",
+        `wechatMiniProgram=${payload?.checks?.wechatMiniProgram?.status ?? "missing"}`,
+      );
+    }
+  } catch (error) {
+    check(
+      "remote API health endpoint responds",
+      false,
+      error instanceof Error ? error.message : "unknown error",
+    );
+  }
 }
 
-if (warnCount > 0 && !strict) {
-  console.log(`\n${warnCount} warning(s). Run npm run miniprogram:check:strict before Experience build.`);
+function printResultsAndExit() {
+  let errorCount = 0;
+  let warnCount = 0;
+
+  for (const result of results) {
+    const isStrictWarningFailure = strict && result.level === "warn" && !result.ok;
+    const failed = !result.ok && (result.level === "error" || isStrictWarningFailure);
+
+    if (failed) {
+      errorCount += 1;
+    } else if (!result.ok) {
+      warnCount += 1;
+    }
+
+    const icon = result.ok ? "ok" : failed ? "fail" : "warn";
+    const detail = result.detail ? ` (${result.detail})` : "";
+    console.log(`[${icon}] ${result.label}${detail}`);
+  }
+
+  if (warnCount > 0 && !strict) {
+    console.log(`\n${warnCount} warning(s). Run npm run miniprogram:check:strict before Experience build.`);
+  }
+
+  if (errorCount > 0) {
+    console.error(`\nMini program check failed with ${errorCount} issue(s).`);
+    process.exit(1);
+  }
+
+  console.log("\nMini program check passed.");
 }
 
-if (errorCount > 0) {
-  console.error(`\nMini program check failed with ${errorCount} issue(s).`);
-  process.exit(1);
+async function main() {
+  if (remote) {
+    await checkRemoteHealth();
+  }
+
+  printResultsAndExit();
 }
 
-console.log("\nMini program check passed.");
+void main();

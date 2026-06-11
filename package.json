@@ -14,6 +14,7 @@
     "analytics:report": "tsx scripts/usage-report.ts",
     "miniprogram:check": "tsx scripts/miniprogram-check.ts",
     "miniprogram:check:strict": "tsx scripts/miniprogram-check.ts --strict",
+    "miniprogram:check:remote": "tsx scripts/miniprogram-check.ts --remote",
     "deploy:preview": "bash scripts/deploy-vercel.sh preview",
     "deploy:prod": "bash scripts/deploy-vercel.sh production",
     "prisma:generate": "prisma generate",
