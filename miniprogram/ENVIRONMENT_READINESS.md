@@ -13,6 +13,14 @@ npm run launch:check
 
 `alpha:readiness` 会聚合 launch 配置、小程序结构、研究材料和数据库可达性，并在顶部输出 `Experience build gate: GREEN / YELLOW / RED`；只有 `GREEN` 才能继续进入严格检查、远程检查和真机证据收集。它也会在末尾汇总 `Manual next actions`；`launch:check` 则专门展开体验版配置项。
 
+准备上传体验版前，建议直接跑完整总览：
+
+```bash
+npm run alpha:readiness -- --vercel --remote
+```
+
+其中 `--vercel` 会把 Vercel Production 环境变量名称检查并入 readiness，`--remote` 会把线上 API health 检查并入同一份输出。
+
 如果 `launch:check` 发现 blocker 或 warning，输出末尾会给出 `Next actions`，把每个失败项翻译成下一步要去哪里配置或修改什么。
 
 `launch:check` 会检查：

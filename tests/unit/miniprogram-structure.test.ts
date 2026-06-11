@@ -137,6 +137,8 @@ describe("miniprogram structure", () => {
     expect(alphaReadinessScript).toContain("gateLabel");
     expect(alphaReadinessScript).toContain("Manual next actions");
     expect(alphaReadinessScript).toContain("extractLaunchNextActions");
+    expect(alphaReadinessScript).toContain("includeVercel");
+    expect(alphaReadinessScript).toContain("--vercel");
     expect(alphaPreflightScript).toContain("Alpha Preflight Report");
     expect(alphaPreflightScript).toContain("alpha:readiness");
     expect(alphaPreflightScript).toContain("--out");
@@ -173,6 +175,7 @@ describe("miniprogram structure", () => {
 
     expect(readinessDoc).toContain("npm run launch:check:vercel");
     expect(readinessDoc).toContain("npm run alpha:readiness");
+    expect(readinessDoc).toContain("npm run alpha:readiness -- --vercel --remote");
     expect(readinessDoc).toContain("Experience build gate");
     expect(readinessDoc).toContain("WECHAT_MINI_PROGRAM_APP_ID");
     expect(readinessDoc).toContain("WECHAT_MINI_PROGRAM_APP_SECRET");

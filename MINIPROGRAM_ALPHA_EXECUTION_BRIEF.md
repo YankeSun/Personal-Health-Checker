@@ -128,7 +128,7 @@ Web 端已经可体验：
 
 1. 小程序真机错误态、重试和诊断强化：优先覆盖登录失败、保存失败、Dashboard / Trends 加载失败、API health 不通。
 2. Alpha analytics 决策报告收紧：报告直接输出各门槛是否达标、缺失证据和 `needs_data / hold_and_improve / beta_candidate`。
-3. 体验版 readiness 单一红绿灯：把 AppID、mock 开关、远程 `/api/health`、数据库、Vercel env、request 域名、合规入口集中成一个发放前 gate。
+3. 体验版 readiness 单一红绿灯：用 `npm run alpha:readiness -- --vercel --remote` 把 AppID、mock 开关、远程 `/api/health`、数据库、Vercel env、request 域名、合规入口集中成一个发放前 gate。
 
 ## 8. 每轮执行前读什么
 

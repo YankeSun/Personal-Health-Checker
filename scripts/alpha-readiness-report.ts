@@ -13,6 +13,7 @@ type ReadinessCheck = {
 const npmCommand = process.platform === "win32" ? "npm.cmd" : "npm";
 const strict = process.argv.includes("--strict");
 const includeRemote = process.argv.includes("--remote");
+const includeVercel = process.argv.includes("--vercel");
 
 function runCommand(label: string, args: string[]): ReadinessCheck {
   const result = spawnSync(npmCommand, args, {
@@ -154,8 +155,14 @@ function manualActionsFor(check: ReadinessCheck) {
   return [];
 }
 
+const launchReadinessArgs = ["run", "launch:check"];
+
+if (includeVercel) {
+  launchReadinessArgs.push("--", "--vercel");
+}
+
 const checks = [
-  downgradeExpectedBlocker(runCommand("Launch readiness", ["run", "launch:check"])),
+  downgradeExpectedBlocker(runCommand("Launch readiness", launchReadinessArgs)),
   runCommand("Mini program structure", ["run", "miniprogram:check"]),
   runCommand("Research evidence kit", ["run", "research:check"]),
   runCommand("Database connectivity", ["run", "db:doctor", "--", "--timeout-ms", "5000"]),

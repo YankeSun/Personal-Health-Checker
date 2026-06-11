@@ -244,6 +244,7 @@ npm run analytics:report -- --days=30
 
 ## 2026-06-12
 
+- 增强 alpha readiness 总闸门：`npm run alpha:readiness -- --vercel --remote` 现在可把 Vercel Production 环境变量名称和远程 API health 合并进同一份红绿灯输出；体验版上传前不必再在多个命令之间拼判断，Day 0 阻塞项会更集中。
 - 补齐 Web 设置页数据权利入口：Settings 新增“数据与账号”卡片，支持导出个人资料、目标、记录、体重背景、微信身份映射和 ProductEvent，并要求输入 `DELETE` 后才能删除账号；这样 Web 与小程序都具备账号导出 / 删除入口，减少 alpha 前的合规体验断点。
 - 增加 Docker Postgres 本地小程序 smoke：新增 `npm run miniprogram:smoke:docker`，会显式使用 docker-compose 中的本地 Postgres、等待 `db:doctor` 通过，再启动本地 Next 和 mock 小程序登录主路径；当 `.env.local` 默认 Neon 连接超时时，仍可先验证登录、记录、Dashboard、Trends、导出、意向和反馈链路。
 - 增加体验版 readiness 红绿灯：`alpha:readiness` 现在会在顶部输出 `Experience build gate: GREEN / YELLOW / RED` 和 Gate checklist，明确 RED / YELLOW 时不要邀请外部 alpha 用户；保留原有子检查和 Manual next actions，便于 Day 0 一眼判断体验版是否可发。
