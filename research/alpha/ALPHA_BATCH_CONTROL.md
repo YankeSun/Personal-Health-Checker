@@ -33,8 +33,6 @@ Do not invite external users until every P0 gate is green.
 | Alpha readiness summary reviewed | `npm run alpha:readiness` output | blocked / ready |  |  |
 | Alpha preflight report saved | `npm run alpha:preflight -- --out research/alpha/preflight/Alpha-001.md` | blocked / ready |  |  |
 | Phone session notes created | `npm run alpha:phone-session -- --batch Alpha-001 --tester internal-01` and `internal-02` | blocked / ready |  |  |
-| Alpha analytics report saved | `npm run analytics:miniprogram -- --days=30 --format=markdown --out research/alpha/reports/Alpha-001-day10.md` | blocked / ready |  |  |
-| Alpha evidence check passed | `npm run alpha:evidence-check -- --batch Alpha-001 --strict` | blocked / ready |  |  |
 | Strict launch check passed | `npm run launch:check:strict` | blocked / ready |  |  |
 | Remote API health passed | `npm run miniprogram:check:remote` | blocked / ready |  |  |
 | Real AppID configured | `miniprogram/project.config.json` is not `touristappid` | blocked / ready |  |  |
@@ -53,7 +51,19 @@ Do not invite external users until every P0 gate is green.
 | Day 3-9 | Track whether users return and what blocks them | Daily record count, page views, feedback quotes |
 | Day 10 | Run alpha report and decide next move | `npm run analytics:miniprogram -- --days=30` output plus interview notes |
 
-## 4. Evidence Map
+## 4. Day 10 Decision Gates
+
+Do not use this section before real alpha users have finished the test window. Sample reports are only format previews and must not be marked ready here.
+
+| Gate | Evidence | Status | Owner | Notes |
+|---|---|---|---|---|
+| Alpha evidence check passed | `npm run alpha:evidence-check -- --batch Alpha-001 --strict` | blocked / ready |  |  |
+| Alpha analytics report saved | `npm run analytics:miniprogram -- --days=30 --format=markdown --evidence-check --batch Alpha-001 --out research/alpha/reports/Alpha-001-day10.md` | blocked / ready |  |  |
+| Evidence-backed recommendation reviewed | `decisionReview.recommendation` from the Day 10 report | needs_data / hold_and_improve / beta_candidate |  |  |
+| User quote summary reviewed | Redacted summary from `ALPHA_USER_EVIDENCE.md` | blocked / ready |  |  |
+| Competitor benchmark reviewed | `WECHAT_COMPETITOR_SYNTHESIS.md` status is `fieldwork_complete` | blocked / ready |  |  |
+
+## 5. Evidence Map
 
 | Evidence Type | Where To Store | Required Before Decision |
 |---|---|---|
@@ -65,7 +75,7 @@ Do not invite external users until every P0 gate is green.
 | Analytics report output | Paste summary below or attach as dated notes | yes |
 | Competitor fieldwork | `research/WECHAT_COMPETITOR_FIELDWORK.md` and `research/evidence/` | before beta planning |
 
-## 5. Alpha-001 Daily Tracker
+## 6. Alpha-001 Daily Tracker
 
 | User | Day 1 | Day 2 | Day 3 | Day 4 | Day 5 | Day 6 | Day 7 | Feedback | Notes |
 |---|---|---|---|---|---|---|---|---|---|
@@ -80,7 +90,7 @@ Do not invite external users until every P0 gate is green.
 | U009 |  |  |  |  |  |  |  |  |  |
 | U010 |  |  |  |  |  |  |  |  |  |
 
-## 6. Analytics Snapshot
+## 7. Analytics Snapshot
 
 Paste the Day 10 summary from:
 
@@ -100,6 +110,8 @@ npm run alpha:evidence-pack -- --batch Alpha-001 --vercel --remote
 npm run alpha:preflight -- --out research/alpha/preflight/Alpha-001.md
 npm run alpha:preflight -- --vercel --remote --out research/alpha/preflight/Alpha-001.md
 ```
+
+`alpha:evidence-pack` intentionally does not generate a Day 10 analytics report. Use the analytics commands above only after real users have completed the alpha window.
 
 If you also want to include Vercel Production env names and remote API health in the same readiness gate, run `npm run alpha:readiness -- --vercel --remote`.
 
@@ -131,7 +143,7 @@ npm run alpha:phone-session -- --batch Alpha-001 --tester internal-02 --device "
 | decisionReview.blockers |  |
 | decision |  |
 
-## 7. Decision Rule
+## 8. Decision Rule
 
 | Decision | Use When | Next Action |
 |---|---|---|

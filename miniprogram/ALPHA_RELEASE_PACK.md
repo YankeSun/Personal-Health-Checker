@@ -42,11 +42,11 @@ npm run alpha:phone-session -- --batch Alpha-001 --tester internal-01
 
 `npm run alpha:readiness -- --vercel --remote` 是体验版上传前更接近真实环境的总览：它会在同一份红绿灯里纳入 Vercel Production 变量名和线上 API health。
 
-如果要一键生成本地私有证据包，使用 `npm run alpha:evidence-pack -- --batch Alpha-001 --vercel --remote`，生成的 preflight 会包含同一组完整闸门。
+如果要一键生成 Day 0 / Day 1 本地私有证据包，使用 `npm run alpha:evidence-pack -- --batch Alpha-001 --vercel --remote`；它只生成 preflight 和两份真机会话模板，不生成 Day 10 报告。
 
 `alpha:readiness` 顶部的 `Experience build gate` 必须是 `GREEN`，才可以继续进入体验版上传和真机证据收集；`YELLOW` 或 `RED` 都不要邀请外部 alpha 用户。
 
-这些命令生成的 preflight、phone session 和 report 文件默认是本地私有证据，已被 `.gitignore` 忽略。只把脱敏后的摘要写入 `research/alpha/ALPHA_BATCH_CONTROL.md`，不要提交截图、录屏、手机号、可识别用户原话、密钥或数据库 URL。
+这些命令生成的 preflight 和 phone session 文件默认是本地私有证据，已被 `.gitignore` 忽略。只把脱敏后的摘要写入 `research/alpha/ALPHA_BATCH_CONTROL.md`，不要提交截图、录屏、手机号、可识别用户原话、密钥或数据库 URL。
 
 `npm run alpha:gate:experience -- --batch Alpha-001` 是体验版上传前的硬闸门：它会先生成包含 Vercel 和远程 API 的 Day 0 preflight，再用 strict readiness 和 strict remote mini program check 阻断非 GREEN 状态。
 
@@ -222,14 +222,14 @@ npm run miniprogram:check:remote
 ```bash
 npm run analytics:miniprogram -- --days=30
 npm run alpha:evidence-check -- --batch Alpha-001 --strict
-npm run analytics:miniprogram -- --days=30 --format=markdown --out research/alpha/reports/Alpha-001-day10.md
+npm run analytics:miniprogram -- --days=30 --format=markdown --evidence-check --batch Alpha-001 --out research/alpha/reports/Alpha-001-day10.md
 ```
 
 如果已经补齐 2 台真机验收、3-5 条用户原话和微信竞品真机样本，可以显式带上人工证据标记，让报告输出更接近最终 beta 判断：
 
 ```bash
-npm run analytics:miniprogram -- --days=30 --format=markdown --real-device-evidence --user-quotes --competitor-fieldwork --out research/alpha/reports/Alpha-001-day10.md
 npm run analytics:miniprogram -- --days=30 --format=markdown --evidence-check --batch Alpha-001 --out research/alpha/reports/Alpha-001-day10.md
+npm run analytics:miniprogram -- --days=30 --format=markdown --real-device-evidence --user-quotes --competitor-fieldwork --out research/alpha/reports/Alpha-001-day10.md
 ```
 
 默认优先使用 `--evidence-check`，让报告自动读取真机会话、用户原话和竞品实测状态；三个手动 evidence flag 只用于临时复盘，不应替代证据文件。

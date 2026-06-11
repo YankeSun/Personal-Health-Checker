@@ -244,6 +244,7 @@ npm run analytics:report -- --days=30
 
 ## 2026-06-12
 
+- 拆清 Day 0 发放证据和 Day 10 复盘证据：`alpha:evidence-pack` 现在只生成 preflight 和两份真机会话模板，不再生成 sample Day 10 report；`ALPHA_BATCH_CONTROL.md` 把体验版 Release Gates 和 Day 10 Decision Gates 分开，避免把样例报告误当真实 alpha 复盘证据。
 - 增加 Day 10 alpha 证据检查：新增 `npm run alpha:evidence-check -- --batch Alpha-001 --strict`，会检查 2 份真机会话、10 人用户证据、3 条以上用户原话和竞品实测 synthesis；`analytics:miniprogram -- --evidence-check --batch Alpha-001` 可自动读取检查结果，减少仅靠手动 evidence flag 误判 beta 候选的风险。
 - 补齐 Today 记录摩擦埋点：新增 `RECORD_FORM_STARTED` 和 `RECORD_SAVE_ATTEMPTED`，Web / 小程序进入记录页和保存尝试都会进入 ProductEvent；小程序 alpha report 新增 `recordFormStartRate`、`recordSaveAttemptRate`、`recordSaveSuccessRate`，便于区分用户没进入、没尝试保存或保存失败。
 - 补齐商业意向曝光口径：`/api/intent/pay` 支持 `action: "shown" | "clicked"`，Web Dashboard 和小程序“我的”页会记录 30 天报告入口曝光；小程序 alpha report 新增 `payIntentShownUsers`、`payIntentExposureRate` 和 `payIntentClickThroughRate`，避免只用点击人数误判商业意向。

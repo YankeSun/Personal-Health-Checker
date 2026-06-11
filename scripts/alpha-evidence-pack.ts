@@ -52,7 +52,6 @@ const batchSlug = safeSlug(batch);
 const preflightPath = `research/alpha/preflight/${batchSlug}.md`;
 const phoneOnePath = `research/alpha/phone-sessions/${batchSlug}-${safeSlug(testerOne)}.md`;
 const phoneTwoPath = `research/alpha/phone-sessions/${batchSlug}-${safeSlug(testerTwo)}.md`;
-const sampleReportPath = `research/alpha/reports/${batchSlug}-sample-day10.md`;
 const indexPath = `research/alpha/private/${batchSlug}-evidence-pack.md`;
 const commands: PackCommand[] = [
   {
@@ -106,19 +105,6 @@ const commands: PackCommand[] = [
     ],
     outputPath: phoneTwoPath,
   },
-  {
-    label: "Generate sample Day 10 markdown report",
-    args: [
-      "run",
-      "analytics:miniprogram",
-      "--",
-      "--sample",
-      "--format=markdown",
-      "--out",
-      sampleReportPath,
-    ],
-    outputPath: sampleReportPath,
-  },
 ];
 
 for (const command of commands) {
@@ -132,6 +118,13 @@ Generated files:
 ${commands.map((command) => `- ${command.outputPath}`).join("\n")}
 
 These files are local private evidence and are ignored by Git. Use them to run Day 0 / Day 1 checks, then paste only redacted summaries into \`research/alpha/ALPHA_BATCH_CONTROL.md\`.
+
+This pack intentionally does not generate a Day 10 analytics report. After real users complete the alpha window, run:
+
+\`\`\`bash
+npm run alpha:evidence-check -- --batch ${batch} --strict
+npm run analytics:miniprogram -- --days=30 --format=markdown --evidence-check --batch ${batch} --out research/alpha/reports/${batchSlug}-day10.md
+\`\`\`
 
 Do not commit screenshots, recordings, phone numbers, identifiable user quotes, AppSecret values, tokens, or database URLs.
 `;

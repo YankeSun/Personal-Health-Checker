@@ -167,6 +167,7 @@ describe("miniprogram structure", () => {
     expect(alphaEvidencePackScript).toContain("alpha:preflight");
     expect(alphaEvidencePackScript).toContain("includeVercel");
     expect(alphaEvidencePackScript).toContain("alpha:phone-session");
+    expect(alphaEvidencePackScript).toContain("intentionally does not generate a Day 10 analytics report");
     expect(alphaEvidencePackScript).toContain("analytics:miniprogram");
     expect(alphaEvidencePackScript).toContain("local private evidence");
     expect(alphaEvidenceCheckScript).toContain("realDeviceEvidence");
