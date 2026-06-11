@@ -90,6 +90,7 @@ export async function saveDailyRecordWithEvents({
       path: "/today",
       metadata: {
         date,
+        platform,
       },
     });
   }
@@ -101,6 +102,7 @@ export async function saveDailyRecordWithEvents({
       path: "/today",
       metadata: {
         date,
+        platform,
       },
     });
   }

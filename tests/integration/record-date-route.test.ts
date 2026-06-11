@@ -89,7 +89,7 @@ describe("record-by-date route", () => {
     expect(data.qualityWarnings).toEqual([]);
   });
 
-  it("updates one historical record by date", async () => {
+  it("updates one mini program historical record by date with platform attribution", async () => {
     getCurrentUser.mockResolvedValue({
       id: "user_1",
       profile: {
@@ -120,6 +120,7 @@ describe("record-by-date route", () => {
       new Request("http://localhost:3000/api/records/2026-04-02", {
         method: "PUT",
         headers: {
+          Authorization: "Bearer mini_program_session",
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
@@ -158,6 +159,49 @@ describe("record-by-date route", () => {
       isBackfilled: true,
     });
     expect(trackProductEventSafely).toHaveBeenCalledTimes(4);
+    expect(trackProductEventSafely).toHaveBeenCalledWith({
+      userId: "user_1",
+      eventName: "DAILY_RECORD_SAVED",
+      path: "/history",
+      metadata: {
+        date: "2026-04-02",
+        completedMetrics: 3,
+        isToday: false,
+        isBackfilled: true,
+        contextTagCount: 3,
+        hasContextTags: true,
+        platform: "wechat_mp",
+      },
+    });
+    expect(trackProductEventSafely).toHaveBeenCalledWith({
+      userId: "user_1",
+      eventName: "CONTEXT_TAGS_SAVED",
+      path: "/history",
+      metadata: {
+        date: "2026-04-02",
+        contextTagCount: 3,
+        isToday: false,
+        platform: "wechat_mp",
+      },
+    });
+    expect(trackProductEventSafely).toHaveBeenCalledWith({
+      userId: "user_1",
+      eventName: "FIRST_RECORD_SAVED",
+      path: "/today",
+      metadata: {
+        date: "2026-04-02",
+        platform: "wechat_mp",
+      },
+    });
+    expect(trackProductEventSafely).toHaveBeenCalledWith({
+      userId: "user_1",
+      eventName: "FIRST_COMPLETE_RECORD_SAVED",
+      path: "/today",
+      metadata: {
+        date: "2026-04-02",
+        platform: "wechat_mp",
+      },
+    });
     expect(data.record.date).toBe("2026-04-02");
     expect(data.record.isBackfilled).toBe(true);
     expect(data.record.contextTags.dietTags).toEqual(["DINING_OUT"]);

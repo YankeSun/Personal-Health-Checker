@@ -244,6 +244,7 @@ npm run analytics:report -- --days=30
 
 ## 2026-06-12
 
+- 收紧小程序 alpha 漏斗归因：记录保存服务现在会给 `FIRST_RECORD_SAVED` 和 `FIRST_COMPLETE_RECORD_SAVED` 里程碑事件补充 `platform` metadata；Bearer 保存 `/api/records/[date]` 的测试覆盖 `wechat_mp` 归因，避免首次记录率 / 首次完整记录率在小程序 alpha 报表里被漏算或混入 Web。
 - 强化小程序上线前检查诊断：`launch:check` 现在会检查竞品实测和 alpha 用户证据模板；`miniprogram:check:remote` 失败时会输出 health URL 和底层错误原因，便于区分 DNS、Vercel、数据库或微信密钥配置问题。
 - 新增微信竞品实测采集包：`research/WECHAT_COMPETITOR_FIELDWORK.md` 固化 8 类小程序样本、截图/录屏证据要求、评分口径和“必须学 / 暂不学 / 待验证”路线结论；同时补 `research/evidence`、单样本 notes 模板、竞品汇总表、alpha 用户证据表和真机测试模板，并用 `npm run research:check` 防止把未真机验证的公开资料误写成竞品结论。
 - 新增小程序体验版 Alpha 发放包：补齐发给 10-30 个真实测试用户前的发放闸门、邀请文案、7 天任务卡、观察记录、访谈问题和复盘指标，并纳入 launch readiness 检查，避免体验版发放只停留在技术自检。

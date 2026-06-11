@@ -170,6 +170,7 @@ describe("today record route", () => {
       path: "/today",
       metadata: {
         date: "2026-04-03",
+        platform: "web",
       },
     });
     expect(trackProductEventSafely).toHaveBeenCalledWith({
@@ -178,6 +179,7 @@ describe("today record route", () => {
       path: "/today",
       metadata: {
         date: "2026-04-03",
+        platform: "web",
       },
     });
 
