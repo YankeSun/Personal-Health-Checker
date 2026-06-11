@@ -2,6 +2,7 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 
 const getCurrentUser = vi.fn();
 const getTrendOverviewByUserId = vi.fn();
+const trackProductPageViewSafely = vi.fn();
 
 vi.mock("@/lib/auth/session", () => ({
   getCurrentUser,
@@ -9,6 +10,10 @@ vi.mock("@/lib/auth/session", () => ({
 
 vi.mock("@/lib/services/trends-service", () => ({
   getTrendOverviewByUserId,
+}));
+
+vi.mock("@/lib/services/observability-service", () => ({
+  trackProductPageViewSafely,
 }));
 
 describe("trends route", () => {
@@ -93,6 +98,51 @@ describe("trends route", () => {
       "sleep",
       30,
     );
+    expect(trackProductPageViewSafely).not.toHaveBeenCalled();
     expect(data.trend.metric).toBe("sleep");
+  });
+
+  it("tracks trend page view for mini program bearer requests", async () => {
+    getCurrentUser.mockResolvedValue({
+      id: "user_1",
+      profile: {
+        timezone: "Asia/Shanghai",
+        weightUnit: "KG",
+        waterUnit: "ML",
+      },
+    });
+    getTrendOverviewByUserId.mockResolvedValue({
+      metric: "weight",
+      metricLabel: "体重",
+      unitLabel: "kg",
+      days: 30,
+      startDate: "2026-03-05",
+      endDate: "2026-04-03",
+      recordedDays: 12,
+      completionRate: 40,
+      attainmentRate: 23.3,
+      averageDisplay: "68.4",
+      latestDisplay: "68.1",
+      minDisplay: "67.8",
+      maxDisplay: "69.2",
+      goalDescription: "保持在区间内",
+      points: [],
+    });
+
+    const { GET } = await import("@/app/api/trends/route");
+    const response = await GET(
+      new Request("http://localhost:3000/api/trends?metric=weight&days=30", {
+        headers: {
+          Authorization: "Bearer token",
+        },
+      }),
+    );
+
+    expect(response.status).toBe(200);
+    expect(trackProductPageViewSafely).toHaveBeenCalledWith("user_1", "/trends", {
+      platform: "wechat_mp",
+      metric: "weight",
+      days: 30,
+    });
   });
 });

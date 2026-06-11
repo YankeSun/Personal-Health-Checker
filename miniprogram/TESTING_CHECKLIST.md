@@ -61,6 +61,14 @@ npm run miniprogram:smoke -- --base-url http://localhost:3000
 
 这会用 `mock:alpha-smoke` 登录，并依次验证今日记录保存、Dashboard、体重趋势、资料/目标、账号导出和报告内测意向接口。
 
+第一批真实测试用户回来后，跑小程序 alpha 指标报告：
+
+```bash
+npm run analytics:miniprogram -- --days=30
+```
+
+报告会输出次日回访率、7 日平均记录天数、体重填写率、上下文标签填写率、Dashboard / Trends 使用率、付费意愿点击率和 `decision`。`continue_candidate` 只代表数据达标，仍需要访谈反馈能复述产品价值后再规划 beta。
+
 ## 2. 微信后台准备
 
 在微信公众平台确认：
@@ -138,6 +146,7 @@ npm run miniprogram:smoke -- --base-url http://localhost:3000
 | 删除账号是否通过 | 是 / 否 |
 | 发现的问题 |  |
 | 是否可以发给外部测试用户 | 是 / 否 |
+| 30 天 alpha report decision | needs_data / hold_and_improve / continue_candidate |
 
 ## 6. 不通过时先看哪里
 

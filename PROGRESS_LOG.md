@@ -244,6 +244,7 @@ npm run analytics:report -- --days=30
 
 ## 2026-06-12
 
+- 增加小程序 alpha 指标报告：新增 `npm run analytics:miniprogram -- --days=30`，基于现有 `ProductEvent` 和 `DailyRecord` 输出 alpha 用户数、首次完整记录、次日回访、7 日记录天数、体重/上下文填写率、Dashboard/Trends 使用率、付费意愿点击率和 `decision`；Dashboard/Trends 的 Bearer 请求现在会记录小程序 page view，方便判断是否值得进入 beta。
 - 增加小程序 alpha 主路径 smoke：新增 `npm run miniprogram:smoke`，可在 local/preview 环境启用 mock 登录后，用同一套 Bearer API 验证登录、今日记录保存、Dashboard、体重趋势、资料/目标、账号导出和报告内测意向；它不替代微信开发者工具/真机验收，但能先定位后端主路径是否可用。
 - 补小程序无微信凭证时的主路径测试能力：新增受控 mock 登录，只有 `WECHAT_MINI_PROGRAM_MOCK_LOGIN_ENABLED=true` 且非 Vercel Production 时才接受 `mock:` 登录 code；小程序端默认 `mockLoginEnabled=false` 不展示按钮，临时开启后可先测试 Today / Dashboard / Trends / 我的页。launch 检查会把正式体验版前未关闭 mock 视为 blocker。
 - 增加小程序体验版环境就绪检查：新增 `npm run launch:check`、`npm run launch:check:strict`、`npm run launch:check:vercel` 和 `miniprogram/ENVIRONMENT_READINESS.md`，把真实 AppID、Vercel Production 环境变量、HTTPS API 域名、合规材料和测试清单纳入同一套检查；默认命令只报告缺口，strict 才失败，便于当前缺外部配置时继续推进。

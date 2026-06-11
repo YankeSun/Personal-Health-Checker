@@ -73,6 +73,9 @@ describe("miniprogram structure", () => {
     expect(packageJson.scripts["miniprogram:smoke"]).toBe(
       "tsx scripts/miniprogram-alpha-smoke.ts",
     );
+    expect(packageJson.scripts["analytics:miniprogram"]).toBe(
+      "tsx scripts/miniprogram-alpha-report.ts",
+    );
     expect(checkScript).toContain("WECHAT_MINI_PROGRAM_APP_ID");
     expect(checkScript).toContain("WECHAT_MINI_PROGRAM_APP_SECRET");
     expect(checkScript).toContain("apiBaseUrl uses HTTPS");
@@ -106,6 +109,21 @@ describe("miniprogram structure", () => {
     expect(smokeScript).toContain("/api/dashboard?days=7");
     expect(smokeScript).toContain("/api/trends?metric=weight&days=30");
     expect(smokeScript).toContain("/api/intent/pay");
+  });
+
+  it("exposes mini program alpha reporting for commercial validation", () => {
+    const reportScript = readFileSync(
+      path.join(projectRoot, "scripts", "miniprogram-alpha-report.ts"),
+      "utf8",
+    );
+    const validationPlan = readFileSync(
+      path.join(projectRoot, "WECHAT_MINI_PROGRAM_VALIDATION_PLAN.md"),
+      "utf8",
+    );
+
+    expect(reportScript).toContain("getMiniProgramAlphaSnapshot");
+    expect(validationPlan).toContain("npm run analytics:miniprogram");
+    expect(validationPlan).toContain("continue_candidate");
   });
 
   it("calls the existing backend through bearer-token API helpers", () => {

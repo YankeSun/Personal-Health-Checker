@@ -2,8 +2,10 @@ import { z } from "zod";
 
 import { getCurrentUser } from "@/lib/auth/session";
 import { getDashboardOverviewByUserId } from "@/lib/services/dashboard-service";
+import { trackProductPageViewSafely } from "@/lib/services/observability-service";
 import { getReminderFeedByUserId } from "@/lib/services/reminder-service";
 import { jsonError } from "@/lib/utils/api";
+import { getRequestPlatform } from "@/lib/utils/request-platform";
 
 const searchParamsSchema = z.object({
   days: z.enum(["7", "30"]).default("7"),
@@ -29,10 +31,18 @@ export async function GET(request: Request) {
   }
 
   const days = Number(parseResult.data.days) as 7 | 30;
+  const platform = getRequestPlatform(request);
   const [overview, reminders] = await Promise.all([
     getDashboardOverviewByUserId(user.id, user.profile, [days]),
     getReminderFeedByUserId(user.id, user.profile),
   ]);
+
+  if (platform === "wechat_mp") {
+    await trackProductPageViewSafely(user.id, "/dashboard", {
+      platform,
+      days,
+    });
+  }
 
   return Response.json({
     dashboard: {

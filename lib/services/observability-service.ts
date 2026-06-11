@@ -1,6 +1,7 @@
 import { prisma } from "@/lib/db";
 import { ensureDatabaseSchema } from "@/lib/db/ensure-schema";
 import { shiftDateString } from "@/lib/utils/dates";
+import { countRecordContextTags } from "@/lib/utils/record-context";
 
 export const PRODUCT_EVENT_NAMES = {
   signUpCompleted: "SIGN_UP_COMPLETED",
@@ -45,6 +46,38 @@ export type ObservationSnapshot = {
     views: number;
     uniqueUsers: number;
   }>;
+};
+
+export type MiniProgramAlphaSnapshot = {
+  days: number;
+  generatedAt: string;
+  alphaUsers: number;
+  newAlphaUsers: number;
+  usersWithAnyRecord: number;
+  usersWithCompleteRecord: number;
+  firstCompleteRecordRate: number;
+  nextDayReturnUsers: number;
+  nextDayReturnRate: number;
+  averageRecordedDaysInFirst7Days: number;
+  recordedDays: number;
+  weightFilledDays: number;
+  weightFillRate: number;
+  contextTagFilledDays: number;
+  contextTagFillRate: number;
+  dashboardViewUsers: number;
+  dashboardViewRate: number;
+  trendViewUsers: number;
+  trendViewRate: number;
+  payIntentUsers: number;
+  payIntentRate: number;
+  decision: "needs_data" | "continue_candidate" | "hold_and_improve";
+  gates: Array<{
+    label: string;
+    actual: number;
+    target: number;
+    passed: boolean;
+  }>;
+  notes: string[];
 };
 
 export async function trackProductEvent({
@@ -294,6 +327,263 @@ export async function getObservationSnapshot(days = 30) {
       .sort((left, right) => right.views - left.views)
       .slice(0, 10),
   } satisfies ObservationSnapshot;
+}
+
+type EventRow = {
+  userId: string | null;
+  eventName: string;
+  path: string | null;
+  metadata: unknown;
+  createdAt: Date;
+};
+
+function getMetadataValue(metadata: unknown, key: string) {
+  if (!metadata || typeof metadata !== "object" || Array.isArray(metadata)) {
+    return null;
+  }
+
+  return (metadata as Record<string, unknown>)[key] ?? null;
+}
+
+function isWechatMiniProgramEvent(event: EventRow) {
+  return (
+    event.eventName === PRODUCT_EVENT_NAMES.wechatLoginCompleted ||
+    getMetadataValue(event.metadata, "platform") === "wechat_mp"
+  );
+}
+
+function uniqueUserIds(events: EventRow[]) {
+  return new Set(
+    events
+      .map((event) => event.userId)
+      .filter((userId): userId is string => Boolean(userId)),
+  );
+}
+
+export async function getMiniProgramAlphaSnapshot(days = 30) {
+  await ensureDatabaseSchema();
+
+  const startDate = new Date(Date.now() - (days - 1) * 24 * 60 * 60 * 1000);
+  const events = (await prisma.productEvent.findMany({
+    where: {
+      createdAt: {
+        gte: startDate,
+      },
+      eventName: {
+        in: [
+          PRODUCT_EVENT_NAMES.wechatLoginCompleted,
+          PRODUCT_EVENT_NAMES.pageView,
+          PRODUCT_EVENT_NAMES.dailyRecordSaved,
+          PRODUCT_EVENT_NAMES.firstRecordSaved,
+          PRODUCT_EVENT_NAMES.firstCompleteRecordSaved,
+          PRODUCT_EVENT_NAMES.contextTagsSaved,
+          PRODUCT_EVENT_NAMES.payIntentClicked,
+        ],
+      },
+    },
+    select: {
+      userId: true,
+      eventName: true,
+      path: true,
+      metadata: true,
+      createdAt: true,
+    },
+  })) as EventRow[];
+  const miniProgramEvents = events.filter(isWechatMiniProgramEvent);
+  const loginEvents = miniProgramEvents.filter(
+    (event) => event.eventName === PRODUCT_EVENT_NAMES.wechatLoginCompleted,
+  );
+  const alphaUserIds = uniqueUserIds(loginEvents);
+  const alphaUserIdList = [...alphaUserIds];
+  const firstLoginDateByUser = new Map<string, string>();
+
+  for (const event of loginEvents) {
+    if (!event.userId) {
+      continue;
+    }
+
+    const date = event.createdAt.toISOString().slice(0, 10);
+    const existing = firstLoginDateByUser.get(event.userId);
+
+    if (!existing || date < existing) {
+      firstLoginDateByUser.set(event.userId, date);
+    }
+  }
+
+  const newAlphaUsers = uniqueUserIds(
+    loginEvents.filter((event) => getMetadataValue(event.metadata, "isNewUser") === true),
+  ).size;
+  const records = alphaUserIdList.length
+    ? await prisma.dailyRecord.findMany({
+        where: {
+          userId: {
+            in: alphaUserIdList,
+          },
+          date: {
+            gte: startDate,
+          },
+        },
+        select: {
+          userId: true,
+          date: true,
+          sleepHours: true,
+          weightKg: true,
+          waterMl: true,
+          contextTags: true,
+        },
+        orderBy: {
+          date: "asc",
+        },
+      })
+    : [];
+  const recordDatesByUser = new Map<string, Set<string>>();
+  const usersWithCompleteRecord = new Set<string>();
+  let weightFilledDays = 0;
+  let contextTagFilledDays = 0;
+
+  for (const record of records) {
+    const date = record.date.toISOString().slice(0, 10);
+    const dates = recordDatesByUser.get(record.userId) ?? new Set<string>();
+    dates.add(date);
+    recordDatesByUser.set(record.userId, dates);
+
+    if (record.sleepHours !== null && record.weightKg !== null && record.waterMl !== null) {
+      usersWithCompleteRecord.add(record.userId);
+    }
+
+    if (record.weightKg !== null) {
+      weightFilledDays += 1;
+    }
+
+    if (countRecordContextTags(record.contextTags) > 0) {
+      contextTagFilledDays += 1;
+    }
+  }
+
+  const nextDayReturnUsers = alphaUserIdList.filter((userId) => {
+    const firstLoginDate = firstLoginDateByUser.get(userId);
+
+    if (!firstLoginDate) {
+      return false;
+    }
+
+    const nextDay = shiftDateString(firstLoginDate, 1);
+    return miniProgramEvents.some(
+      (event) =>
+        event.userId === userId &&
+        event.createdAt.toISOString().slice(0, 10) === nextDay,
+    );
+  }).length;
+  const averageRecordedDaysInFirst7Days =
+    alphaUserIdList.length === 0
+      ? 0
+      : roundTo(
+          alphaUserIdList.reduce((total, userId) => {
+            const firstLoginDate = firstLoginDateByUser.get(userId);
+
+            if (!firstLoginDate) {
+              return total;
+            }
+
+            const seventhDay = shiftDateString(firstLoginDate, 6);
+            const dates = recordDatesByUser.get(userId) ?? new Set<string>();
+            const recordedDays = [...dates].filter(
+              (date) => date >= firstLoginDate && date <= seventhDay,
+            ).length;
+            return total + recordedDays;
+          }, 0) / alphaUserIdList.length,
+          2,
+        );
+  const dashboardViewUsers = uniqueUserIds(
+    miniProgramEvents.filter(
+      (event) => event.eventName === PRODUCT_EVENT_NAMES.pageView && event.path === "/dashboard",
+    ),
+  ).size;
+  const trendViewUsers = uniqueUserIds(
+    miniProgramEvents.filter(
+      (event) =>
+        event.eventName === PRODUCT_EVENT_NAMES.pageView &&
+        Boolean(event.path?.startsWith("/trends")),
+    ),
+  ).size;
+  const payIntentUsers = uniqueUserIds(
+    miniProgramEvents.filter(
+      (event) => event.eventName === PRODUCT_EVENT_NAMES.payIntentClicked,
+    ),
+  ).size;
+  const alphaUsers = alphaUserIds.size;
+  const recordedDays = records.length;
+  const gates = [
+    {
+      label: "次日回访率",
+      actual: alphaUsers === 0 ? 0 : roundTo((nextDayReturnUsers / alphaUsers) * 100, 1),
+      target: 25,
+      passed: alphaUsers > 0 && nextDayReturnUsers / alphaUsers >= 0.25,
+    },
+    {
+      label: "7 日内平均记录天数",
+      actual: averageRecordedDaysInFirst7Days,
+      target: 3,
+      passed: averageRecordedDaysInFirst7Days >= 3,
+    },
+    {
+      label: "体重填写率",
+      actual: recordedDays === 0 ? 0 : roundTo((weightFilledDays / recordedDays) * 100, 1),
+      target: 50,
+      passed: recordedDays > 0 && weightFilledDays / recordedDays >= 0.5,
+    },
+    {
+      label: "上下文标签填写率",
+      actual: recordedDays === 0 ? 0 : roundTo((contextTagFilledDays / recordedDays) * 100, 1),
+      target: 40,
+      passed: recordedDays > 0 && contextTagFilledDays / recordedDays >= 0.4,
+    },
+    {
+      label: "付费意愿点击率",
+      actual: alphaUsers === 0 ? 0 : roundTo((payIntentUsers / alphaUsers) * 100, 1),
+      target: 5,
+      passed: alphaUsers > 0 && payIntentUsers / alphaUsers >= 0.05,
+    },
+  ];
+  const decision =
+    alphaUsers === 0
+      ? "needs_data"
+      : gates.every((gate) => gate.passed)
+        ? "continue_candidate"
+        : "hold_and_improve";
+  const notes = [
+    "该报告只基于 ProductEvent 和 DailyRecord，不包含访谈反馈。",
+    "若判定为 continue_candidate，仍需用户反馈能复述产品价值后再规划 beta。",
+    "mock 登录数据会污染真实 alpha 指标，正式测试前请清理或使用独立环境。",
+  ];
+
+  return {
+    days,
+    generatedAt: new Date().toISOString(),
+    alphaUsers,
+    newAlphaUsers,
+    usersWithAnyRecord: recordDatesByUser.size,
+    usersWithCompleteRecord: usersWithCompleteRecord.size,
+    firstCompleteRecordRate:
+      alphaUsers === 0 ? 0 : roundTo((usersWithCompleteRecord.size / alphaUsers) * 100, 1),
+    nextDayReturnUsers,
+    nextDayReturnRate: gates[0].actual,
+    averageRecordedDaysInFirst7Days,
+    recordedDays,
+    weightFilledDays,
+    weightFillRate: gates[2].actual,
+    contextTagFilledDays,
+    contextTagFillRate: gates[3].actual,
+    dashboardViewUsers,
+    dashboardViewRate: alphaUsers === 0 ? 0 : roundTo((dashboardViewUsers / alphaUsers) * 100, 1),
+    trendViewUsers,
+    trendViewRate: alphaUsers === 0 ? 0 : roundTo((trendViewUsers / alphaUsers) * 100, 1),
+    payIntentUsers,
+    payIntentRate: gates[4].actual,
+    decision,
+    gates,
+    notes,
+  } satisfies MiniProgramAlphaSnapshot;
 }
 
 function roundTo(value: number, fractionDigits: number) {

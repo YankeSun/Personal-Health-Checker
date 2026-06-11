@@ -3,6 +3,7 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 const getCurrentUser = vi.fn();
 const getDashboardOverviewByUserId = vi.fn();
 const getReminderFeedByUserId = vi.fn();
+const trackProductPageViewSafely = vi.fn();
 
 vi.mock("@/lib/auth/session", () => ({
   getCurrentUser,
@@ -14,6 +15,10 @@ vi.mock("@/lib/services/dashboard-service", () => ({
 
 vi.mock("@/lib/services/reminder-service", () => ({
   getReminderFeedByUserId,
+}));
+
+vi.mock("@/lib/services/observability-service", () => ({
+  trackProductPageViewSafely,
 }));
 
 describe("dashboard route", () => {
@@ -106,7 +111,52 @@ describe("dashboard route", () => {
       weightUnit: "KG",
       waterUnit: "ML",
     });
+    expect(trackProductPageViewSafely).not.toHaveBeenCalled();
     expect(data.dashboard.window.days).toBe(30);
     expect(data.reminders.reminders).toHaveLength(1);
+  });
+
+  it("tracks dashboard page view for mini program bearer requests", async () => {
+    getCurrentUser.mockResolvedValue({
+      id: "user_1",
+      profile: {
+        timezone: "Asia/Shanghai",
+        weightUnit: "KG",
+        waterUnit: "ML",
+      },
+    });
+    getDashboardOverviewByUserId.mockResolvedValue({
+      todayDate: "2026-04-03",
+      streakDays: 4,
+      todayCompletedMetrics: 3,
+      totalTrackedMetrics: 3,
+      todayMetrics: [],
+      windows: [
+        {
+          days: 7,
+          completionRate: 20,
+        },
+      ],
+    });
+    getReminderFeedByUserId.mockResolvedValue({
+      enabled: true,
+      todayDate: "2026-04-03",
+      reminders: [],
+    });
+
+    const { GET } = await import("@/app/api/dashboard/route");
+    const response = await GET(
+      new Request("http://localhost:3000/api/dashboard?days=7", {
+        headers: {
+          Authorization: "Bearer token",
+        },
+      }),
+    );
+
+    expect(response.status).toBe(200);
+    expect(trackProductPageViewSafely).toHaveBeenCalledWith("user_1", "/dashboard", {
+      platform: "wechat_mp",
+      days: 7,
+    });
   });
 });

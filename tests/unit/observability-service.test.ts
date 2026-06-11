@@ -27,6 +27,7 @@ vi.mock("@/lib/db", () => ({
 import { prisma } from "@/lib/db";
 import {
   PRODUCT_EVENT_NAMES,
+  getMiniProgramAlphaSnapshot,
   getObservationSnapshot,
   trackProductEvent,
 } from "@/lib/services/observability-service";
@@ -148,6 +149,123 @@ describe("observability-service", () => {
       views: 2,
       uniqueUsers: 2,
     });
+
+    vi.useRealTimers();
+  });
+
+  it("builds a mini program alpha snapshot with decision gates", async () => {
+    vi.useFakeTimers();
+    vi.setSystemTime(new Date("2026-04-08T08:00:00.000Z"));
+
+    vi.mocked(prisma.productEvent.findMany).mockResolvedValue([
+      {
+        userId: "user_1",
+        eventName: PRODUCT_EVENT_NAMES.wechatLoginCompleted,
+        path: "/api/mp/auth/wechat-login",
+        metadata: {
+          platform: "wechat_mp",
+          isNewUser: true,
+        },
+        createdAt: new Date("2026-04-01T08:00:00.000Z"),
+      },
+      {
+        userId: "user_1",
+        eventName: PRODUCT_EVENT_NAMES.dailyRecordSaved,
+        path: "/today",
+        metadata: {
+          platform: "wechat_mp",
+        },
+        createdAt: new Date("2026-04-02T08:00:00.000Z"),
+      },
+      {
+        userId: "user_1",
+        eventName: PRODUCT_EVENT_NAMES.pageView,
+        path: "/dashboard",
+        metadata: {
+          platform: "wechat_mp",
+        },
+        createdAt: new Date("2026-04-02T08:10:00.000Z"),
+      },
+      {
+        userId: "user_1",
+        eventName: PRODUCT_EVENT_NAMES.pageView,
+        path: "/trends",
+        metadata: {
+          platform: "wechat_mp",
+        },
+        createdAt: new Date("2026-04-02T08:20:00.000Z"),
+      },
+      {
+        userId: "user_1",
+        eventName: PRODUCT_EVENT_NAMES.payIntentClicked,
+        path: "wechat_mp/me",
+        metadata: {
+          platform: "wechat_mp",
+        },
+        createdAt: new Date("2026-04-02T08:30:00.000Z"),
+      },
+    ] as never);
+    vi.mocked(prisma.dailyRecord.findMany).mockResolvedValue([
+      {
+        userId: "user_1",
+        date: new Date("2026-04-01T00:00:00.000Z"),
+        sleepHours: 7.5,
+        weightKg: 68.4,
+        waterMl: 1800,
+        contextTags: {
+          dietTags: ["NORMAL"],
+          activityLevel: "NORMAL",
+          energyLevel: "GOOD",
+          weighTiming: "MORNING",
+        },
+      },
+      {
+        userId: "user_1",
+        date: new Date("2026-04-02T00:00:00.000Z"),
+        sleepHours: 7.2,
+        weightKg: 68.1,
+        waterMl: 1600,
+        contextTags: {
+          dietTags: ["LIGHT"],
+        },
+      },
+      {
+        userId: "user_1",
+        date: new Date("2026-04-03T00:00:00.000Z"),
+        sleepHours: 7.1,
+        weightKg: 67.9,
+        waterMl: 1700,
+        contextTags: {
+          activityLevel: "HIGH",
+        },
+      },
+    ] as never);
+
+    const snapshot = await getMiniProgramAlphaSnapshot(30);
+
+    expect(snapshot).toMatchObject({
+      alphaUsers: 1,
+      newAlphaUsers: 1,
+      usersWithAnyRecord: 1,
+      usersWithCompleteRecord: 1,
+      firstCompleteRecordRate: 100,
+      nextDayReturnUsers: 1,
+      nextDayReturnRate: 100,
+      averageRecordedDaysInFirst7Days: 3,
+      recordedDays: 3,
+      weightFilledDays: 3,
+      weightFillRate: 100,
+      contextTagFilledDays: 3,
+      contextTagFillRate: 100,
+      dashboardViewUsers: 1,
+      dashboardViewRate: 100,
+      trendViewUsers: 1,
+      trendViewRate: 100,
+      payIntentUsers: 1,
+      payIntentRate: 100,
+      decision: "continue_candidate",
+    });
+    expect(snapshot.gates.every((gate) => gate.passed)).toBe(true);
 
     vi.useRealTimers();
   });

@@ -58,6 +58,7 @@ npm test
 npm run smoke
 npm run launch:check
 npm run miniprogram:check
+npm run analytics:miniprogram -- --days=30
 npm run analytics:report -- --days=30
 ```
 
@@ -152,6 +153,12 @@ npm run miniprogram:check:remote
 
 ```bash
 npm run miniprogram:smoke -- --base-url http://localhost:3000
+```
+
+第一批小程序 alpha 测试后，可以看小程序专用指标：
+
+```bash
+npm run analytics:miniprogram -- --days=30
 ```
 
 当前小程序壳仅用于 alpha 内测，不包含支付、订阅消息、设备接入或正式上线合规材料。
