@@ -5,6 +5,7 @@ import { shiftDateString } from "@/lib/utils/dates";
 export const PRODUCT_EVENT_NAMES = {
   signUpCompleted: "SIGN_UP_COMPLETED",
   loginCompleted: "LOGIN_COMPLETED",
+  wechatLoginCompleted: "WECHAT_LOGIN_COMPLETED",
   pageView: "PAGE_VIEW",
   dailyRecordSaved: "DAILY_RECORD_SAVED",
   firstRecordSaved: "FIRST_RECORD_SAVED",

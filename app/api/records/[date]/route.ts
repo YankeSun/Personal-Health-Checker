@@ -18,6 +18,7 @@ import {
   getDefaultRecordContextTags,
 } from "@/lib/utils/record-context";
 import { getRecordQualityWarnings } from "@/lib/utils/record-quality";
+import { getRequestPlatform } from "@/lib/utils/request-platform";
 import { dailyRecordFieldsSchema } from "@/lib/validations/daily-record";
 import {
   getRecordDateValidationError,
@@ -59,8 +60,8 @@ async function getValidatedDate(context: RouteContext, timezone: string) {
   };
 }
 
-export async function GET(_: Request, context: RouteContext) {
-  const user = await getCurrentUser();
+export async function GET(request: Request, context: RouteContext) {
+  const user = await getCurrentUser(request);
 
   if (!user) {
     return jsonError("未登录", 401);
@@ -98,7 +99,7 @@ export async function GET(_: Request, context: RouteContext) {
 }
 
 export async function PUT(request: Request, context: RouteContext) {
-  const user = await getCurrentUser();
+  const user = await getCurrentUser(request);
 
   if (!user) {
     return jsonError("未登录", 401);
@@ -119,6 +120,7 @@ export async function PUT(request: Request, context: RouteContext) {
     const milestones = await getDailyRecordMilestonesByUserId(user.id);
     const todayDate = getDateStringInTimezone(user.profile.timezone);
     const isToday = parsedDate.date === todayDate;
+    const platform = getRequestPlatform(request);
     const record = await upsertDailyRecordByUserId(user.id, {
       date: parsedDate.date,
       ...body,
@@ -146,6 +148,7 @@ export async function PUT(request: Request, context: RouteContext) {
         isBackfilled: record.isBackfilled,
         contextTagCount,
         hasContextTags: contextTagCount > 0,
+        platform,
       },
     });
 
@@ -158,6 +161,7 @@ export async function PUT(request: Request, context: RouteContext) {
           date: parsedDate.date,
           contextTagCount,
           isToday,
+          platform,
         },
       });
     }
@@ -195,8 +199,8 @@ export async function PUT(request: Request, context: RouteContext) {
   }
 }
 
-export async function DELETE(_: Request, context: RouteContext) {
-  const user = await getCurrentUser();
+export async function DELETE(request: Request, context: RouteContext) {
+  const user = await getCurrentUser(request);
 
   if (!user) {
     return jsonError("未登录", 401);

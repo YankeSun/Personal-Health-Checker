@@ -15,11 +15,75 @@ function getExpiryDate() {
   return new Date(Date.now() + SESSION_TTL_DAYS * 24 * 60 * 60 * 1000);
 }
 
-export async function createSession(userId: string) {
+type CreateSessionOptions = {
+  setCookie?: boolean;
+};
+
+function getBearerToken(request?: Request) {
+  const authorization = request?.headers.get("authorization");
+
+  if (!authorization) {
+    return null;
+  }
+
+  const [scheme, token] = authorization.split(" ");
+
+  if (scheme?.toLowerCase() !== "bearer" || !token) {
+    return null;
+  }
+
+  return token.trim() || null;
+}
+
+async function getSessionByRawToken(rawToken: string) {
+  await ensureDatabaseSchema();
+
+  const session = await prisma.session.findUnique({
+    where: {
+      sessionToken: hashToken(rawToken),
+    },
+    include: {
+      user: {
+        include: {
+          profile: true,
+        },
+      },
+    },
+  });
+
+  if (!session || session.expiresAt < new Date()) {
+    if (session) {
+      await prisma.session.delete({
+        where: {
+          id: session.id,
+        },
+      });
+    }
+
+    return null;
+  }
+
+  await prisma.session.update({
+    where: {
+      id: session.id,
+    },
+    data: {
+      lastAccessedAt: new Date(),
+    },
+  });
+
+  return session;
+}
+
+export async function createSession(
+  userId: string,
+  options: CreateSessionOptions = {},
+) {
   await ensureDatabaseSchema();
   const token = randomBytes(32).toString("hex");
   const sessionToken = hashToken(token);
   const expiresAt = getExpiryDate();
+  const shouldSetCookie = options.setCookie ?? true;
 
   await prisma.session.create({
     data: {
@@ -29,14 +93,21 @@ export async function createSession(userId: string) {
     },
   });
 
-  const cookieStore = await cookies();
-  cookieStore.set(SESSION_COOKIE_NAME, token, {
-    httpOnly: true,
-    sameSite: "lax",
-    secure: process.env.NODE_ENV === "production",
-    path: "/",
-    expires: expiresAt,
-  });
+  if (shouldSetCookie) {
+    const cookieStore = await cookies();
+    cookieStore.set(SESSION_COOKIE_NAME, token, {
+      httpOnly: true,
+      sameSite: "lax",
+      secure: process.env.NODE_ENV === "production",
+      path: "/",
+      expires: expiresAt,
+    });
+  }
+
+  return {
+    token,
+    expiresAt,
+  };
 }
 
 export async function clearSession() {
@@ -63,47 +134,24 @@ export const getCurrentSession = cache(async () => {
     return null;
   }
 
-  await ensureDatabaseSchema();
+  const session = await getSessionByRawToken(token);
 
-  const session = await prisma.session.findUnique({
-    where: {
-      sessionToken: hashToken(token),
-    },
-    include: {
-      user: {
-        include: {
-          profile: true,
-        },
-      },
-    },
-  });
-
-  if (!session || session.expiresAt < new Date()) {
-    if (session) {
-      await prisma.session.delete({
-        where: {
-          id: session.id,
-        },
-      });
-    }
-
+  if (!session) {
     cookieStore.delete(SESSION_COOKIE_NAME);
     return null;
   }
 
-  await prisma.session.update({
-    where: {
-      id: session.id,
-    },
-    data: {
-      lastAccessedAt: new Date(),
-    },
-  });
-
   return session;
 });
 
-export async function getCurrentUser() {
+export async function getCurrentUser(request?: Request) {
+  const bearerToken = getBearerToken(request);
+
+  if (bearerToken) {
+    const session = await getSessionByRawToken(bearerToken);
+    return session?.user ?? null;
+  }
+
   const session = await getCurrentSession();
   return session?.user ?? null;
 }

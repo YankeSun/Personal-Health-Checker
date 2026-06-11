@@ -89,6 +89,28 @@ const schemaStatements = [
   CREATE INDEX IF NOT EXISTS "Session_expiresAt_idx" ON "Session"("expiresAt");
   `,
   `
+  CREATE TABLE IF NOT EXISTS "WechatIdentity" (
+    "id" TEXT NOT NULL,
+    "userId" TEXT NOT NULL,
+    "appId" TEXT NOT NULL,
+    "openid" TEXT NOT NULL,
+    "unionid" TEXT,
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" TIMESTAMP(3) NOT NULL,
+    CONSTRAINT "WechatIdentity_pkey" PRIMARY KEY ("id"),
+    CONSTRAINT "WechatIdentity_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE
+  );
+  `,
+  `
+  CREATE UNIQUE INDEX IF NOT EXISTS "WechatIdentity_appId_openid_key" ON "WechatIdentity"("appId", "openid");
+  `,
+  `
+  CREATE INDEX IF NOT EXISTS "WechatIdentity_userId_idx" ON "WechatIdentity"("userId");
+  `,
+  `
+  CREATE INDEX IF NOT EXISTS "WechatIdentity_unionid_idx" ON "WechatIdentity"("unionid");
+  `,
+  `
   CREATE TABLE IF NOT EXISTS "EmailVerificationToken" (
     "id" TEXT NOT NULL,
     "userId" TEXT NOT NULL,

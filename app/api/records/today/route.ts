@@ -10,8 +10,8 @@ import { getDateStringInTimezone } from "@/lib/utils/dates";
 import { getDefaultRecordContextTags } from "@/lib/utils/record-context";
 import { dailyRecordInputSchema } from "@/lib/validations/daily-record";
 
-export async function GET() {
-  const user = await getCurrentUser();
+export async function GET(request?: Request) {
+  const user = await getCurrentUser(request);
 
   if (!user) {
     return jsonError("未登录", 401);
@@ -36,7 +36,7 @@ export async function GET() {
 }
 
 export async function PUT(request: Request) {
-  const user = await getCurrentUser();
+  const user = await getCurrentUser(request);
 
   if (!user) {
     return jsonError("未登录", 401);

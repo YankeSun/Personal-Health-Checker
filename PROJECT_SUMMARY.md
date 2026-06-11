@@ -165,6 +165,7 @@
 - 用户密码哈希后存库
 - Session 存在数据库中
 - 浏览器保存 `HttpOnly Cookie`
+- 小程序 alpha 入口使用同一张 `Session` 表，通过 `Authorization: Bearer` 传递服务端签发 token
 
 ### 5.5 自动建表
 
@@ -179,6 +180,7 @@
 - `User`
 - `UserProfile`
 - `Session`
+- `WechatIdentity`
 - `DailyRecord`
 - `Goal`
 - `ProductEvent`
@@ -188,6 +190,7 @@
 - `User`：登录主体
 - `UserProfile`：昵称、时区、单位、提醒偏好
 - `Session`：登录态
+- `WechatIdentity`：微信小程序 `openid / unionid` 与用户账号的映射
 - `DailyRecord`：睡眠、体重、饮水每日记录
 - `Goal`：三项健康目标
 - `ProductEvent`：关键路径行为事件与页面访问观察
