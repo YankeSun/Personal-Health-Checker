@@ -244,6 +244,7 @@ npm run analytics:report -- --days=30
 
 ## 2026-06-12
 
+- 增强 Day 0 preflight 证据口径：`alpha:preflight` 现在会从 `alpha:readiness` 中提取 `Experience build gate` 状态和 gate guidance，并把 `--remote` 标记为 remote experience check，避免私有预检报告只留下汇总数字却看不出体验版是否 GREEN / RED。
 - 收紧 `alpha:readiness --remote` 的远程验收口径：现在会调用体验版级 `miniprogram:check:experience`，把线上 API health、数据库状态、真实 AppID / AppSecret 和远程微信后端凭证状态纳入同一份红绿灯，避免只证明 API 可访问就误以为体验版远程链路可发。
 - 收紧小程序 smoke 的账号导出验收：`miniprogram:smoke` 现在会在保存记录、报告曝光 / 点击和 alpha 反馈之后再导出账号数据，并断言导出包含 goals 数组、带 contextTags 的 daily record、wechatIdentities 以及 PAY_INTENT_SHOWN / PAY_INTENT_CLICKED / ALPHA_FEEDBACK_SUBMITTED 事件，确保体验版前数据权利闭环覆盖真实 alpha 数据。
 - 补齐小程序后端 smoke 的报告意向漏斗：`miniprogram:smoke` 现在会先记录 `action: "shown"` 的 30 天报告曝光，再记录 `action: "clicked"` 的内测意向点击，覆盖 `payIntentExposureRate` 和 `payIntentClickThroughRate` 两段 alpha 复盘口径。

@@ -163,6 +163,9 @@ describe("miniprogram structure", () => {
     expect(alphaPreflightScript).toContain("alpha:readiness");
     expect(alphaPreflightScript).toContain("includeVercel");
     expect(alphaPreflightScript).toContain("Vercel env included");
+    expect(alphaPreflightScript).toContain("extractExperienceGate");
+    expect(alphaPreflightScript).toContain("Remote experience check included");
+    expect(alphaPreflightScript).toContain("Experience build gate");
     expect(alphaPreflightScript).toContain("--out");
     expect(alphaPhoneSessionScript).toContain("PHONE_TEST_SESSION_TEMPLATE.md");
     expect(alphaPhoneSessionScript).toContain("phone-sessions");

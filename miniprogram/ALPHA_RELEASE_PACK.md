@@ -48,7 +48,7 @@ npm run alpha:phone-session -- --batch Alpha-001 --tester internal-01
 
 这些命令生成的 preflight 和 phone session 文件默认是本地私有证据，已被 `.gitignore` 忽略。只把脱敏后的摘要写入 `research/alpha/ALPHA_BATCH_CONTROL.md`，不要提交截图、录屏、手机号、可识别用户原话、密钥或数据库 URL。
 
-`npm run alpha:gate:experience -- --batch Alpha-001` 是体验版上传前的硬闸门：它会先生成包含 Vercel 和远程 API 的 Day 0 preflight，再用 strict readiness 和 strict remote mini program check 阻断非 GREEN 状态。
+`npm run alpha:gate:experience -- --batch Alpha-001` 是体验版上传前的硬闸门：它会先生成包含 Vercel 和远程体验版检查的 Day 0 preflight，再用 strict readiness 和 strict remote mini program check 阻断非 GREEN 状态。
 
 再按发放前严格闸门逐项清零：
 

@@ -111,6 +111,21 @@ function extractManualActions(output: string) {
   return actions;
 }
 
+function extractExperienceGate(output: string) {
+  const state = output.match(/^Experience build gate:\s*(GREEN|YELLOW|RED)$/m)?.[1] ?? "unknown";
+  const lineAfterState = output
+    .split(/\r?\n/)
+    .find((line) =>
+      line.startsWith("Automated gates are green.") ||
+      line.startsWith("Do not invite external alpha users"),
+    );
+
+  return {
+    state,
+    guidance: lineAfterState ?? "No gate guidance reported.",
+  };
+}
+
 function markdownTable(rows: string[][]) {
   return rows.map((row) => `| ${row.join(" | ")} |`).join("\n");
 }
@@ -133,6 +148,7 @@ if (readinessFlags.length > 0) {
 const readiness = run(npmCommand, readinessArgs);
 const readinessRows = extractReadinessRows(readiness.output);
 const manualActions = extractManualActions(readiness.output);
+const experienceGate = extractExperienceGate(readiness.output);
 const statusLine =
   readiness.output.match(/Alpha readiness:\s*(.+)$/m)?.[1] ?? `exit=${readiness.status}`;
 const gitStatus = gitValue(["status", "--short"]);
@@ -157,12 +173,17 @@ ${markdownTable([
   ["API domain", extractApiBaseUrl()],
   ["Mini program AppID state", appIdState],
   ["Vercel env included", includeVercel ? "yes" : "no"],
-  ["Remote API included", includeRemote ? "yes" : "no"],
+  ["Remote experience check included", includeRemote ? "yes" : "no"],
+  ["Experience build gate", experienceGate.state],
 ])}
 
 ## Readiness Summary
 
 Overall: ${statusLine}
+
+Experience build gate: ${experienceGate.state}
+
+Gate guidance: ${experienceGate.guidance}
 
 ${markdownTable([
   ["Check", "Status", "Summary"],
