@@ -29,3 +29,9 @@ Generate a Day 10 mini program alpha report after the first user batch:
 ```bash
 npm run analytics:miniprogram -- --days=30 --format=markdown --out research/alpha/reports/Alpha-001-day10.md
 ```
+
+If the report cannot reach the database, run:
+
+```bash
+npm run db:doctor -- --timeout-ms 5000
+```

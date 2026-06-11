@@ -209,6 +209,8 @@ npm run analytics:miniprogram -- --days=30
 npm run analytics:miniprogram -- --days=30 --format=markdown --out research/alpha/reports/Alpha-001-day10.md
 ```
 
+如果报告生成失败，先运行 `npm run db:doctor -- --timeout-ms 5000` 定位当前数据库连接；需要查看底层错误时再给报告命令追加 `--verbose`。
+
 需要一起看：
 
 - `alphaUsers`

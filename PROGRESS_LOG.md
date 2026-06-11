@@ -244,6 +244,7 @@ npm run analytics:report -- --days=30
 
 ## 2026-06-12
 
+- 改善 alpha 复盘数据库失败诊断：`analytics:miniprogram` 在数据库不可达时不再默认只抛 Prisma 堆栈，而是提示运行 `npm run db:doctor -- --timeout-ms 5000` 和备用连接变量检查；需要底层错误时可追加 `--verbose`。
 - 增强小程序 alpha 复盘报告：`npm run analytics:miniprogram` 新增 `--format=markdown` 和 `--out`，可在 Day 10 输出 `research/alpha/reports/Alpha-001-day10.md`，把核心指标、决策门槛、价值 cue、阻力 cue 和注意事项变成可贴进批次控制台的复盘材料。
 - 增加真机测试会话生成器：新增 `npm run alpha:phone-session`，可基于 `PHONE_TEST_SESSION_TEMPLATE.md` 自动生成 Day 1 真机验收记录，并预填日期、tester、设备、微信版本、API 域名、Git commit 和 AppID 状态；发体验版前可快速生成 internal-01 / internal-02 两份证据文件。
 - 增加 alpha 预检报告生成器：新增 `npm run alpha:preflight`，可把当前 Git commit、API 域名、AppID 状态、`alpha:readiness` 摘要和 `Manual next actions` 生成 Markdown；发体验版前可用 `--out research/alpha/preflight/Alpha-001.md` 留档，避免 Day 0 配置和后续真机证据脱节。

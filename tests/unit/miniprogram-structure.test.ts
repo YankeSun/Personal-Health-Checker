@@ -203,6 +203,8 @@ describe("miniprogram structure", () => {
     expect(reportScript).toContain("Mini Program Alpha Report");
     expect(reportScript).toContain("--format");
     expect(reportScript).toContain("--out");
+    expect(reportScript).toContain("db:doctor");
+    expect(reportScript).toContain("--verbose");
     expect(validationPlan).toContain("npm run analytics:miniprogram");
     expect(validationPlan).toContain("continue_candidate");
   });

@@ -98,6 +98,28 @@ ${snapshot.notes.map((note) => `- ${note}`).join("\n")}
 `;
 }
 
+function describeReportError(error: unknown) {
+  if (!(error instanceof Error)) {
+    return String(error);
+  }
+
+  const code = "code" in error ? String(error.code) : "";
+
+  if (
+    code === "ECONNREFUSED" ||
+    error.message.includes("ECONNREFUSED") ||
+    error.message.includes("timeout")
+  ) {
+    return [
+      "database unavailable while generating mini program alpha report",
+      "Run `npm run db:doctor -- --timeout-ms 5000` to inspect the active DATABASE_URL.",
+      "If `.env.local` has a backup connection variable, try `npm run db:doctor -- --database-url-env DATABASE_URL_UNPOOLED`.",
+    ].join("\n");
+  }
+
+  return error.message;
+}
+
 async function main() {
   const daysArg = getInlineArgValue("--days") ?? getArgValue("--days");
   const days = daysArg ? Number(daysArg) : 30;
@@ -121,6 +143,11 @@ async function main() {
 }
 
 main().catch((error) => {
-  console.error("mini program alpha report failed", error);
+  console.error(`mini program alpha report failed: ${describeReportError(error)}`);
+
+  if (process.argv.includes("--verbose")) {
+    console.error(error);
+  }
+
   process.exitCode = 1;
 });
