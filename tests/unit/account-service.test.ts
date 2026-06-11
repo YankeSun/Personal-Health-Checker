@@ -13,6 +13,9 @@ vi.mock("@/lib/db", () => ({
       findUnique: vi.fn(),
       delete: vi.fn(),
     },
+    productEvent: {
+      deleteMany: vi.fn(),
+    },
   },
 }));
 
@@ -21,7 +24,7 @@ describe("account-service", () => {
     vi.clearAllMocks();
   });
 
-  it("exports profile, goals, records, context tags, and wechat identities", async () => {
+  it("exports profile, goals, records, context tags, wechat identities, and product events", async () => {
     vi.mocked(prisma.user.findUnique).mockResolvedValue({
       id: "user_1",
       email: "demo@example.com",
@@ -84,10 +87,44 @@ describe("account-service", () => {
           updatedAt: new Date("2026-04-01T00:00:00.000Z"),
         },
       ],
+      productEvents: [
+        {
+          id: "event_1",
+          userId: "user_1",
+          eventName: "ALPHA_FEEDBACK_SUBMITTED",
+          path: "/mp/me",
+          metadata: {
+            rating: 5,
+            valueCue: "trend-review",
+            friction: "manual-entry",
+          },
+          createdAt: new Date("2026-04-03T00:00:00.000Z"),
+        },
+      ],
     });
 
     const accountExport = await getAccountExportByUserId("user_1");
 
+    expect(prisma.user.findUnique).toHaveBeenCalledWith({
+      where: {
+        id: "user_1",
+      },
+      include: {
+        profile: true,
+        goals: true,
+        dailyRecords: {
+          orderBy: {
+            date: "asc",
+          },
+        },
+        wechatIdentities: true,
+        productEvents: {
+          orderBy: {
+            createdAt: "asc",
+          },
+        },
+      },
+    });
     expect(accountExport).toMatchObject({
       user: {
         id: "user_1",
@@ -122,12 +159,29 @@ describe("account-service", () => {
           openid: "openid_1",
         },
       ],
+      productEvents: [
+        {
+          eventName: "ALPHA_FEEDBACK_SUBMITTED",
+          path: "/mp/me",
+          metadata: {
+            rating: 5,
+            valueCue: "trend-review",
+            friction: "manual-entry",
+          },
+          createdAt: "2026-04-03T00:00:00.000Z",
+        },
+      ],
     });
   });
 
-  it("deletes the user account and relies on cascade cleanup", async () => {
+  it("deletes product events before deleting the user account", async () => {
     await deleteUserAccountByUserId("user_1");
 
+    expect(prisma.productEvent.deleteMany).toHaveBeenCalledWith({
+      where: {
+        userId: "user_1",
+      },
+    });
     expect(prisma.user.delete).toHaveBeenCalledWith({
       where: {
         id: "user_1",

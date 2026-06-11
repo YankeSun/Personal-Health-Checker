@@ -26,6 +26,11 @@ export async function getAccountExportByUserId(userId: string) {
         },
       },
       wechatIdentities: true,
+      productEvents: {
+        orderBy: {
+          createdAt: "asc",
+        },
+      },
     },
   });
 
@@ -67,11 +72,23 @@ export async function getAccountExportByUserId(userId: string) {
       unionid: identity.unionid,
       createdAt: identity.createdAt.toISOString(),
     })),
+    productEvents: user.productEvents.map((event) => ({
+      eventName: event.eventName,
+      path: event.path,
+      metadata: event.metadata,
+      createdAt: event.createdAt.toISOString(),
+    })),
   };
 }
 
 export async function deleteUserAccountByUserId(userId: string) {
   await ensureDatabaseSchema();
+
+  await prisma.productEvent.deleteMany({
+    where: {
+      userId,
+    },
+  });
 
   await prisma.user.delete({
     where: {

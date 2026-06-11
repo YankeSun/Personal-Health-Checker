@@ -244,6 +244,7 @@ npm run analytics:report -- --days=30
 
 ## 2026-06-12
 
+- 补齐账号数据权利闭环：账号导出现在包含与账号关联的 ProductEvent，账号删除会先清理该用户的产品事件，再删除用户主体；隐私说明、用户协议、小程序说明和验收清单同步更新，覆盖 alpha 反馈、页面访问和报告内测意向这类验证数据。
 - 增加 alpha 用户反馈闭环：新增 `POST /api/feedback`，小程序“我的”页可提交评分、最有用的点、最卡的点和一句话反馈；反馈复用 `ProductEvent` 的 `ALPHA_FEEDBACK_SUBMITTED`，并进入 `analytics:miniprogram` 的反馈人数、反馈率、平均评分、价值感和阻力统计，用于判断用户是否能复述产品价值。
 - 增加小程序 alpha 指标报告：新增 `npm run analytics:miniprogram -- --days=30`，基于现有 `ProductEvent` 和 `DailyRecord` 输出 alpha 用户数、首次完整记录、次日回访、7 日记录天数、体重/上下文填写率、Dashboard/Trends 使用率、付费意愿点击率和 `decision`；Dashboard/Trends 的 Bearer 请求现在会记录小程序 page view，方便判断是否值得进入 beta。
 - 增加小程序 alpha 主路径 smoke：新增 `npm run miniprogram:smoke`，可在 local/preview 环境启用 mock 登录后，用同一套 Bearer API 验证登录、今日记录保存、Dashboard、体重趋势、资料/目标、账号导出和报告内测意向；它不替代微信开发者工具/真机验收，但能先定位后端主路径是否可用。
