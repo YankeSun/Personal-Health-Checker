@@ -244,6 +244,7 @@ npm run analytics:report -- --days=30
 
 ## 2026-06-12
 
+- 补齐小程序后端 smoke 的报告意向漏斗：`miniprogram:smoke` 现在会先记录 `action: "shown"` 的 30 天报告曝光，再记录 `action: "clicked"` 的内测意向点击，覆盖 `payIntentExposureRate` 和 `payIntentClickThroughRate` 两段 alpha 复盘口径。
 - 收紧 alpha readiness 的红灯判定：`alpha:readiness` 现在会把 `launch:check` 中的 blocker 映射为真正的 fail，而不是 review/warn；只有 launch 里没有 blocker、仅有 warning 时才进入 review，避免真实 AppID、合规占位等 P0 项未清时误判体验版 gate 接近可发。
 - 改善本地小程序 Docker smoke 的失败诊断：`miniprogram:smoke:docker` 在找不到 Docker CLI 时会明确提示安装 / 启动 Docker Desktop 或改用已有本地 API 跑 `miniprogram:smoke`，不再只暴露 `spawnSync docker ENOENT` 这类底层错误。
 - 收紧小程序体验版合规 readiness：`launch:check` 现在不只检查合规草案文件是否存在，还会把隐私保护指引、用户协议和提交清单里的主体、联系方式、生效日期、收费模式 / 收费规则占位列为 blocker 或 warning，避免把“有草稿”误判成“可发体验版”。

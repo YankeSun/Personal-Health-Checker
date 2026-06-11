@@ -140,15 +140,29 @@ async function main() {
   const exportPayload = await authedJson("/api/account/export", token);
   assert(Array.isArray(exportPayload.dailyRecords), "account export missing dailyRecords");
 
-  printStep("recording report beta intent");
-  const intentPayload = await authedJson("/api/intent/pay", token, {
+  printStep("recording report beta exposure");
+  const exposurePayload = await authedJson("/api/intent/pay", token, {
     method: "POST",
     body: JSON.stringify({
+      action: "shown",
       offer: "WEIGHT_REPORT_30D",
       source: "wechat_mp/smoke",
     }),
   });
-  assert(intentPayload.success === true, "pay intent did not return success");
+  assert(exposurePayload.success === true, "pay intent exposure did not return success");
+  assert(exposurePayload.status === "tracked", "pay intent exposure did not return tracked");
+
+  printStep("recording report beta click intent");
+  const intentPayload = await authedJson("/api/intent/pay", token, {
+    method: "POST",
+    body: JSON.stringify({
+      action: "clicked",
+      offer: "WEIGHT_REPORT_30D",
+      source: "wechat_mp/smoke",
+    }),
+  });
+  assert(intentPayload.success === true, "pay intent click did not return success");
+  assert(intentPayload.status === "waitlist", "pay intent click did not join waitlist");
 
   printStep("submitting alpha feedback");
   const feedbackPayload = await authedJson("/api/feedback", token, {

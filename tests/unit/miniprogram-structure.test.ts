@@ -242,6 +242,8 @@ describe("miniprogram structure", () => {
     expect(smokeScript).toContain("/api/dashboard?days=7");
     expect(smokeScript).toContain("/api/trends?metric=weight&days=30");
     expect(smokeScript).toContain("/api/intent/pay");
+    expect(smokeScript).toContain('action: "shown"');
+    expect(smokeScript).toContain('action: "clicked"');
     expect(smokeScript).toContain("/api/feedback");
     expect(localSmokeScript).toContain("WECHAT_MINI_PROGRAM_MOCK_LOGIN_ENABLED");
     expect(localSmokeScript).toContain('"run", "dev"');
