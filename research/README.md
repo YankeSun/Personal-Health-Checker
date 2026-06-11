@@ -23,3 +23,9 @@ Generate a real-device phone test session note before Day 1 internal smoke:
 ```bash
 npm run alpha:phone-session -- --batch Alpha-001 --tester internal-01
 ```
+
+Generate a Day 10 mini program alpha report after the first user batch:
+
+```bash
+npm run analytics:miniprogram -- --days=30 --format=markdown --out research/alpha/reports/Alpha-001-day10.md
+```

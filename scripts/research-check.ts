@@ -92,6 +92,7 @@ for (const snippet of [
   "Release Gates",
   "alpha:preflight",
   "alpha:phone-session",
+  "Alpha-001-day10.md",
   "Real AppID configured",
   "2 real-device sessions passed",
   "npm run analytics:miniprogram -- --days=30",

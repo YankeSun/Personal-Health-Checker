@@ -206,6 +206,7 @@ npm run miniprogram:check:remote
 
 ```bash
 npm run analytics:miniprogram -- --days=30
+npm run analytics:miniprogram -- --days=30 --format=markdown --out research/alpha/reports/Alpha-001-day10.md
 ```
 
 需要一起看：

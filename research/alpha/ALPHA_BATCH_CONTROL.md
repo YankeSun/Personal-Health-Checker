@@ -29,6 +29,7 @@ Do not invite external users until every P0 gate is green.
 | Alpha readiness summary reviewed | `npm run alpha:readiness` output | blocked / ready |  |  |
 | Alpha preflight report saved | `npm run alpha:preflight -- --out research/alpha/preflight/Alpha-001.md` | blocked / ready |  |  |
 | Phone session notes created | `npm run alpha:phone-session -- --batch Alpha-001 --tester internal-01` and `internal-02` | blocked / ready |  |  |
+| Alpha analytics report saved | `npm run analytics:miniprogram -- --days=30 --format=markdown --out research/alpha/reports/Alpha-001-day10.md` | blocked / ready |  |  |
 | Strict launch check passed | `npm run launch:check:strict` | blocked / ready |  |  |
 | Remote API health passed | `npm run miniprogram:check:remote` | blocked / ready |  |  |
 | Real AppID configured | `miniprogram/project.config.json` is not `touristappid` | blocked / ready |  |  |
@@ -53,6 +54,7 @@ Do not invite external users until every P0 gate is green.
 |---|---|---|
 | Alpha preflight report | `research/alpha/preflight/Alpha-001.md` | yes |
 | Real-device smoke notes | `research/alpha/phone-sessions/` or copied from `PHONE_TEST_SESSION_TEMPLATE.md` | yes |
+| Alpha analytics report | `research/alpha/reports/Alpha-001-day10.md` | yes |
 | Alpha user table | `research/alpha/ALPHA_USER_EVIDENCE.md` | yes |
 | User quotes | `research/alpha/ALPHA_USER_EVIDENCE.md` | yes |
 | Analytics report output | Paste summary below or attach as dated notes | yes |
@@ -79,6 +81,7 @@ Paste the Day 10 summary from:
 
 ```bash
 npm run analytics:miniprogram -- --days=30
+npm run analytics:miniprogram -- --days=30 --format=markdown --out research/alpha/reports/Alpha-001-day10.md
 ```
 
 Before uploading an Experience build, generate the Day 0 preflight report:

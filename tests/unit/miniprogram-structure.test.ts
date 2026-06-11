@@ -174,6 +174,7 @@ describe("miniprogram structure", () => {
     expect(releasePack).toContain("Manual next actions");
     expect(releasePack).toContain("可直接发送的邀请文案");
     expect(releasePack).toContain("npm run analytics:miniprogram");
+    expect(releasePack).toContain("--format=markdown");
     expect(smokeScript).toContain("/api/mp/auth/wechat-login");
     expect(smokeScript).toContain("/api/records/today");
     expect(smokeScript).toContain("/api/dashboard?days=7");
@@ -199,6 +200,9 @@ describe("miniprogram structure", () => {
     );
 
     expect(reportScript).toContain("getMiniProgramAlphaSnapshot");
+    expect(reportScript).toContain("Mini Program Alpha Report");
+    expect(reportScript).toContain("--format");
+    expect(reportScript).toContain("--out");
     expect(validationPlan).toContain("npm run analytics:miniprogram");
     expect(validationPlan).toContain("continue_candidate");
   });
