@@ -51,6 +51,8 @@ export async function GET(request: Request) {
       todayCompletedMetrics: overview.todayCompletedMetrics,
       totalTrackedMetrics: overview.totalTrackedMetrics,
       todayMetrics: overview.todayMetrics,
+      insights: overview.insights ?? [],
+      weightContext: overview.weightContext ?? null,
       window: overview.windows[0],
     },
     reminders,

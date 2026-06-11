@@ -1,35 +1,88 @@
-<view class="page">
+<view class="page dashboard-page">
   <view class="hero card">
-    <text class="eyebrow">DASHBOARD</text>
-    <text class="title">今天已完成 {{dashboard.todayCompletedMetrics || 0}}/{{dashboard.totalTrackedMetrics || 3}}</text>
-    <text class="muted">连续记录 {{dashboard.streakDays || 0}} 天</text>
+    <view class="hero-topline">
+      <text class="eyebrow">DASHBOARD</text>
+      <text class="date-label">{{dashboard.todayDate || "今日"}}</text>
+    </view>
+    <text class="hero-title">今天已完成 {{dashboard.todayCompletedMetrics || 0}}/{{dashboard.totalTrackedMetrics || 3}}</text>
+    <text class="hero-subtitle">连续记录 {{dashboard.streakDays || 0}} 天</text>
+    <view class="progress-track">
+      <view class="progress-fill" style="width: {{completionPercent}}%;"></view>
+    </view>
+  </view>
+
+  <view class="action-stack">
+    <view
+      wx:for="{{actionCards}}"
+      wx:key="id"
+      class="action-card card {{item.toneClass}} {{item.isPrimary ? 'action-primary' : ''}}"
+      data-route="{{item.route}}"
+      bindtap="handleAction"
+    >
+      <text class="action-kicker">{{item.isPrimary ? "今天先做什么" : "接下来可以看"}}</text>
+      <text class="action-title">{{item.title}}</text>
+      <text class="action-copy">{{item.description}}</text>
+      <text class="action-link">{{item.actionLabel}}</text>
+    </view>
   </view>
 
   <view class="grid">
     <view class="stat card">
       <text class="label">记录密度</text>
       <text class="metric-value">{{window.completionRate || 0}}%</text>
+      <text class="stat-note">最近 {{window.days || 7}} 天</text>
     </view>
     <view class="stat card">
       <text class="label">达标率</text>
       <text class="metric-value">{{window.attainmentRate || 0}}%</text>
+      <text class="stat-note">目标对齐情况</text>
+    </view>
+  </view>
+
+  <view class="card weight-card">
+    <view class="section-head">
+      <text class="section-title">体重变化线索</text>
+      <text class="weight-badge">{{weightContext.recordedDays || 0}}/{{weightContext.days || 7}} 天</text>
+    </view>
+    <view class="weight-values">
+      <view>
+        <text class="label">最新</text>
+        <text class="weight-value">{{weightContext.latestDisplay}}</text>
+      </view>
+      <view>
+        <text class="label">变化</text>
+        <text class="weight-value">{{weightContext.changeDisplay}}</text>
+      </view>
+    </view>
+    <text class="context-title">{{weightContext.title}}</text>
+    <text class="context-copy">{{weightContext.description}}</text>
+    <view wx:if="{{weightContext.topContextLabels.length > 0}}" class="chips">
+      <text wx:for="{{weightContext.topContextLabels}}" wx:key="label" class="chip">
+        {{item.label}} {{item.count}} 次
+      </text>
     </view>
   </view>
 
   <view class="card block">
-    <text class="section-title">今日状态</text>
-    <view wx:for="{{dashboard.todayMetrics}}" wx:key="metric" class="metric-row">
-      <text>{{item.label}}</text>
-      <text class="muted">{{item.displayValue || "未记录"}}</text>
+    <text class="section-title">今日三项</text>
+    <view wx:for="{{metricRows}}" wx:key="metric" class="metric-row">
+      <view class="metric-main">
+        <text class="metric-name">{{item.label}}</text>
+        <text class="metric-detail">{{item.detailLabel}}</text>
+      </view>
+      <view class="metric-side">
+        <text class="metric-display">{{item.valueLabel}}</text>
+        <text class="metric-status {{item.statusClass}}">{{item.statusLabel}}</text>
+      </view>
     </view>
   </view>
 
-  <view class="card block">
-    <text class="section-title">站内提醒</text>
-    <view wx:if="{{reminders.length === 0}}" class="empty">暂时没有需要处理的提醒</view>
-    <view wx:for="{{reminders}}" wx:key="id" class="reminder">
-      <text class="reminder-title">{{item.title}}</text>
-      <text class="muted">{{item.description}}</text>
+  <view wx:if="{{windowMetrics.length > 0}}" class="card block">
+    <text class="section-title">最近 {{window.days || 7}} 天</text>
+    <view wx:for="{{windowMetrics}}" wx:key="metric" class="week-row">
+      <text class="week-name">{{item.label}}</text>
+      <text class="week-value">{{item.latestLabel}}</text>
+      <text class="week-note">{{item.recordedLabel}}</text>
     </view>
   </view>
 

@@ -160,6 +160,7 @@ const loginWxml = readText(path.join(srcRoot, "pages", "login", "login.wxml"));
 const todayJs = readText(path.join(srcRoot, "pages", "today", "today.js"));
 const todayWxml = readText(path.join(srcRoot, "pages", "today", "today.wxml"));
 const dashboardJs = readText(path.join(srcRoot, "pages", "dashboard", "dashboard.js"));
+const dashboardWxml = readText(path.join(srcRoot, "pages", "dashboard", "dashboard.wxml"));
 const trendsJs = readText(path.join(srcRoot, "pages", "trends", "trends.js"));
 const meJs = readText(path.join(srcRoot, "pages", "me", "me.js"));
 const meWxml = readText(path.join(srcRoot, "pages", "me", "me.wxml"));
@@ -180,6 +181,8 @@ check("today page reads and saves records", hasAll(todayJs, ["/api/records/today
 check("today page keeps weight-first alpha flow", hasAll(todayJs, ["qualityWarnings", "goDashboard", "completionSteps"]));
 check("today page shows record quality and dashboard CTA", hasAll(todayWxml, ["今日称重", "qualityWarnings", "看今日概览"]));
 check("dashboard page reads summary", dashboardJs.includes("/api/dashboard"));
+check("dashboard page surfaces alpha action insights", hasAll(dashboardJs, ["actionCards", "weightContext", "handleAction"]));
+check("dashboard page shows weekly focus and weight context", hasAll(dashboardWxml, ["今天先做什么", "体重变化线索", "今日三项"]));
 check("trends page reads weight trend", trendsJs.includes("/api/trends?metric=weight"));
 check("me page supports account export and deletion", hasAll(meJs, ["/api/account/export", "/api/account"]));
 check("me page records pay intent only", meJs.includes("/api/intent/pay"));

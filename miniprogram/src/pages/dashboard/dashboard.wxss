@@ -1,18 +1,140 @@
+.dashboard-page {
+  padding-bottom: 48rpx;
+}
+
 .hero {
+  overflow: hidden;
   padding: 34rpx;
+  background:
+    radial-gradient(circle at 86% 12%, rgba(247, 200, 111, 0.32), transparent 34%),
+    linear-gradient(145deg, #172033 0%, #26372f 58%, #805f2c 100%);
+  color: #fffaf0;
+}
+
+.hero-topline,
+.section-head,
+.weight-values {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24rpx;
 }
 
 .eyebrow {
-  color: #8a6a2d;
+  color: rgba(255, 250, 240, 0.72);
   font-size: 22rpx;
-  font-weight: 800;
+  font-weight: 900;
   letter-spacing: 4rpx;
 }
 
-.title {
+.date-label,
+.weight-badge {
+  border-radius: 999rpx;
+  padding: 10rpx 18rpx;
+  font-size: 22rpx;
+}
+
+.date-label {
+  border: 1rpx solid rgba(255, 255, 255, 0.22);
+  color: rgba(255, 250, 240, 0.78);
+}
+
+.hero-title {
   display: block;
-  margin-top: 16rpx;
-  font-size: 44rpx;
+  margin-top: 34rpx;
+  font-size: 50rpx;
+  font-weight: 950;
+  letter-spacing: -1rpx;
+}
+
+.hero-subtitle {
+  display: block;
+  margin-top: 10rpx;
+  color: rgba(255, 250, 240, 0.78);
+  font-size: 26rpx;
+}
+
+.progress-track {
+  overflow: hidden;
+  height: 14rpx;
+  margin-top: 32rpx;
+  border-radius: 999rpx;
+  background: rgba(255, 255, 255, 0.18);
+}
+
+.progress-fill {
+  height: 100%;
+  border-radius: 999rpx;
+  background: #f7c86f;
+}
+
+.action-stack {
+  margin-top: 24rpx;
+}
+
+.action-card {
+  margin-top: 18rpx;
+  padding: 30rpx;
+}
+
+.action-primary {
+  border-color: rgba(23, 32, 51, 0.18);
+  background: #fff8e8;
+  box-shadow: 0 24rpx 70rpx rgba(95, 63, 26, 0.14);
+}
+
+.tone-warning {
+  border-color: rgba(180, 83, 9, 0.22);
+}
+
+.tone-success {
+  border-color: rgba(4, 120, 87, 0.2);
+}
+
+.tone-info {
+  border-color: rgba(23, 32, 51, 0.1);
+}
+
+.action-kicker {
+  display: block;
+  color: #8a6a2d;
+  font-size: 22rpx;
+  font-weight: 900;
+  letter-spacing: 3rpx;
+}
+
+.action-title {
+  display: block;
+  margin-top: 12rpx;
+  color: #172033;
+  font-size: 34rpx;
+  font-weight: 950;
+  line-height: 1.25;
+}
+
+.action-copy,
+.context-copy,
+.metric-detail,
+.stat-note,
+.week-note {
+  display: block;
+  color: #777064;
+  font-size: 24rpx;
+  line-height: 1.55;
+}
+
+.action-copy {
+  margin-top: 10rpx;
+}
+
+.action-link {
+  display: inline-block;
+  margin-top: 18rpx;
+  border-radius: 999rpx;
+  background: #172033;
+  padding: 12rpx 20rpx;
+  color: #fffaf0;
+  font-size: 24rpx;
   font-weight: 900;
 }
 
@@ -24,48 +146,142 @@
 }
 
 .stat,
-.block {
+.block,
+.weight-card {
   padding: 30rpx;
 }
 
 .label {
   color: #6f675d;
   font-size: 24rpx;
-  font-weight: 700;
+  font-weight: 800;
 }
 
+.metric-value {
+  display: block;
+  margin-top: 8rpx;
+}
+
+.weight-card,
 .block {
   margin-top: 24rpx;
 }
 
-.metric-row,
-.reminder {
+.section-title {
+  font-size: 30rpx;
+}
+
+.weight-badge {
+  background: #f8f4ec;
+  color: #6f675d;
+}
+
+.weight-values {
+  margin-top: 28rpx;
+}
+
+.weight-value {
+  display: block;
+  margin-top: 6rpx;
+  color: #172033;
+  font-size: 42rpx;
+  font-weight: 950;
+}
+
+.context-title {
+  display: block;
+  margin-top: 26rpx;
+  color: #172033;
+  font-size: 30rpx;
+  font-weight: 950;
+}
+
+.context-copy {
+  margin-top: 10rpx;
+}
+
+.chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 14rpx;
+  margin-top: 22rpx;
+}
+
+.metric-row {
   display: flex;
   justify-content: space-between;
   gap: 24rpx;
   border-bottom: 1rpx solid rgba(15, 23, 42, 0.08);
   padding: 24rpx 0;
+}
+
+.metric-main {
+  flex: 1;
+}
+
+.metric-name {
+  display: block;
+  color: #172033;
   font-size: 28rpx;
+  font-weight: 900;
 }
 
-.reminder {
-  display: block;
+.metric-side {
+  min-width: 180rpx;
+  text-align: right;
 }
 
-.reminder-title {
+.metric-display {
   display: block;
-  margin-bottom: 8rpx;
+  color: #172033;
+  font-size: 28rpx;
+  font-weight: 900;
+}
+
+.metric-status {
+  display: inline-block;
+  margin-top: 8rpx;
+  border-radius: 999rpx;
+  padding: 6rpx 12rpx;
+  font-size: 20rpx;
+  font-weight: 900;
+}
+
+.metric-good,
+.metric-recorded {
+  background: #ecfdf5;
+  color: #047857;
+}
+
+.metric-watch {
+  background: #fff7ed;
+  color: #9a5412;
+}
+
+.metric-missing {
+  background: #f8f4ec;
+  color: #6f675d;
+}
+
+.week-row {
+  display: grid;
+  grid-template-columns: 1fr auto auto;
+  align-items: center;
+  gap: 18rpx;
+  border-bottom: 1rpx solid rgba(15, 23, 42, 0.08);
+  padding: 22rpx 0;
+}
+
+.week-name,
+.week-value {
+  color: #172033;
+  font-size: 26rpx;
   font-weight: 800;
 }
 
-.empty,
 .error {
   display: block;
   margin-top: 20rpx;
-  color: #777064;
-  font-size: 26rpx;
-}
-
-.error {
   color: #be123c;
+  font-size: 26rpx;
 }

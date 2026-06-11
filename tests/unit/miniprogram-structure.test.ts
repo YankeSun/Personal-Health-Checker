@@ -152,6 +152,14 @@ describe("miniprogram structure", () => {
       path.join(miniprogramRoot, "pages", "me", "me.js"),
       "utf8",
     );
+    const dashboardPage = readFileSync(
+      path.join(miniprogramRoot, "pages", "dashboard", "dashboard.js"),
+      "utf8",
+    );
+    const dashboardMarkup = readFileSync(
+      path.join(miniprogramRoot, "pages", "dashboard", "dashboard.wxml"),
+      "utf8",
+    );
     const loginMarkup = readFileSync(
       path.join(miniprogramRoot, "pages", "login", "login.wxml"),
       "utf8",
@@ -179,6 +187,12 @@ describe("miniprogram structure", () => {
     expect(todayMarkup).toContain("今日称重");
     expect(todayMarkup).toContain("qualityWarnings");
     expect(todayMarkup).toContain("看今日概览");
+    expect(dashboardPage).toContain("actionCards");
+    expect(dashboardPage).toContain("weightContext");
+    expect(dashboardPage).toContain("handleAction");
+    expect(dashboardMarkup).toContain("今天先做什么");
+    expect(dashboardMarkup).toContain("体重变化线索");
+    expect(dashboardMarkup).toContain("今日三项");
     expect(mePage).toContain("/api/intent/pay");
     expect(mePage).toContain("/api/feedback");
     expect(mePage).toContain("submitFeedback");

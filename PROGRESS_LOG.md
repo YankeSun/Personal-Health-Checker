@@ -244,6 +244,7 @@ npm run analytics:report -- --days=30
 
 ## 2026-06-12
 
+- 优化小程序 Dashboard alpha 回看价值：`/api/dashboard` 下发 `insights` 和 `weightContext`，小程序概览页新增“今天先做什么”、体重变化线索、今日三项状态和最近 7 天摘要，让用户从 Today 保存后能更快理解下一步关注点。
 - 优化小程序 Today alpha 记录体验：首屏改为体重优先的今日称重焦点区，展示完成进度、下一步提示和保存后去 Dashboard 的单一 CTA；同时接入后端 `qualityWarnings`，对明显异常的睡眠、体重、饮水输入给出温和确认提示。
 - 整合 sub-agent 并行评审结论：`WECHAT_MINI_PROGRAM_VALIDATION_PLAN.md` 新增公开资料竞品预调研、当前 Alpha 作战板、P0 blocker 和 10 人真实用户 alpha 节奏；同时明确公开资料不能替代微信真机实测，仍需补 8 个以上真实小程序体验样本。
 - 收敛记录保存口径：新增共享保存服务，让 `/api/records/today` 和 `/api/records/[date]` 共用同一套保存、补录标记、质量提示和 ProductEvent 埋点逻辑，降低小程序 alpha 与 Web 数据口径不一致的风险。

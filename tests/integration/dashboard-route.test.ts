@@ -70,6 +70,31 @@ describe("dashboard route", () => {
       todayCompletedMetrics: 3,
       totalTrackedMetrics: 3,
       todayMetrics: [],
+      insights: [
+        {
+          id: "today-focus",
+          tone: "success",
+          title: "连续记录已经到 4 天",
+          description: "继续保持今天这组。",
+          actionHref: "/trends",
+          actionLabel: "看最近趋势",
+        },
+      ],
+      weightContext: {
+        days: 7,
+        recordedDays: 4,
+        latestDisplay: "63.2 kg",
+        changeDisplay: "-0.5 kg",
+        trend: "down",
+        title: "最近 7 天体重有所下降",
+        description: "窗口内记录了 4/7 天。",
+        topContextLabels: [
+          {
+            label: "晨起",
+            count: 3,
+          },
+        ],
+      },
       windows: [
         {
           days: 30,
@@ -113,6 +138,8 @@ describe("dashboard route", () => {
     });
     expect(trackProductPageViewSafely).not.toHaveBeenCalled();
     expect(data.dashboard.window.days).toBe(30);
+    expect(data.dashboard.insights[0].id).toBe("today-focus");
+    expect(data.dashboard.weightContext.title).toBe("最近 7 天体重有所下降");
     expect(data.reminders.reminders).toHaveLength(1);
   });
 
