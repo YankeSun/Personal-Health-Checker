@@ -115,6 +115,11 @@ describe("observability-service", () => {
       .mockResolvedValueOnce([
         {
           userId: "user_1",
+        },
+      ] as never)
+      .mockResolvedValueOnce([
+        {
+          userId: "user_1",
           path: "/today",
         },
         {
@@ -140,9 +145,12 @@ describe("observability-service", () => {
       nextDayReturnUsers: 2,
       nextDayReturnRate: 100,
       averageRecordedDaysInFirst7Days: 1.5,
+      payIntentImpressions: 1,
+      payIntentShownUsers: 1,
       payIntentClicks: 1,
       payIntentUsers: 1,
       payIntentRate: 50,
+      payIntentClickThroughRate: 100,
     });
     expect(snapshot.pageViews[0]).toEqual({
       path: "/today",
@@ -194,6 +202,15 @@ describe("observability-service", () => {
           platform: "wechat_mp",
         },
         createdAt: new Date("2026-04-02T08:20:00.000Z"),
+      },
+      {
+        userId: "user_1",
+        eventName: PRODUCT_EVENT_NAMES.payIntentShown,
+        path: "wechat_mp/me",
+        metadata: {
+          platform: "wechat_mp",
+        },
+        createdAt: new Date("2026-04-02T08:25:00.000Z"),
       },
       {
         userId: "user_1",
@@ -273,8 +290,11 @@ describe("observability-service", () => {
       dashboardViewRate: 100,
       trendViewUsers: 1,
       trendViewRate: 100,
+      payIntentShownUsers: 1,
+      payIntentExposureRate: 100,
       payIntentUsers: 1,
       payIntentRate: 100,
+      payIntentClickThroughRate: 100,
       feedbackUsers: 1,
       feedbackRate: 100,
       averageFeedbackRating: 5,

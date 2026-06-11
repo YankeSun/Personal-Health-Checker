@@ -96,10 +96,24 @@ function buildDecisionReview(
       passed: snapshot.contextTagFillRate >= 40,
     },
     {
+      label: "报告入口曝光率",
+      actual: `${snapshot.payIntentExposureRate}%`,
+      target: ">= 80%",
+      passed: snapshot.payIntentExposureRate >= 80,
+    },
+    {
       label: "付费意向点击率",
       actual: `${snapshot.payIntentRate}%`,
       target: ">= 5%",
       passed: snapshot.payIntentRate >= 5,
+    },
+    {
+      label: "付费意向点击/曝光转化率",
+      actual: `${snapshot.payIntentClickThroughRate}%`,
+      target: ">= 5%",
+      passed:
+        snapshot.payIntentShownUsers > 0 &&
+        snapshot.payIntentClickThroughRate >= 5,
     },
     {
       label: "Alpha 反馈提交率",
@@ -170,8 +184,11 @@ function createSampleSnapshot(days: number): AlphaSnapshot {
     dashboardViewRate: 70,
     trendViewUsers: 5,
     trendViewRate: 50,
+    payIntentShownUsers: 9,
+    payIntentExposureRate: 90,
     payIntentUsers: 1,
     payIntentRate: 10,
+    payIntentClickThroughRate: 11.1,
     feedbackUsers: 4,
     feedbackRate: 40,
     averageFeedbackRating: 4.25,
@@ -222,8 +239,20 @@ function createSampleSnapshot(days: number): AlphaSnapshot {
         passed: true,
       },
       {
+        label: "报告入口曝光率",
+        actual: 90,
+        target: 80,
+        passed: true,
+      },
+      {
         label: "付费意愿点击率",
         actual: 10,
+        target: 5,
+        passed: true,
+      },
+      {
+        label: "付费意愿点击/曝光转化率",
+        actual: 11.1,
         target: 5,
         passed: true,
       },
@@ -308,7 +337,10 @@ ${markdownTable([
   ["contextTagFillRate", `${snapshot.contextTagFillRate}%`],
   ["dashboardViewRate", `${snapshot.dashboardViewRate}%`],
   ["trendViewRate", `${snapshot.trendViewRate}%`],
+  ["payIntentShownUsers", snapshot.payIntentShownUsers],
+  ["payIntentExposureRate", `${snapshot.payIntentExposureRate}%`],
   ["payIntentRate", `${snapshot.payIntentRate}%`],
+  ["payIntentClickThroughRate", `${snapshot.payIntentClickThroughRate}%`],
   ["feedbackRate", `${snapshot.feedbackRate}%`],
   ["averageFeedbackRating", snapshot.averageFeedbackRating],
 ])}

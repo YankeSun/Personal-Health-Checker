@@ -117,7 +117,9 @@ npm run alpha:phone-session -- --batch Alpha-001 --tester internal-02 --device "
 | contextTagRate |  |
 | dashboardViewRate |  |
 | trendsViewRate |  |
+| payIntentExposureRate |  |
 | payIntentRate |  |
+| payIntentClickThroughRate |  |
 | feedbackRate |  |
 | decisionReview.recommendation |  |
 | decisionReview.blockers |  |

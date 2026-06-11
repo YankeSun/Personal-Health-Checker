@@ -1,6 +1,7 @@
 import { z } from "zod";
 
 export const payIntentSchema = z.object({
+  action: z.enum(["shown", "clicked"]).default("clicked"),
   offer: z.enum([
     "WEIGHT_REPORT_30D",
     "WEIGHT_CHALLENGE_7D",

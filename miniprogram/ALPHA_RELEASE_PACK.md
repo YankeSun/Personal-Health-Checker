@@ -244,7 +244,9 @@ npm run analytics:miniprogram -- --days=30 --format=markdown --real-device-evide
 - `contextTagRate`
 - `dashboardViewRate`
 - `trendsViewRate`
+- `payIntentExposureRate`
 - `payIntentRate`
+- `payIntentClickThroughRate`
 - `feedbackRate`
 - `decision`
 - `decisionReview.recommendation`
@@ -256,7 +258,9 @@ npm run analytics:miniprogram -- --days=30 --format=markdown --real-device-evide
 - 7 日内平均记录天数 >= 3
 - 体重记录率 >= 50%
 - 背景标签填写率 >= 40%
+- 报告入口曝光率 >= 80%
 - 付费意愿点击率 >= 5%
+- 付费意愿点击 / 曝光转化率 >= 5%
 - Alpha 反馈提交率 >= 30%
 - 用户能用自己的话复述价值：更容易坚持称重、更容易理解波动、更清楚目标进度
 

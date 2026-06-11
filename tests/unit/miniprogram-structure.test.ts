@@ -361,6 +361,8 @@ describe("miniprogram structure", () => {
     expect(trendsMarkup).toContain("最近记录");
     expect(trendsMarkup).toContain("errorDetail");
     expect(mePage).toContain("/api/intent/pay");
+    expect(mePage).toContain('action: "shown"');
+    expect(mePage).toContain('action: "clicked"');
     expect(mePage).toContain("/api/feedback");
     expect(mePage).toContain("submitFeedback");
     expect(mePage).toContain("alphaTaskItems");

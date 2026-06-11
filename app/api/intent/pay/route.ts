@@ -22,14 +22,25 @@ export async function POST(request: Request) {
 
     await trackProductEventSafely({
       userId: user.id,
-      eventName: PRODUCT_EVENT_NAMES.payIntentClicked,
+      eventName:
+        body.action === "shown"
+          ? PRODUCT_EVENT_NAMES.payIntentShown
+          : PRODUCT_EVENT_NAMES.payIntentClicked,
       path: body.source,
       metadata: {
+        action: body.action,
         offer: body.offer,
         source: body.source,
         platform,
       },
     });
+
+    if (body.action === "shown") {
+      return Response.json({
+        success: true,
+        status: "tracked",
+      });
+    }
 
     return Response.json({
       success: true,

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 import { getApiErrorMessage } from "@/lib/utils/client-api";
 
@@ -10,9 +10,31 @@ type PayIntentButtonProps = {
 };
 
 export function PayIntentButton({ offer, source }: PayIntentButtonProps) {
+  const hasTrackedShown = useRef(false);
   const [isPending, setIsPending] = useState(false);
   const [message, setMessage] = useState("");
   const [error, setError] = useState("");
+
+  useEffect(() => {
+    if (hasTrackedShown.current) {
+      return;
+    }
+
+    hasTrackedShown.current = true;
+    void fetch("/api/intent/pay", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        action: "shown",
+        offer,
+        source,
+      }),
+    }).catch(() => {
+      // Exposure tracking should never block the dashboard experience.
+    });
+  }, [offer, source]);
 
   async function handleClick() {
     setIsPending(true);
@@ -26,6 +48,7 @@ export function PayIntentButton({ offer, source }: PayIntentButtonProps) {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
+          action: "clicked",
           offer,
           source,
         }),

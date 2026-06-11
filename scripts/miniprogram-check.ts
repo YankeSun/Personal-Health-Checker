@@ -231,7 +231,10 @@ check(
     hasAll(trendsWxml, ["errorDetail", "errorRetryLabel"]),
 );
 check("me page supports account export and deletion", hasAll(meJs, ["/api/account/export", "/api/account"]));
-check("me page records pay intent only", meJs.includes("/api/intent/pay"));
+check(
+  "me page records pay intent exposure and clicks",
+  hasAll(meJs, ["/api/intent/pay", 'action: "shown"', 'action: "clicked"']),
+);
 check("me page submits alpha feedback", hasAll(meJs, ["/api/feedback", "submitFeedback"]));
 check("me page closes alpha test loop", hasAll(meJs, ["alphaTaskItems", "reportReasonItems", "handleAlphaTask"]));
 check(

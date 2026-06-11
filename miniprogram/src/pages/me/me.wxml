@@ -32,7 +32,7 @@
   <view class="card block beta-card">
     <text class="eyebrow light">WAITLIST</text>
     <text class="beta-title">30 天体重观察报告</text>
-    <text class="beta-copy">当前只记录内测意向，不创建订单、不收款。我们会用点击率判断这类报告是否值得继续做。</text>
+    <text class="beta-copy">感兴趣可以加入内测名单。当前不会创建订单，也不会收款。</text>
     <view class="report-list">
       <text wx:for="{{reportReasonItems}}" wx:key="*this" class="report-item">{{item}}</text>
     </view>

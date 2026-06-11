@@ -48,7 +48,7 @@ const alphaTaskItems = [
 const reportReasonItems = [
   "汇总 30 天体重变化和目标进度",
   "回看经常同天出现的饮食、活动和称重时段",
-  "判断这类报告是否值得进入 beta",
+  "为下一版报告内测预留名额",
 ];
 
 function decorateOptions(options, activeValue) {
@@ -88,7 +88,30 @@ Page({
       return;
     }
 
+    this.trackReportIntentShown();
     this.loadSettings();
+  },
+
+  async trackReportIntentShown() {
+    if (this.reportIntentShownTracked) {
+      return;
+    }
+
+    this.reportIntentShownTracked = true;
+
+    try {
+      await request({
+        url: "/api/intent/pay",
+        method: "POST",
+        data: {
+          action: "shown",
+          offer: "WEIGHT_REPORT_30D",
+          source: "wechat_mp/me",
+        },
+      });
+    } catch {
+      // Exposure tracking is diagnostic only and should not interrupt alpha tasks.
+    }
   },
 
   async loadSettings() {
@@ -136,6 +159,7 @@ Page({
         url: "/api/intent/pay",
         method: "POST",
         data: {
+          action: "clicked",
           offer: "WEIGHT_REPORT_30D",
           source: "wechat_mp/me",
         },

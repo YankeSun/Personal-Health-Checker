@@ -12,6 +12,7 @@ export const PRODUCT_EVENT_NAMES = {
   firstRecordSaved: "FIRST_RECORD_SAVED",
   firstCompleteRecordSaved: "FIRST_COMPLETE_RECORD_SAVED",
   contextTagsSaved: "CONTEXT_TAGS_SAVED",
+  payIntentShown: "PAY_INTENT_SHOWN",
   payIntentClicked: "PAY_INTENT_CLICKED",
   alphaFeedbackSubmitted: "ALPHA_FEEDBACK_SUBMITTED",
 } as const;
@@ -39,9 +40,12 @@ export type ObservationSnapshot = {
   nextDayReturnUsers: number;
   nextDayReturnRate: number;
   averageRecordedDaysInFirst7Days: number;
+  payIntentImpressions: number;
+  payIntentShownUsers: number;
   payIntentClicks: number;
   payIntentUsers: number;
   payIntentRate: number;
+  payIntentClickThroughRate: number;
   pageViews: Array<{
     path: string;
     views: number;
@@ -69,8 +73,11 @@ export type MiniProgramAlphaSnapshot = {
   dashboardViewRate: number;
   trendViewUsers: number;
   trendViewRate: number;
+  payIntentShownUsers: number;
+  payIntentExposureRate: number;
   payIntentUsers: number;
   payIntentRate: number;
+  payIntentClickThroughRate: number;
   feedbackUsers: number;
   feedbackRate: number;
   averageFeedbackRating: number;
@@ -156,7 +163,14 @@ export async function getObservationSnapshot(days = 30) {
   const userIds = signUps.map((user) => user.id);
   const earliestSignupAt = signUps[0]?.createdAt ?? startDate;
 
-  const [successfulLogins, recordRows, observationEvents, payIntentRows, pageViewRows] =
+  const [
+    successfulLogins,
+    recordRows,
+    observationEvents,
+    payIntentShownRows,
+    payIntentRows,
+    pageViewRows,
+  ] =
     await Promise.all([
       prisma.productEvent.count({
         where: {
@@ -199,6 +213,7 @@ export async function getObservationSnapshot(days = 30) {
                   PRODUCT_EVENT_NAMES.firstRecordSaved,
                   PRODUCT_EVENT_NAMES.firstCompleteRecordSaved,
                   PRODUCT_EVENT_NAMES.contextTagsSaved,
+                  PRODUCT_EVENT_NAMES.payIntentShown,
                   PRODUCT_EVENT_NAMES.payIntentClicked,
                 ],
               },
@@ -209,6 +224,17 @@ export async function getObservationSnapshot(days = 30) {
             },
           })
         : Promise.resolve([]),
+      prisma.productEvent.findMany({
+        where: {
+          eventName: PRODUCT_EVENT_NAMES.payIntentShown,
+          createdAt: {
+            gte: startDate,
+          },
+        },
+        select: {
+          userId: true,
+        },
+      }),
       prisma.productEvent.findMany({
         where: {
           eventName: PRODUCT_EVENT_NAMES.payIntentClicked,
@@ -277,6 +303,14 @@ export async function getObservationSnapshot(days = 30) {
       .map((event) => event.userId)
       .filter((userId): userId is string => Boolean(userId)),
   );
+  const payIntentShownUserIds = new Set(
+    payIntentShownRows
+      .map((event) => event.userId)
+      .filter((userId): userId is string => Boolean(userId)),
+  );
+  const payIntentClickThroughUserIds = new Set(
+    [...payIntentUserIds].filter((userId) => payIntentShownUserIds.has(userId)),
+  );
 
   const pageViewMap = new Map<
     string,
@@ -326,10 +360,16 @@ export async function getObservationSnapshot(days = 30) {
     nextDayReturnRate:
       signUps.length === 0 ? 0 : roundTo((nextDayReturnUsers / signUps.length) * 100, 1),
     averageRecordedDaysInFirst7Days,
+    payIntentImpressions: payIntentShownRows.length,
+    payIntentShownUsers: payIntentShownUserIds.size,
     payIntentClicks: payIntentRows.length,
     payIntentUsers: payIntentUserIds.size,
     payIntentRate:
       signUps.length === 0 ? 0 : roundTo((payIntentUserIds.size / signUps.length) * 100, 1),
+    payIntentClickThroughRate:
+      payIntentShownUserIds.size === 0
+        ? 0
+        : roundTo((payIntentClickThroughUserIds.size / payIntentShownUserIds.size) * 100, 1),
     pageViews: [...pageViewMap.entries()]
       .map(([path, value]) => ({
         path,
@@ -389,6 +429,7 @@ export async function getMiniProgramAlphaSnapshot(days = 30) {
           PRODUCT_EVENT_NAMES.firstRecordSaved,
           PRODUCT_EVENT_NAMES.firstCompleteRecordSaved,
           PRODUCT_EVENT_NAMES.contextTagsSaved,
+          PRODUCT_EVENT_NAMES.payIntentShown,
           PRODUCT_EVENT_NAMES.payIntentClicked,
           PRODUCT_EVENT_NAMES.alphaFeedbackSubmitted,
         ],
@@ -524,6 +565,23 @@ export async function getMiniProgramAlphaSnapshot(days = 30) {
       (event) => event.eventName === PRODUCT_EVENT_NAMES.payIntentClicked,
     ),
   ).size;
+  const payIntentShownUsers = uniqueUserIds(
+    miniProgramEvents.filter(
+      (event) => event.eventName === PRODUCT_EVENT_NAMES.payIntentShown,
+    ),
+  ).size;
+  const payIntentClickThroughUsers = uniqueUserIds(
+    miniProgramEvents.filter(
+      (event) =>
+        event.eventName === PRODUCT_EVENT_NAMES.payIntentClicked &&
+        Boolean(event.userId) &&
+        miniProgramEvents.some(
+          (shownEvent) =>
+            shownEvent.eventName === PRODUCT_EVENT_NAMES.payIntentShown &&
+            shownEvent.userId === event.userId,
+        ),
+    ),
+  ).size;
   const feedbackEvents = miniProgramEvents.filter(
     (event) => event.eventName === PRODUCT_EVENT_NAMES.alphaFeedbackSubmitted,
   );
@@ -567,10 +625,25 @@ export async function getMiniProgramAlphaSnapshot(days = 30) {
       passed: recordedDays > 0 && contextTagFilledDays / recordedDays >= 0.4,
     },
     {
+      label: "报告入口曝光率",
+      actual: alphaUsers === 0 ? 0 : roundTo((payIntentShownUsers / alphaUsers) * 100, 1),
+      target: 80,
+      passed: alphaUsers > 0 && payIntentShownUsers / alphaUsers >= 0.8,
+    },
+    {
       label: "付费意愿点击率",
       actual: alphaUsers === 0 ? 0 : roundTo((payIntentUsers / alphaUsers) * 100, 1),
       target: 5,
       passed: alphaUsers > 0 && payIntentUsers / alphaUsers >= 0.05,
+    },
+    {
+      label: "付费意愿点击/曝光转化率",
+      actual:
+        payIntentShownUsers === 0
+          ? 0
+          : roundTo((payIntentClickThroughUsers / payIntentShownUsers) * 100, 1),
+      target: 5,
+      passed: payIntentShownUsers > 0 && payIntentClickThroughUsers / payIntentShownUsers >= 0.05,
     },
     {
       label: "反馈提交率",
@@ -612,10 +685,13 @@ export async function getMiniProgramAlphaSnapshot(days = 30) {
     dashboardViewRate: alphaUsers === 0 ? 0 : roundTo((dashboardViewUsers / alphaUsers) * 100, 1),
     trendViewUsers,
     trendViewRate: alphaUsers === 0 ? 0 : roundTo((trendViewUsers / alphaUsers) * 100, 1),
+    payIntentShownUsers,
+    payIntentExposureRate: gates[4].actual,
     payIntentUsers,
-    payIntentRate: gates[4].actual,
+    payIntentRate: gates[5].actual,
+    payIntentClickThroughRate: gates[6].actual,
     feedbackUsers,
-    feedbackRate: gates[5].actual,
+    feedbackRate: gates[7].actual,
     averageFeedbackRating,
     topValueCues: countMetadataValues(feedbackEvents, "valueCue"),
     topFrictions: countMetadataValues(feedbackEvents, "friction"),
