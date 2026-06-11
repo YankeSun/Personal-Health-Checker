@@ -565,6 +565,19 @@ function buildTrend(metricParam: TrendMetricParam, daysParam: TrendDaysParam): T
       previousAttainmentRate: roundTo((previousMetDays / days) * 100, 1),
       attainmentRateChange: roundTo(attainmentRate - roundTo((previousMetDays / days) * 100, 1), 1),
     },
+    contextSummary:
+      metric === Metric.WEIGHT
+        ? {
+            title: "这些背景经常和体重记录同天出现",
+            description: `当前窗口内有 ${Math.min(validValues.length, 5)}/${validValues.length} 天带有背景标签。它们是回看线索，不代表体重变化的直接原因。`,
+            taggedDays: Math.min(validValues.length, 5),
+            topContextLabels: [
+              { label: "清淡", count: 3 },
+              { label: "晨起", count: 4 },
+              { label: "正常", count: 3 },
+            ],
+          }
+        : null,
     points: dates.map((date) => ({
       date,
       label: formatShortDateLabel(date),

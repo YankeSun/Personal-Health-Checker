@@ -199,6 +199,49 @@ export default async function TrendsPage({ searchParams }: TrendsPageProps) {
         </article>
       </section>
 
+      {trend.contextSummary ? (
+        <section className="rounded-3xl border border-sky-200 bg-sky-50 p-6 shadow-sm">
+          <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
+            <div className="max-w-3xl">
+              <p className="text-sm font-semibold tracking-[0.18em] text-sky-700">
+                体重背景回看
+              </p>
+              <h2 className="mt-2 text-xl font-semibold text-slate-900">
+                {trend.contextSummary.title}
+              </h2>
+              <p className="mt-2 text-sm leading-6 text-slate-700">
+                {trend.contextSummary.description}
+              </p>
+            </div>
+            <div className="rounded-2xl bg-white/75 px-4 py-3 text-sm text-slate-700 ring-1 ring-sky-100">
+              <span className="font-semibold text-slate-900">
+                {trend.contextSummary.taggedDays}
+              </span>{" "}
+              天带有背景标签
+            </div>
+          </div>
+          {trend.contextSummary.topContextLabels.length > 0 ? (
+            <div className="mt-5 flex flex-wrap gap-2">
+              {trend.contextSummary.topContextLabels.map((item) => (
+                <span
+                  className="rounded-full bg-white/80 px-3 py-1.5 text-xs font-medium text-slate-700 ring-1 ring-sky-100"
+                  key={item.label}
+                >
+                  {item.label} {item.count} 次
+                </span>
+              ))}
+            </div>
+          ) : (
+            <AppLink
+              className="mt-5 inline-flex rounded-full bg-slate-900 px-4 py-2 text-sm font-medium text-white transition hover:bg-slate-800"
+              href="/today"
+            >
+              去补今天的背景
+            </AppLink>
+          )}
+        </section>
+      ) : null}
+
       <section className="rounded-3xl border border-slate-200 bg-white p-8 shadow-sm">
         <div className="flex flex-col gap-2 md:flex-row md:items-end md:justify-between">
           <div>

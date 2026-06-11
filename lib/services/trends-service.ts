@@ -16,6 +16,10 @@ import {
 } from "@/lib/utils/goal-copy";
 import { GoalView } from "@/lib/utils/goals";
 import {
+  listRecordContextLabels,
+  normalizeRecordContextTags,
+} from "@/lib/utils/record-context";
+import {
   toDisplaySleep,
   toDisplaySleepValue,
   toDisplayWater,
@@ -61,6 +65,7 @@ export type TrendOverview = {
   goalDeviationDescription: string | null;
   insight: TrendInsight;
   comparison: TrendComparison;
+  contextSummary: TrendContextSummary | null;
   points: TrendPoint[];
 };
 
@@ -82,6 +87,24 @@ export type TrendComparison = {
   attainmentRateChange: number | null;
 };
 
+export type TrendContextSummary = {
+  title: string;
+  description: string;
+  taggedDays: number;
+  topContextLabels: Array<{
+    label: string;
+    count: number;
+  }>;
+};
+
+type TrendRecord = {
+  sleepHours: number | null;
+  weightKg: number | null;
+  waterMl: number | null;
+  isBackfilled: boolean;
+  contextTags: unknown;
+};
+
 const metricMap: Record<TrendMetricParam, Metric> = {
   sleep: Metric.SLEEP,
   weight: Metric.WEIGHT,
@@ -101,11 +124,7 @@ function roundTo(value: number, digits: number) {
 
 function getMetricRawValue(
   metric: Metric,
-  record: {
-    sleepHours: number | null;
-    weightKg: number | null;
-    waterMl: number | null;
-  } | null,
+  record: Pick<TrendRecord, "sleepHours" | "weightKg" | "waterMl"> | null,
 ) {
   if (!record) {
     return null;
@@ -318,6 +337,78 @@ function buildTrendInsight({
   };
 }
 
+function buildContextSummary({
+  metric,
+  dates,
+  recordMap,
+}: {
+  metric: Metric;
+  dates: string[];
+  recordMap: Map<string, TrendRecord>;
+}): TrendContextSummary | null {
+  if (metric !== Metric.WEIGHT) {
+    return null;
+  }
+
+  const labelCounts = new Map<string, number>();
+  let taggedDays = 0;
+  let recordedWeightDays = 0;
+
+  for (const date of dates) {
+    const record = recordMap.get(date) ?? null;
+
+    if (!record || record.weightKg === null) {
+      continue;
+    }
+
+    recordedWeightDays += 1;
+    const labels = listRecordContextLabels(record.contextTags);
+
+    if (labels.length === 0) {
+      continue;
+    }
+
+    taggedDays += 1;
+
+    for (const label of labels) {
+      labelCounts.set(label, (labelCounts.get(label) ?? 0) + 1);
+    }
+  }
+
+  const topContextLabels = [...labelCounts.entries()]
+    .sort((left, right) => right[1] - left[1] || left[0].localeCompare(right[0]))
+    .slice(0, 5)
+    .map(([label, count]) => ({
+      label,
+      count,
+    }));
+
+  if (recordedWeightDays === 0) {
+    return {
+      title: "先建立体重趋势",
+      description: "有了几天体重记录后，这里会把体重趋势和你记录的日常背景放在一起回看。",
+      taggedDays: 0,
+      topContextLabels: [],
+    };
+  }
+
+  if (taggedDays === 0) {
+    return {
+      title: "给体重趋势补一点背景",
+      description: "体重已经有记录了。下次记录时补充饮食状态、活动量或称重时段，趋势会更容易读懂。",
+      taggedDays: 0,
+      topContextLabels: [],
+    };
+  }
+
+  return {
+    title: "这些背景经常和体重记录同天出现",
+    description: `当前窗口内有 ${taggedDays}/${recordedWeightDays} 天带有背景标签。它们是回看线索，不代表体重变化的直接原因。`,
+    taggedDays,
+    topContextLabels,
+  };
+}
+
 export async function getTrendOverviewByUserId(
   userId: string,
   profile: TrendProfile,
@@ -358,7 +449,8 @@ export async function getTrendOverviewByUserId(
         weightKg: record.weightKg === null ? null : Number(record.weightKg),
         waterMl: record.waterMl,
         isBackfilled: record.isBackfilled,
-      },
+        contextTags: normalizeRecordContextTags(record.contextTags),
+      } satisfies TrendRecord,
     ]),
   );
 
@@ -480,6 +572,11 @@ export async function getTrendOverviewByUserId(
       previousAttainmentRate,
       attainmentRateChange,
     },
+    contextSummary: buildContextSummary({
+      metric,
+      dates,
+      recordMap,
+    }),
     points,
   } satisfies TrendOverview;
 }

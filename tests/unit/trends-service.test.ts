@@ -46,6 +46,8 @@ describe("trends-service", () => {
         sleepHours: new Prisma.Decimal("7.0"),
         weightKg: new Prisma.Decimal("62.0"),
         waterMl: 1800,
+        isBackfilled: false,
+        contextTags: null,
         createdAt: new Date(),
         updatedAt: new Date(),
       },
@@ -56,6 +58,8 @@ describe("trends-service", () => {
         sleepHours: new Prisma.Decimal("7.6"),
         weightKg: new Prisma.Decimal("61.8"),
         waterMl: 2000,
+        isBackfilled: false,
+        contextTags: null,
         createdAt: new Date(),
         updatedAt: new Date(),
       },
@@ -66,6 +70,8 @@ describe("trends-service", () => {
         sleepHours: new Prisma.Decimal("8.2"),
         weightKg: new Prisma.Decimal("61.7"),
         waterMl: 2200,
+        isBackfilled: false,
+        contextTags: null,
         createdAt: new Date(),
         updatedAt: new Date(),
       },
@@ -93,6 +99,7 @@ describe("trends-service", () => {
     );
 
     expect(trend.metric).toBe("sleep");
+    expect(trend.contextSummary).toBeNull();
     expect(trend.recordedDays).toBe(3);
     expect(trend.completionRate).toBe(42.9);
     expect(trend.attainmentRate).toBe(28.6);
@@ -119,6 +126,13 @@ describe("trends-service", () => {
         sleepHours: null,
         weightKg: new Prisma.Decimal("63.5"),
         waterMl: null,
+        isBackfilled: false,
+        contextTags: {
+          dietTags: ["LIGHT", "DINING_OUT"],
+          activityLevel: "LOW",
+          energyLevel: null,
+          weighTiming: "MORNING",
+        },
         createdAt: new Date(),
         updatedAt: new Date(),
       },
@@ -139,6 +153,16 @@ describe("trends-service", () => {
     expect(trend.unitLabel).toBe("lb");
     expect(trend.latestDisplay).toBe("140");
     expect(trend.insight.title).toContain("体重");
+    expect(trend.contextSummary).toMatchObject({
+      title: "这些背景经常和体重记录同天出现",
+      taggedDays: 1,
+      topContextLabels: [
+        { label: "偏少", count: 1 },
+        { label: "外食", count: 1 },
+        { label: "晨起", count: 1 },
+        { label: "清淡", count: 1 },
+      ],
+    });
     expect(trend.points[6].value).toBe(140);
   });
 });
