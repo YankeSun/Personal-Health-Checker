@@ -73,6 +73,8 @@ describe("miniprogram structure", () => {
 
     expect(apiHelper).toContain("Authorization: `Bearer ${token}`");
     expect(loginPage).toContain("/api/mp/auth/wechat-login");
+    expect(loginPage).toContain("acceptedLegal");
+    expect(loginPage).toContain("请先同意隐私保护指引和用户协议");
     expect(todayPage).toContain("/api/records/today");
     expect(todayPage).toContain("/api/records/${date}");
     expect(mePage).toContain("/api/intent/pay");

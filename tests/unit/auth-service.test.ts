@@ -43,6 +43,7 @@ describe("auth-service", () => {
       email: "demo@example.com",
       password: "password123",
       displayName: "Demo",
+      acceptedLegal: true,
     });
 
     expect(user.profile?.displayName).toBe("Demo");
@@ -73,6 +74,7 @@ describe("auth-service", () => {
         email: "demo@example.com",
         password: "password123",
         displayName: "Demo",
+        acceptedLegal: true,
       }),
     ).rejects.toMatchObject({
       message: "该邮箱已被注册",

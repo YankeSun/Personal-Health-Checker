@@ -4,6 +4,7 @@ Page({
   data: {
     loading: false,
     error: "",
+    acceptedLegal: false,
   },
 
   onLoad() {
@@ -15,6 +16,13 @@ Page({
   },
 
   handleWechatLogin() {
+    if (!this.data.acceptedLegal) {
+      this.setData({
+        error: "请先同意隐私保护指引和用户协议",
+      });
+      return;
+    }
+
     this.setData({
       loading: true,
       error: "",
@@ -67,6 +75,13 @@ Page({
 
     wx.navigateTo({
       url: `/pages/legal/legal?type=${type}`,
+    });
+  },
+
+  toggleLegalAccepted() {
+    this.setData({
+      acceptedLegal: !this.data.acceptedLegal,
+      error: "",
     });
   },
 });

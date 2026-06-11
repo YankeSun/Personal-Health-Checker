@@ -5,6 +5,7 @@
 - Next.js App Router + TypeScript + Tailwind
 - Prisma + PostgreSQL schema
 - 邮箱密码注册 / 登录 / 退出
+- 注册前隐私保护指引 / 用户协议确认，后端同步校验
 - 邮箱验证提醒、忘记密码、重置密码
 - HttpOnly Cookie + 服务端 Session
 - 微信小程序 Alpha 壳 + Bearer Session
@@ -103,6 +104,7 @@ npm run analytics:report -- --days=30
 - 目录：`miniprogram/`
 - 页面：登录、今日记录、简版 Dashboard、体重趋势、我的 / 设置
 - 认证：`wx.login` -> `POST /api/mp/auth/wechat-login` -> 服务端 Bearer token
+- 登录确认：调用微信登录前需要确认隐私保护指引和用户协议
 - 合规底座：我的页可触发个人数据导出和账号删除
 - 协议入口：登录页和我的页可查看隐私保护指引、用户协议、健康免责声明
 - 商业验证：我的页可记录 30 天观察报告内测意向，不创建订单、不收款

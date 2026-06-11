@@ -57,6 +57,7 @@ describe("register route", () => {
           email: "demo@example.com",
           password: "password123",
           displayName: "Demo",
+          acceptedLegal: true,
         }),
       }),
     );
@@ -74,5 +75,29 @@ describe("register route", () => {
       "http://localhost:3000",
     );
     expect(data.user.email).toBe("demo@example.com");
+  });
+
+  it("rejects registration before legal consent is accepted", async () => {
+    const { POST } = await import("@/app/api/auth/register/route");
+    const response = await POST(
+      new Request("http://localhost:3000/api/auth/register", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          email: "demo@example.com",
+          password: "password123",
+          displayName: "Demo",
+          acceptedLegal: false,
+        }),
+      }),
+    );
+    const data = await response.json();
+
+    expect(response.status).toBe(400);
+    expect(data.error).toBe("请先同意隐私保护指引和用户协议");
+    expect(registerUser).not.toHaveBeenCalled();
+    expect(createSession).not.toHaveBeenCalled();
   });
 });

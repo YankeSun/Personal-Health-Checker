@@ -11,6 +11,10 @@ export const registerSchema = z.object({
     .trim()
     .min(2, "昵称至少需要 2 个字符")
     .max(40, "昵称不能超过 40 个字符"),
+  acceptedLegal: z.custom<true>(
+    (value) => value === true,
+    "请先同意隐私保护指引和用户协议",
+  ),
 });
 
 export const loginSchema = z.object({

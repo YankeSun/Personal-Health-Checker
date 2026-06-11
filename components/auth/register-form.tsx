@@ -10,12 +10,14 @@ type FormState = {
   displayName: string;
   email: string;
   password: string;
+  acceptedLegal: boolean;
 };
 
 const initialState: FormState = {
   displayName: "",
   email: "",
   password: "",
+  acceptedLegal: false,
 };
 
 export function RegisterForm() {
@@ -27,6 +29,12 @@ export function RegisterForm() {
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     setError("");
+
+    if (!form.acceptedLegal) {
+      setError("请先同意隐私保护指引和用户协议");
+      return;
+    }
+
     setIsPending(true);
 
     try {
@@ -98,6 +106,30 @@ export function RegisterForm() {
           autoComplete="new-password"
           required
         />
+      </label>
+      <label className="flex gap-3 rounded-2xl border border-slate-200 bg-slate-50/70 px-4 py-3 text-sm leading-6 text-slate-600">
+        <input
+          className="mt-1 size-4 rounded border-slate-300 text-slate-900 accent-slate-900"
+          type="checkbox"
+          checked={form.acceptedLegal}
+          onChange={(event) =>
+            setForm((current) => ({
+              ...current,
+              acceptedLegal: event.target.checked,
+            }))
+          }
+        />
+        <span>
+          我已阅读并同意{" "}
+          <AppLink className="font-medium text-slate-900" href="/legal/privacy">
+            隐私保护指引
+          </AppLink>
+          、{" "}
+          <AppLink className="font-medium text-slate-900" href="/legal/terms">
+            用户协议
+          </AppLink>
+          ，并了解本产品不提供医疗诊断。
+        </span>
       </label>
       {error ? (
         <p className="rounded-2xl bg-rose-50 px-4 py-3 text-sm text-rose-600">

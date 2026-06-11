@@ -4,6 +4,11 @@
     <text class="title">把今天的体重管理记录下来</text>
     <text class="subtitle">先从体重、睡眠、饮水和几个日常背景开始，形成可回看的轻量记录。</text>
 
+    <view class="agreement" bindtap="toggleLegalAccepted">
+      <text class="check {{acceptedLegal ? 'check-active' : ''}}">{{acceptedLegal ? "✓" : ""}}</text>
+      <text class="agreement-copy">我已阅读并同意隐私保护指引和用户协议，并了解本产品不提供医疗诊断。</text>
+    </view>
+
     <button class="primary-button login-button" loading="{{loading}}" bindtap="handleWechatLogin">
       微信登录并开始记录
     </button>
