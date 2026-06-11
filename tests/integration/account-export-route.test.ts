@@ -38,7 +38,53 @@ describe("account export route", () => {
       user: {
         id: "user_1",
       },
-      dailyRecords: [],
+      goals: [
+        {
+          metric: "WEIGHT",
+          mode: "IN_RANGE",
+          isActive: true,
+          targetValue: null,
+          minValue: 60,
+          maxValue: 65,
+        },
+      ],
+      dailyRecords: [
+        {
+          date: "2026-04-02",
+          isBackfilled: false,
+          sleepHours: 7.5,
+          weightKg: 63.2,
+          waterMl: 1800,
+          contextTags: {
+            dietTags: ["LIGHT"],
+            activityLevel: "NORMAL",
+            energyLevel: null,
+            weighTiming: "MORNING",
+          },
+          createdAt: "2026-04-02T08:00:00.000Z",
+          updatedAt: "2026-04-02T08:00:00.000Z",
+        },
+      ],
+      wechatIdentities: [
+        {
+          appId: "wx_app",
+          openid: "openid_1",
+          unionid: null,
+          createdAt: "2026-04-01T00:00:00.000Z",
+        },
+      ],
+      productEvents: [
+        {
+          eventName: "ALPHA_FEEDBACK_SUBMITTED",
+          path: "/mp/me",
+          metadata: {
+            rating: 5,
+            valueCue: "trend-review",
+            friction: "manual-entry",
+          },
+          createdAt: "2026-04-03T00:00:00.000Z",
+        },
+      ],
     });
 
     const { GET } = await import("@/app/api/account/export/route");
@@ -57,6 +103,49 @@ describe("account export route", () => {
     );
     expect(getCurrentUser).toHaveBeenCalledWith(expect.any(Request));
     expect(getAccountExportByUserId).toHaveBeenCalledWith("user_1");
-    expect(data.user.id).toBe("user_1");
+    expect(data).toMatchObject({
+      user: {
+        id: "user_1",
+      },
+      goals: [
+        {
+          metric: "WEIGHT",
+          mode: "IN_RANGE",
+          isActive: true,
+          targetValue: null,
+          minValue: 60,
+          maxValue: 65,
+        },
+      ],
+      dailyRecords: [
+        {
+          date: "2026-04-02",
+          contextTags: {
+            dietTags: ["LIGHT"],
+            activityLevel: "NORMAL",
+            energyLevel: null,
+            weighTiming: "MORNING",
+          },
+        },
+      ],
+      wechatIdentities: [
+        {
+          appId: "wx_app",
+          openid: "openid_1",
+          unionid: null,
+        },
+      ],
+      productEvents: [
+        {
+          eventName: "ALPHA_FEEDBACK_SUBMITTED",
+          path: "/mp/me",
+          metadata: {
+            rating: 5,
+            valueCue: "trend-review",
+            friction: "manual-entry",
+          },
+        },
+      ],
+    });
   });
 });

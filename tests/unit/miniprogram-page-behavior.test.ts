@@ -75,6 +75,13 @@ function installMiniProgramGlobals(responseByPath: Record<string, unknown> = {})
     navigateTo: vi.fn(),
     pageScrollTo: vi.fn(),
     showModal: vi.fn(),
+    login: vi.fn((options: Record<string, unknown>) => {
+      const success = options.success as ((response: unknown) => void) | undefined;
+
+      success?.({
+        code: "wechat-code",
+      });
+    }),
   };
 }
 
@@ -251,6 +258,194 @@ describe("mini program page behavior", () => {
     expect(page.data.errorRetryAction).toBe("save");
   });
 
+  it("blocks mini program login until legal terms are accepted", () => {
+    installMiniProgramGlobals();
+    const page = loadPage("miniprogram/src/pages/login/login.js") as {
+      data: {
+        error: string;
+        errorDetail: string;
+      };
+      handleWechatLogin: () => void;
+    };
+
+    page.handleWechatLogin();
+
+    expect(page.data.error).toBe("请先同意隐私保护指引和用户协议");
+    expect(page.data.errorDetail).toBe("");
+    expect((globalThis as MiniProgramGlobals).wx.login).not.toHaveBeenCalled();
+  });
+
+  it("shows actionable diagnostics when wx.login fails", () => {
+    installMiniProgramGlobals();
+    (globalThis as MiniProgramGlobals).wx.login.mockImplementationOnce((options) => {
+      options.fail({
+        errMsg: "login:fail appid missing",
+      });
+    });
+    const page = loadPage("miniprogram/src/pages/login/login.js") as {
+      data: {
+        acceptedLegal: boolean;
+        loading: boolean;
+        error: string;
+        errorDetail: string;
+      };
+      handleWechatLogin: () => void;
+    };
+
+    page.setData({
+      acceptedLegal: true,
+    });
+    page.handleWechatLogin();
+
+    expect(page.data.loading).toBe(false);
+    expect(page.data.error).toBe("微信登录失败，请稍后再试");
+    expect(page.data.errorDetail).toContain("小程序 AppID");
+  });
+
+  it("routes Dashboard action cards to the most relevant mini program tab", async () => {
+    installMiniProgramGlobals({
+      "/api/dashboard?days=7": {
+        dashboard: {
+          todayCompletedMetrics: 3,
+          totalTrackedMetrics: 3,
+          insights: [
+            {
+              id: "review-trend",
+              tone: "success",
+              title: "看看体重变化",
+              description: "今天已经记录完整，可以回看趋势。",
+              actionHref: "/trends?metric=weight",
+              actionLabel: "看趋势",
+            },
+          ],
+          todayMetrics: [],
+          window: {
+            days: 7,
+            metrics: [],
+          },
+        },
+        reminders: {
+          reminders: [],
+        },
+      },
+    });
+    const page = loadPage("miniprogram/src/pages/dashboard/dashboard.js") as {
+      data: {
+        actionCards: Array<{
+          route: string;
+          isPrimary: boolean;
+        }>;
+        completionPercent: number;
+      };
+      loadDashboard: () => Promise<void>;
+      handleAction: (event: { currentTarget: { dataset: { route: string } } }) => void;
+    };
+
+    await page.loadDashboard();
+
+    expect(page.data.completionPercent).toBe(100);
+    expect(page.data.actionCards[0]).toEqual(
+      expect.objectContaining({
+        route: "/pages/trends/trends",
+        isPrimary: true,
+      }),
+    );
+
+    page.handleAction({
+      currentTarget: {
+        dataset: {
+          route: page.data.actionCards[0].route,
+        },
+      },
+    });
+
+    expect((globalThis as MiniProgramGlobals).wx.switchTab).toHaveBeenCalledWith({
+      url: "/pages/trends/trends",
+    });
+  });
+
+  it("keeps Trends empty state focused on recording the first weight", async () => {
+    installMiniProgramGlobals({
+      "/api/trends?metric=weight&days=30": {
+        trend: {
+          days: 30,
+          recordedDays: 0,
+          points: [],
+          unitLabel: "kg",
+        },
+      },
+    });
+    const page = loadPage("miniprogram/src/pages/trends/trends.js") as {
+      data: {
+        trendAction: {
+          title: string;
+          route: string;
+        };
+      };
+      loadTrend: () => Promise<void>;
+      handleTrendAction: (event: { currentTarget: { dataset: { route: string } } }) => void;
+    };
+
+    await page.loadTrend();
+
+    expect(page.data.trendAction).toEqual(
+      expect.objectContaining({
+        title: "先记录第一条体重",
+        route: "/pages/today/today",
+      }),
+    );
+
+    page.handleTrendAction({
+      currentTarget: {
+        dataset: {
+          route: page.data.trendAction.route,
+        },
+      },
+    });
+
+    expect((globalThis as MiniProgramGlobals).wx.switchTab).toHaveBeenCalledWith({
+      url: "/pages/today/today",
+    });
+  });
+
+  it("keeps Trends low-density state focused on continuing records", async () => {
+    installMiniProgramGlobals({
+      "/api/trends?metric=weight&days=30": {
+        trend: {
+          days: 30,
+          recordedDays: 4,
+          points: [
+            { date: "2026-06-09", label: "06/09", value: 68.2 },
+            { date: "2026-06-10", label: "06/10", value: null },
+            { date: "2026-06-11", label: "06/11", value: 68.1 },
+            { date: "2026-06-12", label: "06/12", value: 67.9 },
+          ],
+          unitLabel: "kg",
+        },
+      },
+    });
+    const page = loadPage("miniprogram/src/pages/trends/trends.js") as {
+      data: {
+        trendAction: {
+          title: string;
+          description: string;
+          route: string;
+        };
+      };
+      loadTrend: () => Promise<void>;
+    };
+
+    await page.loadTrend();
+
+    expect(page.data.trendAction).toEqual(
+      expect.objectContaining({
+        title: "先把记录密度补起来",
+        description: "当前窗口只有 4/30 天体重记录，趋势还容易被缺口影响。",
+        route: "/pages/today/today",
+      }),
+    );
+  });
+
   it("clears Me feedback form after a successful alpha feedback submission", async () => {
     installMiniProgramGlobals({
       "/api/feedback": {
@@ -294,6 +489,36 @@ describe("mini program page behavior", () => {
     });
     expect(page.data.feedbackValueOptions.some((item) => item.active)).toBe(false);
     expect(page.data.feedbackFrictionOptions.some((item) => item.active)).toBe(false);
+  });
+
+  it("tracks Me report exposure once without interrupting settings", async () => {
+    installMiniProgramGlobals({
+      "/api/intent/pay": {
+        success: true,
+      },
+    });
+    const page = loadPage("miniprogram/src/pages/me/me.js") as {
+      trackReportIntentShown: () => Promise<void>;
+    };
+
+    await page.trackReportIntentShown();
+    await page.trackReportIntentShown();
+
+    const exposureCalls = (globalThis as MiniProgramGlobals).wx.request.mock.calls.filter(
+      ([options]) => options.url === "https://api.example.test/api/intent/pay",
+    );
+
+    expect(exposureCalls).toHaveLength(1);
+    expect(exposureCalls[0][0]).toEqual(
+      expect.objectContaining({
+        method: "POST",
+        data: {
+          action: "shown",
+          offer: "WEIGHT_REPORT_30D",
+          source: "wechat_mp/me",
+        },
+      }),
+    );
   });
 
   it("requires confirmation before deleting the account from Me", () => {
