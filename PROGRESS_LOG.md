@@ -244,6 +244,7 @@ npm run analytics:report -- --days=30
 
 ## 2026-06-12
 
+- 收紧小程序 smoke 的账号导出验收：`miniprogram:smoke` 现在会在保存记录、报告曝光 / 点击和 alpha 反馈之后再导出账号数据，并断言导出包含 goals 数组、带 contextTags 的 daily record、wechatIdentities 以及 PAY_INTENT_SHOWN / PAY_INTENT_CLICKED / ALPHA_FEEDBACK_SUBMITTED 事件，确保体验版前数据权利闭环覆盖真实 alpha 数据。
 - 补齐小程序后端 smoke 的报告意向漏斗：`miniprogram:smoke` 现在会先记录 `action: "shown"` 的 30 天报告曝光，再记录 `action: "clicked"` 的内测意向点击，覆盖 `payIntentExposureRate` 和 `payIntentClickThroughRate` 两段 alpha 复盘口径。
 - 收紧 alpha readiness 的红灯判定：`alpha:readiness` 现在会把 `launch:check` 中的 blocker 映射为真正的 fail，而不是 review/warn；只有 launch 里没有 blocker、仅有 warning 时才进入 review，避免真实 AppID、合规占位等 P0 项未清时误判体验版 gate 接近可发。
 - 改善本地小程序 Docker smoke 的失败诊断：`miniprogram:smoke:docker` 在找不到 Docker CLI 时会明确提示安装 / 启动 Docker Desktop 或改用已有本地 API 跑 `miniprogram:smoke`，不再只暴露 `spawnSync docker ENOENT` 这类底层错误。

@@ -136,10 +136,6 @@ async function main() {
   assert(Boolean(profilePayload.profile), "profile payload missing");
   assert(Array.isArray(goalsPayload.goals), "goals payload missing");
 
-  printStep("exporting account data");
-  const exportPayload = await authedJson("/api/account/export", token);
-  assert(Array.isArray(exportPayload.dailyRecords), "account export missing dailyRecords");
-
   printStep("recording report beta exposure");
   const exposurePayload = await authedJson("/api/intent/pay", token, {
     method: "POST",
@@ -176,6 +172,33 @@ async function main() {
     }),
   });
   assert(feedbackPayload.success === true, "feedback did not return success");
+
+  printStep("exporting account data with alpha events");
+  const exportPayload = await authedJson("/api/account/export", token);
+  assert(Array.isArray(exportPayload.goals), "account export missing goals");
+  assert(Array.isArray(exportPayload.dailyRecords), "account export missing dailyRecords");
+  assert(Array.isArray(exportPayload.wechatIdentities), "account export missing wechatIdentities");
+  assert(Array.isArray(exportPayload.productEvents), "account export missing productEvents");
+
+  const exportedRecord = exportPayload.dailyRecords.find((item) => {
+    const row = item as JsonRecord;
+
+    return row.date === recordDate;
+  }) as JsonRecord | undefined;
+  const contextTags = exportedRecord?.contextTags as JsonRecord | undefined;
+
+  assert(Boolean(exportedRecord), "account export missing saved daily record");
+  assert(Array.isArray(contextTags?.dietTags), "account export missing record contextTags");
+  assert(contextTags?.weighTiming === "MORNING", "account export missing weighTiming context");
+  assert(exportPayload.wechatIdentities.length > 0, "account export missing WeChat identity mapping");
+
+  const exportedEventNames = new Set(
+    exportPayload.productEvents.map((item) => String((item as JsonRecord).eventName)),
+  );
+
+  assert(exportedEventNames.has("PAY_INTENT_SHOWN"), "account export missing pay intent exposure event");
+  assert(exportedEventNames.has("PAY_INTENT_CLICKED"), "account export missing pay intent click event");
+  assert(exportedEventNames.has("ALPHA_FEEDBACK_SUBMITTED"), "account export missing alpha feedback event");
 
   if (cleanup) {
     printStep("cleaning up smoke account");

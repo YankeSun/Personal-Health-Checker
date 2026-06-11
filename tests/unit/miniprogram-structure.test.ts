@@ -245,6 +245,10 @@ describe("miniprogram structure", () => {
     expect(smokeScript).toContain('action: "shown"');
     expect(smokeScript).toContain('action: "clicked"');
     expect(smokeScript).toContain("/api/feedback");
+    expect(smokeScript).toContain("account export missing wechatIdentities");
+    expect(smokeScript).toContain("account export missing productEvents");
+    expect(smokeScript).toContain("PAY_INTENT_SHOWN");
+    expect(smokeScript).toContain("ALPHA_FEEDBACK_SUBMITTED");
     expect(localSmokeScript).toContain("WECHAT_MINI_PROGRAM_MOCK_LOGIN_ENABLED");
     expect(localSmokeScript).toContain('"run", "dev"');
     expect(localSmokeScript).toContain("--cleanup");
