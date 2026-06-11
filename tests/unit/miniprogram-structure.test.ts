@@ -212,6 +212,9 @@ describe("miniprogram structure", () => {
     expect(mePage).toContain("/api/intent/pay");
     expect(mePage).toContain("/api/feedback");
     expect(mePage).toContain("submitFeedback");
+    expect(mePage).toContain("alphaTaskItems");
+    expect(mePage).toContain("reportReasonItems");
+    expect(mePage).toContain("handleAlphaTask");
     expect(mePage).toContain("/api/account/export");
     expect(mePage).toContain("/api/account");
     expect(loginPage).toContain("/pages/legal/legal?type=${type}");
@@ -221,6 +224,9 @@ describe("miniprogram structure", () => {
     expect(loginMarkup).toContain("健康免责声明");
     expect(meMarkup).toContain("协议与说明");
     expect(meMarkup).toContain("Alpha 反馈");
+    expect(meMarkup).toContain("7 天测试任务");
+    expect(meMarkup).toContain("30 天体重观察报告");
+    expect(meMarkup).toContain("WAITLIST");
     expect(legalPage).toContain("privacy");
     expect(legalPage).toContain("terms");
     expect(legalPage).toContain("health");

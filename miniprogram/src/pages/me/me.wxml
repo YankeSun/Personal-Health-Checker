@@ -1,28 +1,50 @@
-<view class="page">
+<view class="page me-page">
   <view class="profile card">
-    <text class="eyebrow">PROFILE</text>
+    <view class="profile-topline">
+      <text class="eyebrow">ALPHA</text>
+      <text class="unit-pill">{{profile.weightUnit || "KG"}} / {{profile.waterUnit || "ML"}}</text>
+    </view>
     <text class="title">{{profile.displayName || "微信用户"}}</text>
-    <text class="muted">体重单位 {{profile.weightUnit || "KG"}} · 饮水单位 {{profile.waterUnit || "ML"}}</text>
+    <text class="profile-copy">连续 7 天记录体重，看看这套节奏是否真的值得继续做成小程序 beta。</text>
   </view>
 
-  <view class="card block">
-    <text class="section-title">目标</text>
-    <view wx:if="{{goals.length === 0}}" class="empty">还没有配置目标，Web 设置页可继续完善。</view>
-    <view wx:for="{{goals}}" wx:key="metric" class="goal-row">
-      <text>{{item.metric}}</text>
-      <text class="muted">{{item.isActive ? item.mode : "未启用"}}</text>
+  <view class="card block alpha-card">
+    <view class="section-head">
+      <text class="section-title">7 天测试任务</text>
+      <text class="section-note">每天一轮</text>
+    </view>
+    <view
+      wx:for="{{alphaTaskItems}}"
+      wx:key="key"
+      class="task-row"
+      data-route="{{item.route}}"
+      data-anchor="{{item.anchor}}"
+      bindtap="handleAlphaTask"
+    >
+      <view class="task-main">
+        <text class="task-title">{{item.title}}</text>
+        <text class="task-copy">{{item.description}}</text>
+      </view>
+      <text class="task-action">{{item.actionLabel}}</text>
     </view>
   </view>
 
   <view class="card block beta-card">
-    <text class="section-title">30 天体重观察报告</text>
-    <text class="muted beta-copy">体重变化、目标进度和日常背景会整理成月度回看。当前仅记录内测意向，不收取费用。</text>
-    <button class="primary-button action-button" loading="{{joiningReportBeta}}" bindtap="joinReportBeta">加入报告内测</button>
+    <text class="eyebrow light">WAITLIST</text>
+    <text class="beta-title">30 天体重观察报告</text>
+    <text class="beta-copy">当前只记录内测意向，不创建订单、不收款。我们会用点击率判断这类报告是否值得继续做。</text>
+    <view class="report-list">
+      <text wx:for="{{reportReasonItems}}" wx:key="*this" class="report-item">{{item}}</text>
+    </view>
+    <button class="primary-button beta-button" loading="{{joiningReportBeta}}" bindtap="joinReportBeta">加入报告内测</button>
   </view>
 
-  <view class="card block">
-    <text class="section-title">Alpha 反馈</text>
-    <text class="feedback-copy">这会帮助我们判断是否值得继续做小程序 beta。</text>
+  <view id="alpha-feedback" class="card block feedback-card">
+    <view class="section-head">
+      <text class="section-title">Alpha 反馈</text>
+      <text class="section-note">30 秒</text>
+    </view>
+    <text class="feedback-copy">最重要的是：你是否愿意明天继续打开？如果不愿意，是哪一步让你停下。</text>
     <view class="rating-row">
       <text wx:for="{{[1, 2, 3, 4, 5]}}" wx:key="*this" data-rating="{{item}}" bindtap="setFeedbackRating" class="rating-chip {{feedback.rating === item ? 'rating-active' : ''}}">{{item}}</text>
     </view>
@@ -39,7 +61,17 @@
   </view>
 
   <view class="card block">
+    <text class="section-title">目标</text>
+    <view wx:if="{{goals.length === 0}}" class="empty">还没有配置目标，Web 设置页可继续完善。</view>
+    <view wx:for="{{goals}}" wx:key="metric" class="goal-row">
+      <text>{{item.metric}}</text>
+      <text class="muted">{{item.isActive ? item.mode : "未启用"}}</text>
+    </view>
+  </view>
+
+  <view class="card block">
     <text class="section-title">数据与账号</text>
+    <text class="data-copy">你可以导出个人数据，也可以删除账号和全部关联数据。</text>
     <button class="ghost-button action-button" loading="{{exporting}}" bindtap="exportAccount">导出个人数据</button>
     <button class="danger-button action-button" loading="{{deleting}}" bindtap="confirmDeleteAccount">删除账号和全部数据</button>
     <text wx:if="{{message}}" class="message">{{message}}</text>

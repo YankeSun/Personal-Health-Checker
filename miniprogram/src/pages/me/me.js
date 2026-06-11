@@ -14,6 +14,43 @@ const feedbackFrictionOptions = [
   { value: "NO_FRICTION", label: "目前顺手" },
 ];
 
+const alphaTaskItems = [
+  {
+    key: "record",
+    title: "记录今天体重",
+    description: "完成一条体重记录，并尽量补充睡眠、饮水和背景标签。",
+    actionLabel: "去记录",
+    route: "/pages/today/today",
+  },
+  {
+    key: "dashboard",
+    title: "看今日概览",
+    description: "确认系统有没有给出清楚的下一步和体重变化线索。",
+    actionLabel: "看概览",
+    route: "/pages/dashboard/dashboard",
+  },
+  {
+    key: "trend",
+    title: "回看体重趋势",
+    description: "观察趋势结论、走势条和背景标签是否能帮助理解波动。",
+    actionLabel: "看趋势",
+    route: "/pages/trends/trends",
+  },
+  {
+    key: "feedback",
+    title: "提交 Alpha 反馈",
+    description: "告诉我们你是否愿意连续使用 7 天，以及最卡的地方。",
+    actionLabel: "去反馈",
+    anchor: "feedback",
+  },
+];
+
+const reportReasonItems = [
+  "汇总 30 天体重变化和目标进度",
+  "回看经常同天出现的饮食、活动和称重时段",
+  "判断这类报告是否值得进入 beta",
+];
+
 function decorateOptions(options, activeValue) {
   return options.map((option) => ({
     ...option,
@@ -25,6 +62,8 @@ Page({
   data: {
     profile: {},
     goals: [],
+    alphaTaskItems,
+    reportReasonItems,
     feedback: {
       rating: 0,
       valueCue: "",
@@ -198,7 +237,14 @@ Page({
 
       this.setData({
         message: payload.message || "已收到反馈，谢谢。",
-        "feedback.comment": "",
+        feedback: {
+          rating: 0,
+          valueCue: "",
+          friction: "",
+          comment: "",
+        },
+        feedbackValueOptions: decorateOptions(feedbackValueOptions, ""),
+        feedbackFrictionOptions: decorateOptions(feedbackFrictionOptions, ""),
       });
     } catch (error) {
       this.setData({
@@ -256,6 +302,23 @@ Page({
     clearAuth();
     wx.reLaunch({
       url: "/pages/login/login",
+    });
+  },
+
+  handleAlphaTask(event) {
+    const route = event.currentTarget.dataset.route;
+    const anchor = event.currentTarget.dataset.anchor;
+
+    if (anchor === "feedback") {
+      wx.pageScrollTo({
+        selector: "#alpha-feedback",
+        duration: 240,
+      });
+      return;
+    }
+
+    wx.switchTab({
+      url: route || "/pages/today/today",
     });
   },
 
