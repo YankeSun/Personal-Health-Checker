@@ -106,6 +106,7 @@ describe("research materials", () => {
     expect(alphaExecutionBrief).toContain("未来 7 天最短路径");
     expect(alphaExecutionBrief).toContain("没有截图、录屏和 notes 时");
     expect(alphaExecutionBrief).toContain("只允许再做 3 个代码改动");
+    expect(alphaExecutionBrief).toContain("Experience build gate");
   });
 
   it("links fieldwork to the mini program validation plan", () => {

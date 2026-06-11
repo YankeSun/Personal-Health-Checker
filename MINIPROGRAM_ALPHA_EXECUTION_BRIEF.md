@@ -81,6 +81,7 @@ Web 端已经可体验：
 - 微信公众平台隐私保护指引、类目、备案、客服入口仍需人工确认
 - 微信开发者工具需要导入 `miniprogram/`，上传体验版
 - 至少 2 台真机要跑通登录、记录、Dashboard、Trends、我的页、导出 / 删除，并留下私有证据
+- `npm run alpha:readiness` 顶部的 `Experience build gate` 必须为 `GREEN`
 
 ## 5. 竞品实测状态
 

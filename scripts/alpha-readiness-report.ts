@@ -80,6 +80,29 @@ function printCheck(check: ReadinessCheck) {
   console.log(`      ${check.command.join(" ")}`);
 }
 
+function gateLabel(status: CheckStatus) {
+  if (status === "pass") return "READY";
+  if (status === "warn") return "REVIEW";
+  return "BLOCKED";
+}
+
+function buildExperienceGate(checksToReview: ReadinessCheck[]) {
+  const failures = checksToReview.filter((check) => check.status === "fail");
+  const warnings = checksToReview.filter((check) => check.status === "warn");
+  const state = failures.length > 0 ? "RED" : warnings.length > 0 ? "YELLOW" : "GREEN";
+  const guidance =
+    state === "GREEN"
+      ? "Automated gates are green. You can proceed to strict checks, remote checks, and real-device evidence before inviting users."
+      : state === "YELLOW"
+        ? "Do not invite external alpha users yet. Review the warning items and collect the missing manual evidence."
+        : "Do not invite external alpha users. Resolve blocked items before uploading or sharing an Experience build.";
+
+  return {
+    state,
+    guidance,
+  };
+}
+
 function extractLaunchNextActions(output: string) {
   const actions: string[] = [];
   let collecting = false;
@@ -142,7 +165,18 @@ if (includeRemote) {
   checks.push(runCommand("Remote mini program API", ["run", "miniprogram:check:remote"]));
 }
 
-console.log("Alpha readiness summary\n");
+const experienceGate = buildExperienceGate(checks);
+
+console.log(`Experience build gate: ${experienceGate.state}`);
+console.log(`${experienceGate.guidance}\n`);
+
+console.log("Gate checklist:");
+
+for (const check of checks) {
+  console.log(`- [${gateLabel(check.status)}] ${check.label}: ${check.summary}`);
+}
+
+console.log("\nAlpha readiness summary\n");
 
 for (const check of checks) {
   printCheck(check);

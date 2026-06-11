@@ -128,6 +128,10 @@ describe("miniprogram structure", () => {
     expect(alphaReadinessScript).toContain("miniprogram:check");
     expect(alphaReadinessScript).toContain("research:check");
     expect(alphaReadinessScript).toContain("db:doctor");
+    expect(alphaReadinessScript).toContain("Experience build gate");
+    expect(alphaReadinessScript).toContain("Gate checklist");
+    expect(alphaReadinessScript).toContain("Do not invite external alpha users");
+    expect(alphaReadinessScript).toContain("gateLabel");
     expect(alphaReadinessScript).toContain("Manual next actions");
     expect(alphaReadinessScript).toContain("extractLaunchNextActions");
     expect(alphaPreflightScript).toContain("Alpha Preflight Report");
@@ -166,6 +170,7 @@ describe("miniprogram structure", () => {
 
     expect(readinessDoc).toContain("npm run launch:check:vercel");
     expect(readinessDoc).toContain("npm run alpha:readiness");
+    expect(readinessDoc).toContain("Experience build gate");
     expect(readinessDoc).toContain("WECHAT_MINI_PROGRAM_APP_ID");
     expect(readinessDoc).toContain("WECHAT_MINI_PROGRAM_APP_SECRET");
     expect(readinessScript).toContain("DATABASE_URL");
@@ -181,6 +186,7 @@ describe("miniprogram structure", () => {
     expect(releasePack).toContain("7 天任务卡");
     expect(releasePack).toContain("npm run alpha:evidence-pack");
     expect(releasePack).toContain("npm run alpha:readiness");
+    expect(releasePack).toContain("Experience build gate");
     expect(releasePack).toContain("npm run alpha:preflight");
     expect(releasePack).toContain("npm run alpha:phone-session");
     expect(releasePack).toContain("Manual next actions");
