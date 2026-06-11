@@ -166,6 +166,8 @@ npm run deploy:prod -- "这次版本相比上一个版本的改动说明"
 
 - 开发推进日志见 [PROGRESS_LOG.md](./PROGRESS_LOG.md)
 - 项目整体总结见 [PROJECT_SUMMARY.md](./PROJECT_SUMMARY.md)
+- 小程序上线前验证方案见 [WECHAT_MINI_PROGRAM_VALIDATION_PLAN.md](./WECHAT_MINI_PROGRAM_VALIDATION_PLAN.md)
+- 小程序审核前合规草案见 [compliance/](./compliance)
 
 ## CI
 

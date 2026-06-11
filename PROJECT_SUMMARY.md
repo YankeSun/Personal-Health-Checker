@@ -281,6 +281,18 @@
 
 - 每轮完成并 push 后，都会把一句话进展补进 `PROGRESS_LOG.md`
 
+### 8.5 小程序上线前材料
+
+当前已经建立：
+
+- `WECHAT_MINI_PROGRAM_VALIDATION_PLAN.md`
+- `compliance/PRIVACY_POLICY_DRAFT.md`
+- `compliance/USER_AGREEMENT_DRAFT.md`
+- `compliance/HEALTH_DISCLAIMER_DRAFT.md`
+- `compliance/MINIPROGRAM_SUBMISSION_CHECKLIST.md`
+
+这些文件是体验版 / 审核前草案，不替代微信公众平台后台配置或法律审查。
+
 ## 9. 上线与环境演进
 
 项目推进过程中，线上环境也经历了几次关键修复：
