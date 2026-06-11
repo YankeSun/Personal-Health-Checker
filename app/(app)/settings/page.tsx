@@ -1,5 +1,6 @@
 import { Metric } from "@prisma/client";
 
+import { AccountDataPanel } from "@/components/forms/account-data-panel";
 import { GoalsForm } from "@/components/forms/goals-form";
 import { ProfileForm } from "@/components/forms/profile-form";
 import { requireUser } from "@/lib/auth/guards";
@@ -42,6 +43,7 @@ export default async function SettingsPage() {
           ],
         }}
       />
+      <AccountDataPanel />
     </div>
   );
 }

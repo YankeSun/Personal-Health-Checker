@@ -244,6 +244,7 @@ npm run analytics:report -- --days=30
 
 ## 2026-06-12
 
+- 补齐 Web 设置页数据权利入口：Settings 新增“数据与账号”卡片，支持导出个人资料、目标、记录、体重背景、微信身份映射和 ProductEvent，并要求输入 `DELETE` 后才能删除账号；这样 Web 与小程序都具备账号导出 / 删除入口，减少 alpha 前的合规体验断点。
 - 增加 Docker Postgres 本地小程序 smoke：新增 `npm run miniprogram:smoke:docker`，会显式使用 docker-compose 中的本地 Postgres、等待 `db:doctor` 通过，再启动本地 Next 和 mock 小程序登录主路径；当 `.env.local` 默认 Neon 连接超时时，仍可先验证登录、记录、Dashboard、Trends、导出、意向和反馈链路。
 - 增加体验版 readiness 红绿灯：`alpha:readiness` 现在会在顶部输出 `Experience build gate: GREEN / YELLOW / RED` 和 Gate checklist，明确 RED / YELLOW 时不要邀请外部 alpha 用户；保留原有子检查和 Manual next actions，便于 Day 0 一眼判断体验版是否可发。
 - 收紧小程序 Alpha 复盘决策报告：`analytics:miniprogram` 新增 `decisionReview`，把 10 人样本、首次完整记录率、留存、体重 / 背景填写、付费意向、反馈率和人工证据标记汇总成 `needs_data / hold_and_improve / beta_candidate` 建议；Day 10 文档命令同步支持 `--real-device-evidence --user-quotes --competitor-fieldwork`，避免只凭 `continue_candidate` 误判可以商业化。
