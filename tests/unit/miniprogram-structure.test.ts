@@ -190,6 +190,9 @@ describe("miniprogram structure", () => {
     expect(alphaExperienceGateScript).toContain("--remote");
     expect(alphaExperienceGateScript).toContain("miniprogram:check:experience");
     expect(alphaExperienceGateScript).toContain("strict remote experience check");
+    expect(alphaExperienceGateScript.indexOf("Run strict alpha readiness")).toBeLessThan(
+      alphaExperienceGateScript.indexOf("Generate Day 0 preflight evidence"),
+    );
   });
 
   it("documents environment readiness checks for mini program launch prep", () => {

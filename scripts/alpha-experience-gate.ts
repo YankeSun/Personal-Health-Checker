@@ -43,6 +43,15 @@ function runStep(label: string, args: string[]) {
   }
 }
 
+runStep("Run strict alpha readiness", [
+  "run",
+  "alpha:readiness",
+  "--",
+  "--strict",
+  "--vercel",
+  "--remote",
+]);
+
 runStep("Generate Day 0 preflight evidence", [
   "run",
   "alpha:preflight",
@@ -51,15 +60,6 @@ runStep("Generate Day 0 preflight evidence", [
   "--remote",
   "--out",
   outPath,
-]);
-
-runStep("Run strict alpha readiness", [
-  "run",
-  "alpha:readiness",
-  "--",
-  "--strict",
-  "--vercel",
-  "--remote",
 ]);
 
 runStep("Run strict remote experience check", [

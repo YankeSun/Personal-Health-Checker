@@ -33,7 +33,7 @@ npm run alpha:preflight -- --vercel --remote --out research/alpha/preflight/Alph
 npm run alpha:gate:experience -- --batch Alpha-001
 ```
 
-这个命令会生成 Day 0 preflight，并在 readiness 或严格远程体验版检查不是 GREEN 时直接失败。
+这个命令会先跑 strict readiness；只有 readiness 是 GREEN，才会生成 Day 0 preflight，并在严格远程体验版检查不是 GREEN 时直接失败。
 
 如果 `launch:check` 发现 blocker 或 warning，输出末尾会给出 `Next actions`，把每个失败项翻译成下一步要去哪里配置或修改什么。
 

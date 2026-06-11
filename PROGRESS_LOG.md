@@ -244,6 +244,7 @@ npm run analytics:report -- --days=30
 
 ## 2026-06-12
 
+- 修正体验版硬闸门执行顺序：`alpha:gate:experience` 现在先跑 strict readiness，只有 Git clean、launch、数据库和远程体验版检查通过后才生成 Day 0 preflight，避免 RED 状态下先留下可被误用的体验版证据文件。
 - 收紧体验版证据可追溯性：`alpha:readiness` 现在会先检查 Git working tree 是否干净，`alpha:gate:experience` 会因此阻断未提交代码生成体验版证据，确保真机反馈、批次控制台和 Git commit 能一一对应。
 - 改善 Vercel env readiness 失败诊断：`launch:check -- --vercel` 现在会把 Vercel CLI 失败归类成 `network_unreachable` 或 `auth_or_scope`，并给出对应下一步，避免 DNS / 代理问题被误读成单纯没登录。
 - 收口体验版远程闸门文档口径：README、环境就绪说明、Alpha 发放包和批次控制台现在都把发放前标准指向 `alpha:gate:experience` / `miniprogram:check:experience`，明确 `miniprogram:check:remote` 只用于定位 API / 数据库可达性，避免只凭 health 通过就邀请真实用户。
