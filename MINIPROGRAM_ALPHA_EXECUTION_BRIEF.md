@@ -169,11 +169,12 @@ Codex 目标功能适合持续推进有明确终点、需要跨多轮完成的�
 1. `PRODUCT_ROADMAP_FRAMEWORK.md`
 2. `PROGRESS_LOG.md`
 3. `PROJECT_SUMMARY.md`
-4. `WECHAT_MINI_PROGRAM_VALIDATION_PLAN.md`
-5. 本文件
-6. `miniprogram/ALPHA_RELEASE_PACK.md`
-7. `research/alpha/ALPHA_BATCH_CONTROL.md`
-8. `research/WECHAT_COMPETITOR_FIELDWORK.md`
+4. `ACTIVE_OBJECTIVE.md`
+5. `WECHAT_MINI_PROGRAM_VALIDATION_PLAN.md`
+6. 本文件
+7. `miniprogram/ALPHA_RELEASE_PACK.md`
+8. `research/alpha/ALPHA_BATCH_CONTROL.md`
+9. `research/WECHAT_COMPETITOR_FIELDWORK.md`
 
 每轮执行后：
 

@@ -326,6 +326,29 @@ describe("miniprogram structure", () => {
     expect(localSmokeScript).toContain("database=");
   });
 
+  it("documents the active objective fallback when the goal tool is unavailable", () => {
+    const activeObjective = readFileSync(
+      path.join(projectRoot, "ACTIVE_OBJECTIVE.md"),
+      "utf8",
+    );
+    const executionBrief = readFileSync(
+      path.join(projectRoot, "MINIPROGRAM_ALPHA_EXECUTION_BRIEF.md"),
+      "utf8",
+    );
+
+    expect(activeObjective).toContain("Codex goal 功能暂时不可用或受限时的替代目标控制台");
+    expect(activeObjective).toContain("清零微信小程序 Alpha-001 发放前 P0 blocker");
+    expect(activeObjective).toContain("Codex goal 工具状态：`usageLimited`");
+    expect(activeObjective).toContain("不做：");
+    expect(activeObjective).toContain("微信支付");
+    expect(activeObjective).toContain("设备接入");
+    expect(activeObjective).toContain("新增正式健康指标枚举");
+    expect(activeObjective).toContain("npm run wechat:credential-probe");
+    expect(activeObjective).toContain("npm run alpha:invite-gate -- --batch Alpha-001");
+    expect(activeObjective).toContain("不要让多个 sub-agent 同时修改同一批核心页面");
+    expect(executionBrief).toContain("ACTIVE_OBJECTIVE.md");
+  });
+
   it("exposes mini program alpha reporting for commercial validation", () => {
     const reportScript = readFileSync(
       path.join(projectRoot, "scripts", "miniprogram-alpha-report.ts"),
