@@ -34,7 +34,7 @@
     </view>
     <view class="stat card">
       <text class="label">达标率</text>
-      <text class="metric-value">{{window.attainmentRate || 0}}%</text>
+      <text class="metric-value">{{windowAttainmentRate}}%</text>
       <text class="stat-note">目标对齐情况</text>
     </view>
   </view>

@@ -116,6 +116,20 @@ function buildWindowMetrics(windowSummary) {
   }));
 }
 
+function buildWindowAttainmentRate(windowSummary) {
+  const rates = (windowSummary.metrics || [])
+    .map((metric) => metric.attainmentRate)
+    .filter((rate) => typeof rate === "number");
+
+  if (rates.length === 0) {
+    return 0;
+  }
+
+  const total = rates.reduce((sum, rate) => sum + rate, 0);
+
+  return Math.round(total / rates.length);
+}
+
 Page({
   data: {
     dashboard: {},
@@ -125,6 +139,7 @@ Page({
     metricRows: [],
     weightContext: buildWeightContext(null),
     windowMetrics: [],
+    windowAttainmentRate: 0,
     completionPercent: 0,
     error: "",
     errorDetail: "",
@@ -163,6 +178,7 @@ Page({
         metricRows: (dashboard.todayMetrics || []).map(decorateMetric),
         weightContext: buildWeightContext(dashboard.weightContext),
         windowMetrics: buildWindowMetrics(windowSummary),
+        windowAttainmentRate: buildWindowAttainmentRate(windowSummary),
         completionPercent,
         error: "",
         errorDetail: "",

@@ -321,7 +321,26 @@ describe("mini program page behavior", () => {
           todayMetrics: [],
           window: {
             days: 7,
-            metrics: [],
+            metrics: [
+              {
+                metric: "SLEEP",
+                label: "睡眠",
+                attainmentRate: 71.4,
+                recordedDays: 7,
+              },
+              {
+                metric: "WEIGHT",
+                label: "体重",
+                attainmentRate: 42.9,
+                recordedDays: 6,
+              },
+              {
+                metric: "WATER",
+                label: "饮水",
+                attainmentRate: null,
+                recordedDays: 5,
+              },
+            ],
           },
         },
         reminders: {
@@ -336,6 +355,7 @@ describe("mini program page behavior", () => {
           isPrimary: boolean;
         }>;
         completionPercent: number;
+        windowAttainmentRate: number;
       };
       loadDashboard: () => Promise<void>;
       handleAction: (event: { currentTarget: { dataset: { route: string } } }) => void;
@@ -344,6 +364,7 @@ describe("mini program page behavior", () => {
     await page.loadDashboard();
 
     expect(page.data.completionPercent).toBe(100);
+    expect(page.data.windowAttainmentRate).toBe(57);
     expect(page.data.actionCards[0]).toEqual(
       expect.objectContaining({
         route: "/pages/trends/trends",
