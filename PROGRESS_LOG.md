@@ -244,6 +244,7 @@ npm run analytics:report -- --days=30
 
 ## 2026-06-12
 
+- 对齐小程序 alpha 邮件配置闸门口径：`alpha:readiness` 现在会把 `EMAIL_FROM` / `RESEND_API_KEY` 这两个仅影响 Web 邮件体验的 launch warning 识别为 optional email warning，不再让小程序体验版 gate 因可选邮件配置变成 YELLOW；其他 launch warning 仍会进入 review。
 - 修正小程序 Today 单位一致性：`GET /api/records/today` 会返回用户体重 / 饮水单位，小程序 Today 按用户设置显示 lb / oz 或 kg / ml，并在保存时转换回数据库的 kg / ml 存储口径，避免体验版记录页和 Web 设置不一致。
 - 修正小程序 Dashboard 达标率展示口径：概览页不再读取后端不存在的 `window.attainmentRate`，而是基于窗口内各指标 `attainmentRate` 计算平均达标率，避免体验版用户看到误导性的 0%。
 - 补强小程序体验版环境变量防误填说明：`.env.example` 现在区分本地数据库、可选 `DATABASE_URL_UNPOOLED`、邮箱配置和微信 AppID / AppSecret，并明确 AppSecret 不能等于 AppID；`ENVIRONMENT_READINESS.md` 同步修正 Git clean gate 的归属，避免只跑 `launch:check` 就误以上传体验版安全。

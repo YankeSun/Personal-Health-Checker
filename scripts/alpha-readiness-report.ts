@@ -85,6 +85,18 @@ function summarizeOutput(label: string, output: string, exitCode: number) {
   return finalLine || `exit=${exitCode}`;
 }
 
+const optionalLaunchWarningLabels = new Set([
+  "EMAIL_FROM is configured for account email flows",
+  "RESEND_API_KEY is configured for real email delivery",
+]);
+
+function extractLaunchWarningLabels(output: string) {
+  return output
+    .split(/\r?\n/)
+    .map((line) => line.match(/^\[warn]\s+(.+?)(?:\s+\(|$)/)?.[1]?.trim())
+    .filter((label): label is string => Boolean(label));
+}
+
 function classifyLaunchReadiness(check: ReadinessCheck): ReadinessCheck {
   if (check.label !== "Launch readiness") {
     return check;
@@ -102,6 +114,19 @@ function classifyLaunchReadiness(check: ReadinessCheck): ReadinessCheck {
   }
 
   if (warningCount > 0) {
+    const warningLabels = extractLaunchWarningLabels(check.output);
+    const hasOnlyOptionalWarnings =
+      warningLabels.length > 0 &&
+      warningLabels.every((label) => optionalLaunchWarningLabels.has(label));
+
+    if (hasOnlyOptionalWarnings) {
+      return {
+        ...check,
+        status: "pass",
+        summary: `${blockerCount} blocker(s), ${warningCount} optional email warning(s)`,
+      };
+    }
+
     return {
       ...check,
       status: "warn",

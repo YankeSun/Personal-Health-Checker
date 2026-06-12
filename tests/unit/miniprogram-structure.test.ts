@@ -161,6 +161,10 @@ describe("miniprogram structure", () => {
     expect(alphaReadinessScript).toContain("Manual next actions");
     expect(alphaReadinessScript).toContain("extractLaunchNextActions");
     expect(alphaReadinessScript).toContain("classifyLaunchReadiness");
+    expect(alphaReadinessScript).toContain("optionalLaunchWarningLabels");
+    expect(alphaReadinessScript).toContain("optional email warning(s)");
+    expect(alphaReadinessScript).toContain("EMAIL_FROM is configured for account email flows");
+    expect(alphaReadinessScript).toContain("RESEND_API_KEY is configured for real email delivery");
     expect(alphaReadinessScript).toContain("status: \"fail\"");
     expect(alphaReadinessScript).toContain("includeVercel");
     expect(alphaReadinessScript).toContain("--vercel");
