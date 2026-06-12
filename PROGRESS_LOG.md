@@ -244,6 +244,7 @@ npm run analytics:report -- --days=30
 
 ## 2026-06-12
 
+- 修正小程序 Today 单位一致性：`GET /api/records/today` 会返回用户体重 / 饮水单位，小程序 Today 按用户设置显示 lb / oz 或 kg / ml，并在保存时转换回数据库的 kg / ml 存储口径，避免体验版记录页和 Web 设置不一致。
 - 修正小程序 Dashboard 达标率展示口径：概览页不再读取后端不存在的 `window.attainmentRate`，而是基于窗口内各指标 `attainmentRate` 计算平均达标率，避免体验版用户看到误导性的 0%。
 - 补强小程序体验版环境变量防误填说明：`.env.example` 现在区分本地数据库、可选 `DATABASE_URL_UNPOOLED`、邮箱配置和微信 AppID / AppSecret，并明确 AppSecret 不能等于 AppID；`ENVIRONMENT_READINESS.md` 同步修正 Git clean gate 的归属，避免只跑 `launch:check` 就误以上传体验版安全。
 - 加强微信 AppID / AppSecret 配置防错：`launch:check` 和 `miniprogram:check:strict` 现在会校验 AppID 是否像真实 `wx...` 值，并阻止把 AppID 误填进 AppSecret，减少真实 `wx.login` 前的手动配置试错。

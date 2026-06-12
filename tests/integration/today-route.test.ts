@@ -50,6 +50,8 @@ describe("today record route", () => {
       email: "demo@example.com",
       profile: {
         timezone: "Asia/Shanghai",
+        weightUnit: "LB",
+        waterUnit: "OZ",
       },
     });
     getTodayRecordByUserId.mockResolvedValue({
@@ -74,6 +76,10 @@ describe("today record route", () => {
     expect(getTodayRecordByUserId).toHaveBeenCalledWith("user_1", "Asia/Shanghai");
     expect(data.record.sleepHours).toBe(7.2);
     expect(data.record.contextTags.dietTags).toEqual(["NORMAL"]);
+    expect(data.profile).toEqual({
+      weightUnit: "LB",
+      waterUnit: "OZ",
+    });
     expect(data.qualityWarnings).toEqual([]);
   });
 

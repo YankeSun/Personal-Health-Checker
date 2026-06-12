@@ -38,8 +38,8 @@
     </view>
 
     <view class="field weight-field">
-      <text class="label">体重 kg</text>
-      <input class="input weight-input" type="digit" value="{{form.weightKg}}" placeholder="例如 63.2" data-field="weightKg" bindinput="handleInput" />
+      <text class="label">体重 {{weightUnitLabel}}</text>
+      <input class="input weight-input" type="digit" value="{{form.weightKg}}" placeholder="{{weightPlaceholder}}" data-field="weightKg" bindinput="handleInput" />
     </view>
 
     <view class="field-row">
@@ -48,8 +48,8 @@
         <input class="input" type="digit" value="{{form.sleepHours}}" placeholder="7.5" data-field="sleepHours" bindinput="handleInput" />
       </view>
       <view class="field half">
-        <text class="label">饮水 ml</text>
-        <input class="input" type="number" value="{{form.waterMl}}" placeholder="2000" data-field="waterMl" bindinput="handleInput" />
+        <text class="label">饮水 {{waterUnitLabel}}</text>
+        <input class="input" type="number" value="{{form.waterMl}}" placeholder="{{waterPlaceholder}}" data-field="waterMl" bindinput="handleInput" />
       </view>
     </view>
   </view>

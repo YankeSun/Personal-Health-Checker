@@ -1,5 +1,8 @@
 const { ensureAuthed, request, toErrorState } = require("../../utils/api");
 
+const KG_TO_LB = 2.20462;
+const ML_TO_OZ = 0.033814;
+
 const dietBaseOptions = [
   { value: "LIGHT", label: "清淡" },
   { value: "NORMAL", label: "正常" },
@@ -46,6 +49,74 @@ function normalizeNumber(value) {
   return Number.isFinite(parsed) ? parsed : null;
 }
 
+function roundTo(value, fractionDigits) {
+  const factor = 10 ** fractionDigits;
+
+  return Math.round(value * factor) / factor;
+}
+
+function formatNumber(value, fractionDigits) {
+  return roundTo(value, fractionDigits)
+    .toFixed(fractionDigits)
+    .replace(/\.0+$/, "")
+    .replace(/(\.\d*?)0+$/, "$1");
+}
+
+function normalizeProfile(profile) {
+  return {
+    weightUnit: profile && profile.weightUnit === "LB" ? "LB" : "KG",
+    waterUnit: profile && profile.waterUnit === "OZ" ? "OZ" : "ML",
+  };
+}
+
+function getWeightUnitLabel(profile) {
+  return profile.weightUnit === "LB" ? "lb" : "kg";
+}
+
+function getWaterUnitLabel(profile) {
+  return profile.waterUnit === "OZ" ? "oz" : "ml";
+}
+
+function toDisplayWeight(weightKg, profile) {
+  if (weightKg === null || weightKg === undefined) {
+    return "";
+  }
+
+  const displayValue = profile.weightUnit === "LB" ? weightKg * KG_TO_LB : weightKg;
+
+  return formatNumber(displayValue, 1);
+}
+
+function toDisplayWater(waterMl, profile) {
+  if (waterMl === null || waterMl === undefined) {
+    return "";
+  }
+
+  const displayValue = profile.waterUnit === "OZ" ? waterMl * ML_TO_OZ : waterMl;
+
+  return formatNumber(displayValue, 0);
+}
+
+function fromDisplayWeight(value, profile) {
+  const parsed = normalizeNumber(value);
+
+  if (parsed === null) {
+    return null;
+  }
+
+  return profile.weightUnit === "LB" ? roundTo(parsed / KG_TO_LB, 2) : parsed;
+}
+
+function fromDisplayWater(value, profile) {
+  const parsed = normalizeNumber(value);
+
+  if (parsed === null) {
+    return null;
+  }
+
+  return profile.waterUnit === "OZ" ? Math.round(parsed / ML_TO_OZ) : parsed;
+}
+
 function decorateOptions(options, activeValues) {
   return options.map((option) => ({
     ...option,
@@ -84,6 +155,7 @@ function getNextStepText(steps) {
 Page({
   data: {
     record: {},
+    profile: normalizeProfile(null),
     form: {
       sleepHours: "",
       weightKg: "",
@@ -99,6 +171,10 @@ Page({
     }),
     nextStepText: "先记录今天体重",
     weightDisplay: "-- kg",
+    weightUnitLabel: "kg",
+    waterUnitLabel: "ml",
+    weightPlaceholder: "例如 63.2",
+    waterPlaceholder: "2000",
     weightHint: "先填今天体重",
     qualityWarnings: [],
     dietOptions: decorateOptions(dietBaseOptions, []),
@@ -127,16 +203,22 @@ Page({
         url: "/api/records/today",
       });
       const record = payload.record || {};
+      const profile = normalizeProfile(payload.profile);
       const contextTags = record.contextTags || emptyTags();
 
       this.setData({
         record,
+        profile,
         form: {
           sleepHours: record.sleepHours === null || record.sleepHours === undefined ? "" : String(record.sleepHours),
-          weightKg: record.weightKg === null || record.weightKg === undefined ? "" : String(record.weightKg),
-          waterMl: record.waterMl === null || record.waterMl === undefined ? "" : String(record.waterMl),
+          weightKg: toDisplayWeight(record.weightKg, profile),
+          waterMl: toDisplayWater(record.waterMl, profile),
           contextTags,
         },
+        weightUnitLabel: getWeightUnitLabel(profile),
+        waterUnitLabel: getWaterUnitLabel(profile),
+        weightPlaceholder: profile.weightUnit === "LB" ? "例如 140" : "例如 63.2",
+        waterPlaceholder: profile.waterUnit === "OZ" ? "68" : "2000",
         qualityWarnings: payload.qualityWarnings || [],
         error: "",
         errorDetail: "",
@@ -213,13 +295,14 @@ Page({
     const completionSteps = buildCompletionSteps(form);
     const completedCount = completionSteps.filter((step) => step.done).length;
     const weightValue = normalizeNumber(form.weightKg);
+    const weightUnitLabel = this.data.weightUnitLabel || "kg";
 
     this.setData({
       completedCount,
       completionPercent: Math.round((completedCount / 3) * 100),
       completionSteps,
       nextStepText: getNextStepText(completionSteps),
-      weightDisplay: weightValue === null ? "-- kg" : `${form.weightKg} kg`,
+      weightDisplay: weightValue === null ? `-- ${weightUnitLabel}` : `${form.weightKg} ${weightUnitLabel}`,
       weightHint: weightValue === null ? "先填今天体重" : "体重已记录",
       dietOptions: decorateOptions(dietBaseOptions, tags.dietTags || []),
       activityOptions: decorateOptions(activityBaseOptions, tags.activityLevel ? [tags.activityLevel] : []),
@@ -267,8 +350,8 @@ Page({
         method: "PUT",
         data: {
           sleepHours: normalizeNumber(form.sleepHours),
-          weightKg: normalizeNumber(form.weightKg),
-          waterMl: normalizeNumber(form.waterMl),
+          weightKg: fromDisplayWeight(form.weightKg, this.data.profile),
+          waterMl: fromDisplayWater(form.waterMl, this.data.profile),
           contextTags: form.contextTags,
         },
       });

@@ -41,6 +41,10 @@ export async function GET(request?: Request) {
       isBackfilled: false,
       contextTags: getDefaultRecordContextTags(),
     },
+    profile: {
+      weightUnit: user.profile.weightUnit,
+      waterUnit: user.profile.waterUnit,
+    },
     qualityWarnings: record
       ? getRecordQualityWarnings({
           sleepHours: record.sleepHours,

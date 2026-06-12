@@ -258,6 +258,76 @@ describe("mini program page behavior", () => {
     expect(page.data.errorRetryAction).toBe("save");
   });
 
+  it("uses profile units on the mini program Today form while saving storage units", async () => {
+    installMiniProgramGlobals({
+      "/api/records/today": {
+        record: {
+          date: "2026-06-12",
+          sleepHours: 7.5,
+          weightKg: 63.5,
+          waterMl: 2000,
+          contextTags: {
+            dietTags: [],
+            activityLevel: null,
+            energyLevel: null,
+            weighTiming: null,
+          },
+        },
+        profile: {
+          weightUnit: "LB",
+          waterUnit: "OZ",
+        },
+        qualityWarnings: [],
+      },
+      "/api/records/2026-06-12": {
+        record: {
+          date: "2026-06-12",
+          sleepHours: 7.5,
+          weightKg: 63.96,
+          waterMl: 2070,
+        },
+        qualityWarnings: [],
+      },
+    });
+    const page = loadPage("miniprogram/src/pages/today/today.js") as {
+      data: {
+        form: Record<string, unknown>;
+        weightDisplay: string;
+        weightUnitLabel: string;
+        waterUnitLabel: string;
+      };
+      loadToday: () => Promise<void>;
+      refreshDerivedState: () => void;
+      saveRecord: () => Promise<void>;
+    };
+
+    await page.loadToday();
+
+    expect(page.data.form.weightKg).toBe("140");
+    expect(page.data.form.waterMl).toBe("68");
+    expect(page.data.weightDisplay).toBe("140 lb");
+    expect(page.data.weightUnitLabel).toBe("lb");
+    expect(page.data.waterUnitLabel).toBe("oz");
+
+    page.setData({
+      "form.weightKg": "141",
+      "form.waterMl": "70",
+    });
+    page.refreshDerivedState();
+    await page.saveRecord();
+
+    expect((globalThis as MiniProgramGlobals).wx.request).toHaveBeenCalledWith(
+      expect.objectContaining({
+        url: "https://api.example.test/api/records/2026-06-12",
+        method: "PUT",
+        data: expect.objectContaining({
+          weightKg: 63.96,
+          waterMl: 2070,
+        }),
+      }),
+    );
+  });
+
   it("blocks mini program login until legal terms are accepted", () => {
     installMiniProgramGlobals();
     const page = loadPage("miniprogram/src/pages/login/login.js") as {
