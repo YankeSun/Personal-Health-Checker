@@ -11,7 +11,7 @@ npm run alpha:readiness
 npm run launch:check
 ```
 
-`alpha:readiness` 会聚合 launch 配置、小程序结构、研究材料和数据库可达性，并在顶部输出 `Experience build gate: GREEN / YELLOW / RED`；只有 `GREEN` 才能继续进入严格检查、远程检查和真机证据收集。它也会在末尾汇总 `Manual next actions`；`launch:check` 则专门展开体验版配置项。
+`alpha:readiness` 会聚合 Git working tree、launch 配置、小程序结构、研究材料和数据库可达性，并在顶部输出 `Experience build gate: GREEN / YELLOW / RED`；只有 `GREEN` 才能继续进入严格检查、远程检查和真机证据收集。它也会在末尾汇总 `Manual next actions`；`launch:check` 则专门展开体验版配置项。
 
 准备上传体验版前，建议直接跑完整总览：
 
@@ -39,7 +39,6 @@ npm run alpha:gate:experience -- --batch Alpha-001
 
 `launch:check` 会检查：
 
-- 当前 Git working tree 是否干净，确保体验版能追溯到明确 commit
 - Vercel 项目是否已 link 到当前仓库
 - 小程序 `apiBaseUrl` 是否是 HTTPS
 - `project.config.json` 是否还是游客 AppID
@@ -49,6 +48,8 @@ npm run alpha:gate:experience -- --batch Alpha-001
 - 合规草案、测试清单、验证方案是否存在
 - 隐私保护指引、用户协议和提交清单是否仍有主体、联系方式、生效日期、收费规则等占位
 - alpha 批次控制台是否存在，避免体验版发放后版本、证据和指标脱节
+
+Git working tree 是否干净由 `alpha:readiness` 和 `alpha:gate:experience` 统一检查；不要只跑 `launch:check` 就上传体验版。
 
 准备体验版前跑严格检查：
 
@@ -68,6 +69,7 @@ npm run launch:check:vercel
 
 体验版前至少需要：
 
+- 本地 `.env.local` 可从仓库根目录的 `.env.example` 复制生成，只填真实值到本机或部署平台，不提交
 - `miniprogram/project.config.json` 中的 `appid` 改成真实小程序 AppID
 - Vercel Production 配置 `DATABASE_URL`
 - Vercel Production 配置 `SESSION_SECRET`
@@ -78,10 +80,11 @@ npm run launch:check:vercel
 
 可选但建议：
 
+- `DATABASE_URL_UNPOOLED`
 - `EMAIL_FROM`
 - `RESEND_API_KEY`
 
-这两个用于邮箱验证和密码重置的真实邮件发送；缺失时不会阻塞小程序 alpha，但会影响 Web 账号安全体验。
+`DATABASE_URL_UNPOOLED` 用于 Neon pooled 连接不可达时的诊断 / 本地 smoke 备用连接；缺失时不会阻塞小程序 alpha。`EMAIL_FROM` 和 `RESEND_API_KEY` 用于邮箱验证和密码重置的真实邮件发送；缺失时不会阻塞小程序 alpha，但会影响 Web 账号安全体验。
 
 ## 3. 配置后验证
 

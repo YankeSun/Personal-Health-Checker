@@ -208,6 +208,10 @@ describe("miniprogram structure", () => {
       path.join(projectRoot, "miniprogram", "ENVIRONMENT_READINESS.md"),
       "utf8",
     );
+    const envExample = readFileSync(
+      path.join(projectRoot, ".env.example"),
+      "utf8",
+    );
     const releasePack = readFileSync(
       path.join(projectRoot, "miniprogram", "ALPHA_RELEASE_PACK.md"),
       "utf8",
@@ -235,6 +239,13 @@ describe("miniprogram structure", () => {
     expect(readinessDoc).toContain("真实 AppID / AppSecret");
     expect(readinessDoc).toContain("远程微信后端凭证状态");
     expect(readinessDoc).toContain("主体、联系方式、生效日期、收费规则");
+    expect(readinessDoc).toContain("Git working tree 是否干净由 `alpha:readiness`");
+    expect(readinessDoc).toContain(".env.example");
+    expect(readinessDoc).toContain("DATABASE_URL_UNPOOLED");
+    expect(envExample).toContain("DATABASE_URL_UNPOOLED");
+    expect(envExample).toContain("APP_SECRET comes from the WeChat public platform secret field");
+    expect(envExample).toContain("it must not equal APP_ID");
+    expect(envExample).toContain('WECHAT_MINI_PROGRAM_MOCK_LOGIN_ENABLED="false"');
     expect(readinessScript).toContain("DATABASE_URL");
     expect(readinessScript).toContain("SESSION_SECRET");
     expect(readinessScript).toContain("WECHAT_MINI_PROGRAM_MOCK_LOGIN_ENABLED");
