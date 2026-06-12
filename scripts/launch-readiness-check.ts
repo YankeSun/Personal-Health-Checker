@@ -156,6 +156,10 @@ function nextActionFor(result: CheckResult) {
     return "Review the submission checklist and mark legal placeholders as resolved only after the WeChat public platform and legal copy are updated.";
   }
 
+  if (label === "health disclaimer launch placeholders resolved") {
+    return "Confirm the health disclaimer against the selected Mini Program category and remove draft-only launch placeholders before sharing the Experience build.";
+  }
+
   return "Fix this item before using the build for external alpha testing.";
 }
 
@@ -442,6 +446,14 @@ const compliancePlaceholderRules: Array<{
     placeholders: [
       "主体、联系方式和第三方服务清单",
       "收费规则占位",
+    ],
+  },
+  {
+    label: "health disclaimer launch placeholders resolved",
+    filePath: "compliance/HEALTH_DISCLAIMER_DRAFT.md",
+    severity: "warn",
+    placeholders: [
+      "正式上线前需结合实际类目和审核要求确认",
     ],
   },
 ];

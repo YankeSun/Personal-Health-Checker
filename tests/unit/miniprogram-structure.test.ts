@@ -108,6 +108,9 @@ describe("miniprogram structure", () => {
     expect(packageJson.scripts["alpha:invite-gate"]).toBe(
       "tsx scripts/alpha-invite-gate.ts",
     );
+    expect(packageJson.scripts["wechat:credential-probe"]).toBe(
+      "tsx scripts/wechat-credential-probe.ts",
+    );
     expect(packageJson.scripts["miniprogram:check"]).toBe(
       "tsx scripts/miniprogram-check.ts",
     );
@@ -259,6 +262,9 @@ describe("miniprogram structure", () => {
     expect(readinessDoc).toContain("Git working tree 是否干净由 `alpha:readiness`");
     expect(readinessDoc).toContain(".env.example");
     expect(readinessDoc).toContain("DATABASE_URL_UNPOOLED");
+    expect(readinessDoc).toContain("微信公众号 AppID / AppSecret 不能直接替代微信小程序 AppID / AppSecret");
+    expect(readinessDoc).toContain("npm run wechat:credential-probe");
+    expect(readinessDoc).toContain("WECHAT_LOGIN_CODE");
     expect(envExample).toContain("DATABASE_URL_UNPOOLED");
     expect(envExample).toContain("APP_SECRET comes from the WeChat public platform secret field");
     expect(envExample).toContain("it must not equal APP_ID");
@@ -277,6 +283,7 @@ describe("miniprogram structure", () => {
     expect(readinessScript).toContain("privacy policy subject/contact placeholders resolved");
     expect(readinessScript).toContain("user agreement contact/commercial placeholders resolved");
     expect(readinessScript).toContain("mini program submission legal checklist reviewed");
+    expect(readinessScript).toContain("health disclaimer launch placeholders resolved");
     expect(readinessScript).toContain("vercel");
     expect(readinessScript).toContain("miniprogram/ALPHA_RELEASE_PACK.md");
     expect(readinessScript).toContain("research/alpha/ALPHA_BATCH_CONTROL.md");

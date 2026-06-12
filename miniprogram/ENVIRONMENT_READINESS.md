@@ -86,7 +86,27 @@ npm run launch:check:vercel
 
 `DATABASE_URL_UNPOOLED` 用于 Neon pooled 连接不可达时的诊断 / 本地 smoke 备用连接；缺失时不会阻塞小程序 alpha。`EMAIL_FROM` 和 `RESEND_API_KEY` 用于邮箱验证和密码重置的真实邮件发送；缺失时不会阻塞小程序 alpha，但会影响 Web 账号安全体验。
 
-## 3. 配置后验证
+## 3. 公众号凭证与小程序凭证
+
+微信公众号 AppID / AppSecret 不能直接替代微信小程序 AppID / AppSecret。当前小程序登录链路使用 `wx.login` 和服务端 `sns/jscode2session`，必须使用与体验版小程序一致的 AppID / AppSecret。
+
+如果你只有公众号凭证，先在微信公众平台确认账号类型，或创建 / 关联一个小程序，并进入小程序后台复制小程序 AppID / AppSecret。不要把公众号 AppSecret 填入 `WECHAT_MINI_PROGRAM_APP_SECRET`。
+
+可以用下面的只读探测命令做安全检查，脚本不会打印 token、secret 或 openid：
+
+```bash
+npm run wechat:credential-probe
+```
+
+默认探测只会用假 `js_code` 判断 AppID / AppSecret 是否被微信接口立即判错；它不能证明体验版可登录。若要证明真实小程序链路，需要在微信开发者工具里用同一个 AppID 运行小程序，拿到真实 `wx.login` code 后临时设置 `WECHAT_LOGIN_CODE` 再运行：
+
+```bash
+WECHAT_LOGIN_CODE="real-wx-login-code" npm run wechat:credential-probe -- --strict
+```
+
+真实 code、AppSecret、token 和 openid 都不要提交到 Git，也不要写入共享文档。
+
+## 4. 配置后验证
 
 配置完成后按顺序跑：
 
@@ -102,7 +122,7 @@ npm run miniprogram:check:experience
 
 如果 `miniprogram:check:experience` 通过，说明线上 API、数据库和远程微信后端凭证都满足体验版级检查。`miniprogram:check:remote` 只用于单独定位线上 API / 数据库可达性，不作为发放真实用户的通过标准。
 
-## 4. 常见失败解释
+## 5. 常见失败解释
 
 | 失败项 | 含义 | 下一步 |
 |---|---|---|
@@ -115,7 +135,7 @@ npm run miniprogram:check:experience
 | `mock login` | 内部测试登录仍处于开启状态 | 正式体验版前关闭小程序配置和后端环境变量 |
 | `Vercel environment variables can be listed` | 当前终端无法读取 Vercel Production env，可能是 DNS / 代理 / 直连网络问题，也可能是登录账号或 scope 不对 | 先看输出里的 `network_unreachable` / `auth_or_scope`，再分别处理网络或重新 `vercel login` / 确认 scope |
 
-## 5. 不要提交的内容
+## 6. 不要提交的内容
 
 不要把以下内容写入 Git：
 
@@ -127,7 +147,7 @@ npm run miniprogram:check:experience
 
 真实密钥只放在本机环境变量、Vercel 环境变量或微信公众平台后台。
 
-## 6. 内部 mock 登录
+## 7. 内部 mock 登录
 
 如果还没有真实 AppID / AppSecret，但需要先测试小程序 Today、Dashboard、Trends、我的页，可以临时开启 mock 登录：
 

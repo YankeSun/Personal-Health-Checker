@@ -244,6 +244,7 @@ npm run analytics:report -- --days=30
 
 ## 2026-06-12
 
+- 增加微信凭证安全探测与文档边界：新增 `npm run wechat:credential-probe`，只通过环境变量读取 AppID / AppSecret 并输出脱敏分类结果；环境就绪文档明确公众号凭证不能替代小程序凭证，`launch:check` 也开始提示健康免责声明草案中的上线前确认占位。
 - 补充后续执行拆解方式：`MINIPROGRAM_ALPHA_EXECUTION_BRIEF.md` 现在明确当前阶段完成后，哪些工作适合交给 sub-agent 并行审查 / 证据整理，哪些阶段性成果适合拆成 Codex 目标功能持续推进，避免下一轮又回到泛泛规划。
 - 新增小程序 alpha 邀请闸门：`npm run alpha:invite-gate -- --batch Alpha-001` 会先跑体验版硬闸门，再要求同批次至少 2 份真机会话包含体验版版本号、真实 AppID、API 域名、Git commit 和完整主路径证据；同时修正 phone-session 文件名大小写匹配，避免本地证据文件被漏数。
 - 对齐小程序 alpha 邮件配置闸门口径：`alpha:readiness` 现在会把 `EMAIL_FROM` / `RESEND_API_KEY` 这两个仅影响 Web 邮件体验的 launch warning 识别为 optional email warning，不再让小程序体验版 gate 因可选邮件配置变成 YELLOW；其他 launch warning 仍会进入 review。

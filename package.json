@@ -21,6 +21,7 @@
     "alpha:evidence-check": "tsx scripts/alpha-evidence-check.ts",
     "alpha:gate:experience": "tsx scripts/alpha-experience-gate.ts",
     "alpha:invite-gate": "tsx scripts/alpha-invite-gate.ts",
+    "wechat:credential-probe": "tsx scripts/wechat-credential-probe.ts",
     "research:check": "tsx scripts/research-check.ts",
     "launch:check": "tsx scripts/launch-readiness-check.ts",
     "launch:check:strict": "tsx scripts/launch-readiness-check.ts --strict",
