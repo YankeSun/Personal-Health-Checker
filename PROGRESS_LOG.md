@@ -244,6 +244,7 @@ npm run analytics:report -- --days=30
 
 ## 2026-06-12
 
+- 补充后续执行拆解方式：`MINIPROGRAM_ALPHA_EXECUTION_BRIEF.md` 现在明确当前阶段完成后，哪些工作适合交给 sub-agent 并行审查 / 证据整理，哪些阶段性成果适合拆成 Codex 目标功能持续推进，避免下一轮又回到泛泛规划。
 - 新增小程序 alpha 邀请闸门：`npm run alpha:invite-gate -- --batch Alpha-001` 会先跑体验版硬闸门，再要求同批次至少 2 份真机会话包含体验版版本号、真实 AppID、API 域名、Git commit 和完整主路径证据；同时修正 phone-session 文件名大小写匹配，避免本地证据文件被漏数。
 - 对齐小程序 alpha 邮件配置闸门口径：`alpha:readiness` 现在会把 `EMAIL_FROM` / `RESEND_API_KEY` 这两个仅影响 Web 邮件体验的 launch warning 识别为 optional email warning，不再让小程序体验版 gate 因可选邮件配置变成 YELLOW；其他 launch warning 仍会进入 review。
 - 修正小程序 Today 单位一致性：`GET /api/records/today` 会返回用户体重 / 饮水单位，小程序 Today 按用户设置显示 lb / oz 或 kg / ml，并在保存时转换回数据库的 kg / ml 存储口径，避免体验版记录页和 Web 设置不一致。

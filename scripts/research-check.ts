@@ -116,6 +116,9 @@ for (const snippet of [
   "未来 7 天最短路径",
   "没有截图、录屏和 notes 时",
   "只允许再做 3 个代码改动",
+  "后续执行拆解方式",
+  "Sub-agent 适合",
+  "Codex 目标功能适合",
 ]) {
   check(`alpha execution brief includes ${snippet}`, alphaExecutionBrief.includes(snippet));
 }

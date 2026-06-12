@@ -130,7 +130,39 @@ Web 端已经可体验：
 2. Alpha analytics 决策报告收紧：报告直接输出各门槛是否达标、缺失证据和 `needs_data / hold_and_improve / beta_candidate`。
 3. 体验版 readiness 单一红绿灯：用 `npm run alpha:readiness -- --vercel --remote` 把 AppID、mock 开关、远程 `/api/health`、数据库、Vercel env、request 域名、合规入口集中成一个发放前 gate。
 
-## 8. 每轮执行前读什么
+## 8. 后续执行拆解方式
+
+当前阶段完成后，不要把下一轮工作重新变成一个大而泛的任务。建议先按下面方式拆：
+
+### 8.1 适合交给 Sub-agent 的任务
+
+Sub-agent 适合做并行、边界清楚、可独立验收的工作：
+
+- 竞品实测整理：读取真实截图、录屏和 notes，补 `WECHAT_COMPETITOR_SYNTHESIS.md`，但不得把未实测内容写成结论。
+- 当前产品审查：只读 review Today、Dashboard、Trends、Me 和 API 主路径，列出 P0 / P1 / P2，不直接扩功能。
+- Alpha 数据复盘：运行或解读 `analytics:miniprogram`、`alpha:evidence-check`，把数字、用户原话和缺失证据整理成 Day 10 判断。
+- 合规 / 上线检查：核对隐私、协议、客服、类目、request 域名、Vercel env，不处理真实密钥，不提交私密证据。
+- UI / 文案微审查：只针对真实 alpha 反馈里暴露的迷惑点改进，不做整体 redesign。
+
+不要把强耦合、会同时修改同一批核心文件的任务拆给多个 sub-agent；例如同一轮不要让多个 agent 同时改 Today 记录表单。
+
+### 8.2 适合拆成 Codex 目标功能的目标
+
+Codex 目标功能适合持续推进有明确终点、需要跨多轮完成的阶段性目标。每个目标都要有可验证完成条件。
+
+建议的目标拆法：
+
+| 目标 | 完成条件 | 不包含 |
+|---|---|---|
+| 清零 Alpha-001 发放前 P0 blocker | `alpha:gate:experience` 通过，真实 AppID / AppSecret、Vercel env、数据库、合规占位、request 域名均清零 | 不邀请外部用户，不做 Day 10 决策 |
+| 完成 Alpha-001 邀请前验收 | `alpha:invite-gate` 通过，2 台真机会话证据完整，体验版版本号和 Git commit 可追溯 | 不收 10 人数据，不写 beta 结论 |
+| 完成 10 人 7 天 Alpha 证据闭环 | 10 个用户证据、3 条以上用户原话、Day 10 analytics report、`alpha:evidence-check --strict` 通过 | 不接支付，不扩新指标 |
+| 形成 Beta 是否继续的决策材料 | Day 10 报告输出 `needs_data / hold_and_improve / beta_candidate`，并给出下一轮只做什么 / 不做什么 | 不直接进入商业化上线 |
+| 完成微信竞品真机基准 | 至少 8 个样本证据齐全，synthesis 标记 `fieldwork_complete` | 不用公开资料替代真机体验 |
+
+目标开始前仍要先读 `PRODUCT_ROADMAP_FRAMEWORK.md` 和 `PROGRESS_LOG.md`；目标完成前不能把“做了部分工作”当作完成。
+
+## 9. 每轮执行前读什么
 
 默认顺序：
 
