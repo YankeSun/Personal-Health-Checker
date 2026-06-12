@@ -52,6 +52,14 @@ npm run alpha:phone-session -- --batch Alpha-001 --tester internal-01
 
 `npm run alpha:gate:experience -- --batch Alpha-001` 是体验版上传前的硬闸门：它会先跑 strict readiness，只有 Git working tree、launch readiness、数据库和远程体验版检查都通过后，才生成包含 Vercel 和远程体验版检查的 Day 0 preflight，并再次执行 strict remote experience check。
 
+上传体验版并完成 2 台真机验收后，邀请第一批外部用户前再跑：
+
+```bash
+npm run alpha:invite-gate -- --batch Alpha-001
+```
+
+这个命令只检查体验版硬闸门和同批次 2 份真机会话证据，不检查 Day 10 的 10 人用户证据、用户原话或竞品实测；那些仍然只用于复盘和 beta 决策。
+
 再按发放前严格闸门逐项清零：
 
 ```bash

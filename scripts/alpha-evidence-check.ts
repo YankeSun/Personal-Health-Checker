@@ -111,7 +111,7 @@ function countValidPhoneSessions() {
   const sessionDir = path.join(projectRoot, "research", "alpha", "phone-sessions");
   const requiredTasks = ["Login", "Today record", "Dashboard", "Trends", "Delete account guard"];
   const sessionFiles = listFiles(sessionDir).filter((filePath) =>
-    path.basename(filePath).startsWith(batchSlug),
+    path.basename(filePath).toLowerCase().startsWith(batchSlug),
   );
   const validFiles = sessionFiles.filter((filePath) => {
     const text = readText(filePath);

@@ -79,6 +79,10 @@ describe("miniprogram structure", () => {
       path.join(projectRoot, "scripts", "alpha-experience-gate.ts"),
       "utf8",
     );
+    const alphaInviteGateScript = readFileSync(
+      path.join(projectRoot, "scripts", "alpha-invite-gate.ts"),
+      "utf8",
+    );
 
     expect(packageJson.scripts["db:doctor"]).toBe(
       "tsx scripts/database-doctor.ts",
@@ -100,6 +104,9 @@ describe("miniprogram structure", () => {
     );
     expect(packageJson.scripts["alpha:gate:experience"]).toBe(
       "tsx scripts/alpha-experience-gate.ts",
+    );
+    expect(packageJson.scripts["alpha:invite-gate"]).toBe(
+      "tsx scripts/alpha-invite-gate.ts",
     );
     expect(packageJson.scripts["miniprogram:check"]).toBe(
       "tsx scripts/miniprogram-check.ts",
@@ -194,6 +201,7 @@ describe("miniprogram structure", () => {
     expect(alphaEvidenceCheckScript).toContain("realDeviceEvidence");
     expect(alphaEvidenceCheckScript).toContain("userQuotes");
     expect(alphaEvidenceCheckScript).toContain("competitorFieldwork");
+    expect(alphaEvidenceCheckScript).toContain("toLowerCase().startsWith(batchSlug)");
     expect(alphaEvidenceCheckScript).toContain("--strict");
     expect(alphaExperienceGateScript).toContain("alpha:preflight");
     expect(alphaExperienceGateScript).toContain("alpha:readiness");
@@ -205,6 +213,11 @@ describe("miniprogram structure", () => {
     expect(alphaExperienceGateScript.indexOf("Run strict alpha readiness")).toBeLessThan(
       alphaExperienceGateScript.indexOf("Generate Day 0 preflight evidence"),
     );
+    expect(alphaInviteGateScript).toContain("alpha:gate:experience");
+    expect(alphaInviteGateScript).toContain("Step 2/2: real-device phone sessions");
+    expect(alphaInviteGateScript).toContain("Experience build version");
+    expect(alphaInviteGateScript).toContain("Need at least 2 valid real-device phone sessions");
+    expect(alphaInviteGateScript).toContain("Continue Day 2-10 evidence collection separately");
   });
 
   it("documents environment readiness checks for mini program launch prep", () => {

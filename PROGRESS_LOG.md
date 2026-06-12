@@ -244,6 +244,7 @@ npm run analytics:report -- --days=30
 
 ## 2026-06-12
 
+- 新增小程序 alpha 邀请闸门：`npm run alpha:invite-gate -- --batch Alpha-001` 会先跑体验版硬闸门，再要求同批次至少 2 份真机会话包含体验版版本号、真实 AppID、API 域名、Git commit 和完整主路径证据；同时修正 phone-session 文件名大小写匹配，避免本地证据文件被漏数。
 - 对齐小程序 alpha 邮件配置闸门口径：`alpha:readiness` 现在会把 `EMAIL_FROM` / `RESEND_API_KEY` 这两个仅影响 Web 邮件体验的 launch warning 识别为 optional email warning，不再让小程序体验版 gate 因可选邮件配置变成 YELLOW；其他 launch warning 仍会进入 review。
 - 修正小程序 Today 单位一致性：`GET /api/records/today` 会返回用户体重 / 饮水单位，小程序 Today 按用户设置显示 lb / oz 或 kg / ml，并在保存时转换回数据库的 kg / ml 存储口径，避免体验版记录页和 Web 设置不一致。
 - 修正小程序 Dashboard 达标率展示口径：概览页不再读取后端不存在的 `window.attainmentRate`，而是基于窗口内各指标 `attainmentRate` 计算平均达标率，避免体验版用户看到误导性的 0%。

@@ -31,6 +31,7 @@ Do not invite external users until every P0 gate is green.
 | Git working tree clean | `npm run alpha:readiness -- --vercel --remote` includes `Git working tree: clean` | blocked / ready |  |  |
 | Local evidence pack generated | `npm run alpha:evidence-pack -- --batch Alpha-001 --vercel --remote` | blocked / ready |  |  |
 | Experience gate passed | `npm run alpha:gate:experience -- --batch Alpha-001` | blocked / ready |  |  |
+| Invite gate passed | `npm run alpha:invite-gate -- --batch Alpha-001` after 2 real-device sessions are filled | blocked / ready |  |  |
 | Alpha readiness summary reviewed | `npm run alpha:readiness -- --vercel --remote` output | blocked / ready |  |  |
 | Alpha preflight report saved | `npm run alpha:preflight -- --vercel --remote --out research/alpha/preflight/Alpha-001.md` | blocked / ready |  |  |
 | Phone session notes created | `npm run alpha:phone-session -- --batch Alpha-001 --tester internal-01` and `internal-02` | blocked / ready |  |  |
@@ -48,7 +49,7 @@ Do not invite external users until every P0 gate is green.
 |---|---|---|
 | Day 0 | Configure AppID, secrets, request domain, API domain | Release gates updated in this file |
 | Day 1 | Run internal real-device smoke on at least 2 phones | Phone test session notes and screenshots/recordings |
-| Day 2 | Invite first 10 users with the release copy | User rows added to `ALPHA_USER_EVIDENCE.md` |
+| Day 2 | Run `npm run alpha:invite-gate -- --batch Alpha-001`, then invite first 10 users with the release copy | Invite gate output and user rows added to `ALPHA_USER_EVIDENCE.md` |
 | Day 3-9 | Track whether users return and what blocks them | Daily record count, page views, feedback quotes |
 | Day 10 | Run alpha report and decide next move | `npm run analytics:miniprogram -- --days=30` output plus interview notes |
 
