@@ -51,11 +51,106 @@ const reportReasonItems = [
   "为下一版报告内测预留名额",
 ];
 
+const metricLabels = {
+  SLEEP: "睡眠",
+  WEIGHT: "体重",
+  WATER: "饮水",
+};
+
+const unitLabels = {
+  SLEEP: "小时",
+  WEIGHT: "kg",
+  WATER: "ml",
+};
+
 function decorateOptions(options, activeValue) {
   return options.map((option) => ({
     ...option,
     active: option.value === activeValue,
   }));
+}
+
+function formatNumber(value) {
+  if (value === null || value === undefined || value === "") {
+    return "";
+  }
+
+  const numberValue = Number(value);
+
+  if (!Number.isFinite(numberValue)) {
+    return "";
+  }
+
+  return Number.isInteger(numberValue)
+    ? String(numberValue)
+    : numberValue.toFixed(1).replace(/\.0$/, "");
+}
+
+function formatGoalSummary(goal) {
+  const label = metricLabels[goal.metric] || "目标";
+  const unit = unitLabels[goal.metric] || "";
+
+  if (!goal.isActive) {
+    return {
+      ...goal,
+      metricLabel: label,
+      summary: "暂未启用",
+    };
+  }
+
+  if (goal.mode === "IN_RANGE") {
+    const minValue = formatNumber(goal.minValue);
+    const maxValue = formatNumber(goal.maxValue);
+
+    return {
+      ...goal,
+      metricLabel: label,
+      summary: minValue && maxValue
+        ? `保持在 ${minValue} - ${maxValue} ${unit}`
+        : "目标区间待完善",
+    };
+  }
+
+  const targetValue = formatNumber(goal.targetValue);
+
+  if (!targetValue) {
+    return {
+      ...goal,
+      metricLabel: label,
+      summary: "目标值待完善",
+    };
+  }
+
+  return {
+    ...goal,
+    metricLabel: label,
+    summary: goal.mode === "AT_MOST"
+      ? `不高于 ${targetValue} ${unit}`
+      : `至少 ${targetValue} ${unit}`,
+  };
+}
+
+function buildExportSummary(payload) {
+  const dailyRecordCount = Array.isArray(payload.dailyRecords)
+    ? payload.dailyRecords.length
+    : 0;
+  const goalCount = Array.isArray(payload.goals) ? payload.goals.length : 0;
+  const eventCount = Array.isArray(payload.productEvents)
+    ? payload.productEvents.length
+    : 0;
+
+  return {
+    exportedAt: payload.exportedAt,
+    user: payload.user,
+    profile: payload.profile,
+    counts: {
+      dailyRecords: dailyRecordCount,
+      goals: goalCount,
+      productEvents: eventCount,
+    },
+    dailyRecords: payload.dailyRecords || [],
+    goals: payload.goals || [],
+  };
 }
 
 Page({
@@ -127,7 +222,7 @@ Page({
 
       this.setData({
         profile: profilePayload.profile || {},
-        goals: goalsPayload.goals || [],
+        goals: (goalsPayload.goals || []).map(formatGoalSummary),
         message: "",
         error: "",
         errorDetail: "",
@@ -199,10 +294,27 @@ Page({
       const recordCount = Array.isArray(payload.dailyRecords)
         ? payload.dailyRecords.length
         : 0;
+      const exportText = JSON.stringify(buildExportSummary(payload), null, 2);
 
-      this.setData({
-        message: `已生成个人数据导出，共 ${recordCount} 条记录。`,
-      });
+      if (wx.setClipboardData) {
+        wx.setClipboardData({
+          data: exportText,
+          success: () => {
+            this.setData({
+              message: `已复制个人数据摘要，共 ${recordCount} 条记录。`,
+            });
+          },
+          fail: () => {
+            this.setData({
+              message: `已生成个人数据导出，共 ${recordCount} 条记录。复制失败，可稍后重试。`,
+            });
+          },
+        });
+      } else {
+        this.setData({
+          message: `已生成个人数据导出，共 ${recordCount} 条记录。当前微信版本不支持自动复制。`,
+        });
+      }
     } catch (error) {
       const errorState = toErrorState(error);
 

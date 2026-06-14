@@ -25,6 +25,9 @@ export async function POST(request: Request) {
       metadata: {
         platform: "wechat_mp",
         isNewUser,
+        legalConsentAccepted: body.legalConsentAccepted ?? null,
+        legalConsentVersion: body.legalConsentVersion ?? null,
+        legalConsentAt: body.legalConsentAt ?? null,
       },
     });
 

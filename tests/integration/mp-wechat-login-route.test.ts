@@ -72,6 +72,9 @@ describe("mini program wechat login route", () => {
       metadata: {
         platform: "wechat_mp",
         isNewUser: true,
+        legalConsentAccepted: null,
+        legalConsentVersion: null,
+        legalConsentAt: null,
       },
     });
     expect(data).toEqual({
@@ -82,6 +85,58 @@ describe("mini program wechat login route", () => {
         displayName: "微信用户",
       },
       isNewUser: true,
+    });
+  });
+
+  it("tracks mini program legal consent metadata when provided", async () => {
+    loginWechatMiniProgramUser.mockResolvedValue({
+      user: {
+        id: "user_1",
+        profile: {
+          displayName: "微信用户",
+        },
+      },
+      isNewUser: false,
+    });
+    createSession.mockResolvedValue({
+      token: "bearer_token",
+      expiresAt: new Date("2026-05-01T00:00:00.000Z"),
+    });
+
+    const { POST } = await import("@/app/api/mp/auth/wechat-login/route");
+    const response = await POST(
+      new Request("http://localhost:3000/api/mp/auth/wechat-login", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          code: "wx_login_code",
+          legalConsentAccepted: true,
+          legalConsentVersion: "alpha-2026-06-12",
+          legalConsentAt: "2026-06-14T03:00:00.000Z",
+        }),
+      }),
+    );
+
+    expect(response.status).toBe(200);
+    expect(loginWechatMiniProgramUser).toHaveBeenCalledWith({
+      code: "wx_login_code",
+      legalConsentAccepted: true,
+      legalConsentVersion: "alpha-2026-06-12",
+      legalConsentAt: "2026-06-14T03:00:00.000Z",
+    });
+    expect(trackProductEventSafely).toHaveBeenCalledWith({
+      userId: "user_1",
+      eventName: "WECHAT_LOGIN_COMPLETED",
+      path: "/api/mp/auth/wechat-login",
+      metadata: {
+        platform: "wechat_mp",
+        isNewUser: false,
+        legalConsentAccepted: true,
+        legalConsentVersion: "alpha-2026-06-12",
+        legalConsentAt: "2026-06-14T03:00:00.000Z",
+      },
     });
   });
 

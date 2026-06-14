@@ -75,6 +75,11 @@ function installMiniProgramGlobals(responseByPath: Record<string, unknown> = {})
     navigateTo: vi.fn(),
     pageScrollTo: vi.fn(),
     showModal: vi.fn(),
+    setClipboardData: vi.fn((options: Record<string, unknown>) => {
+      const success = options.success as (() => void) | undefined;
+
+      success?.();
+    }),
     login: vi.fn((options: Record<string, unknown>) => {
       const success = options.success as ((response: unknown) => void) | undefined;
 
@@ -372,6 +377,40 @@ describe("mini program page behavior", () => {
     expect(page.data.errorDetail).toContain("小程序 AppID");
   });
 
+  it("sends legal consent metadata when logging into the mini program", () => {
+    installMiniProgramGlobals({
+      "/api/mp/auth/wechat-login": {
+        token: "mini-token",
+        expiresAt: "2026-06-15T00:00:00.000Z",
+        user: {
+          id: "user_1",
+        },
+      },
+    });
+    const page = loadPage("miniprogram/src/pages/login/login.js") as {
+      handleWechatLogin: () => void;
+      setData: (patch: Record<string, unknown>) => void;
+    };
+
+    page.setData({
+      acceptedLegal: true,
+    });
+    page.handleWechatLogin();
+
+    expect((globalThis as MiniProgramGlobals).wx.request).toHaveBeenCalledWith(
+      expect.objectContaining({
+        url: "https://api.example.test/api/mp/auth/wechat-login",
+        method: "POST",
+        data: expect.objectContaining({
+          code: "wechat-code",
+          legalConsentAccepted: true,
+          legalConsentVersion: "alpha-2026-06-12",
+          legalConsentAt: expect.any(String),
+        }),
+      }),
+    );
+  });
+
   it("routes Dashboard action cards to the most relevant mini program tab", async () => {
     installMiniProgramGlobals({
       "/api/dashboard?days=7": {
@@ -610,6 +649,106 @@ describe("mini program page behavior", () => {
         },
       }),
     );
+  });
+
+  it("formats Me goals in plain language", async () => {
+    installMiniProgramGlobals({
+      "/api/profile": {
+        profile: {
+          displayName: "Alpha 用户",
+          weightUnit: "KG",
+          waterUnit: "ML",
+        },
+      },
+      "/api/goals": {
+        goals: [
+          {
+            metric: "SLEEP",
+            mode: "AT_LEAST",
+            isActive: true,
+            targetValue: 7.5,
+            minValue: null,
+            maxValue: null,
+          },
+          {
+            metric: "WEIGHT",
+            mode: "IN_RANGE",
+            isActive: true,
+            targetValue: null,
+            minValue: 60,
+            maxValue: 63,
+          },
+          {
+            metric: "WATER",
+            mode: "AT_LEAST",
+            isActive: false,
+            targetValue: 1800,
+            minValue: null,
+            maxValue: null,
+          },
+        ],
+      },
+    });
+    const page = loadPage("miniprogram/src/pages/me/me.js") as {
+      data: {
+        goals: Array<{
+          metricLabel: string;
+          summary: string;
+        }>;
+      };
+      loadSettings: () => Promise<void>;
+    };
+
+    await page.loadSettings();
+
+    expect(page.data.goals).toEqual([
+      expect.objectContaining({
+        metricLabel: "睡眠",
+        summary: "至少 7.5 小时",
+      }),
+      expect.objectContaining({
+        metricLabel: "体重",
+        summary: "保持在 60 - 63 kg",
+      }),
+      expect.objectContaining({
+        metricLabel: "饮水",
+        summary: "暂未启用",
+      }),
+    ]);
+  });
+
+  it("copies a mini program account export summary to the clipboard", async () => {
+    installMiniProgramGlobals({
+      "/api/account/export": {
+        exportedAt: "2026-06-14T03:00:00.000Z",
+        user: {
+          id: "user_1",
+        },
+        profile: {
+          displayName: "Alpha 用户",
+        },
+        goals: [{ metric: "WEIGHT" }],
+        dailyRecords: [{ date: "2026-06-14", weightKg: 68.4 }],
+        productEvents: [{ eventName: "WECHAT_LOGIN_COMPLETED" }],
+      },
+    });
+    const page = loadPage("miniprogram/src/pages/me/me.js") as {
+      data: {
+        message: string;
+        exporting: boolean;
+      };
+      exportAccount: () => Promise<void>;
+    };
+
+    await page.exportAccount();
+
+    expect((globalThis as MiniProgramGlobals).wx.setClipboardData).toHaveBeenCalledWith(
+      expect.objectContaining({
+        data: expect.stringContaining('"dailyRecords": 1'),
+      }),
+    );
+    expect(page.data.message).toBe("已复制个人数据摘要，共 1 条记录。");
+    expect(page.data.exporting).toBe(false);
   });
 
   it("requires confirmation before deleting the account from Me", () => {

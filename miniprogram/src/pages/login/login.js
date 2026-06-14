@@ -1,6 +1,8 @@
 const config = require("../../config");
 const { request, saveAuth, toErrorState } = require("../../utils/api");
 
+const LEGAL_CONSENT_VERSION = "alpha-2026-06-12";
+
 Page({
   data: {
     loading: false,
@@ -51,6 +53,9 @@ Page({
             method: "POST",
             data: {
               code: result.code,
+              legalConsentAccepted: true,
+              legalConsentVersion: LEGAL_CONSENT_VERSION,
+              legalConsentAt: new Date().toISOString(),
             },
           });
 
@@ -103,6 +108,9 @@ Page({
         data: {
           code: `mock:${Date.now()}`,
           displayName: "体验测试用户",
+          legalConsentAccepted: true,
+          legalConsentVersion: LEGAL_CONSENT_VERSION,
+          legalConsentAt: new Date().toISOString(),
         },
       });
 

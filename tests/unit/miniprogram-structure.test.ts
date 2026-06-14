@@ -442,6 +442,8 @@ describe("miniprogram structure", () => {
     expect(loginPage).toContain("/api/mp/auth/wechat-login");
     expect(loginPage).toContain("errorDetail");
     expect(loginPage).toContain("acceptedLegal");
+    expect(loginPage).toContain("LEGAL_CONSENT_VERSION");
+    expect(loginPage).toContain("legalConsentAccepted");
     expect(loginPage).toContain("handleMockLogin");
     expect(loginPage).toContain("请先同意隐私保护指引和用户协议");
     expect(todayPage).toContain("/api/records/today");
@@ -484,6 +486,8 @@ describe("miniprogram structure", () => {
     expect(mePage).toContain("handleAlphaTask");
     expect(mePage).toContain("retryLastAction");
     expect(mePage).toContain("/api/account/export");
+    expect(mePage).toContain("setClipboardData");
+    expect(mePage).toContain("formatGoalSummary");
     expect(mePage).toContain("/api/account");
     expect(meMarkup).toContain("errorDetail");
     expect(loginPage).toContain("/pages/legal/legal?type=${type}");
