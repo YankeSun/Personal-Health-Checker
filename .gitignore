@@ -8,6 +8,7 @@ dist
 *.log
 .vercel
 .env*.local
+miniprogram/project.private.config.json
 
 # local research evidence and alpha user artifacts may contain screenshots,
 # recordings, device info, user quotes, or other private test data.
