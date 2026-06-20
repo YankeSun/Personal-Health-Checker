@@ -47,6 +47,9 @@ const schemaStatements = [
   );
   `,
   `
+  ALTER TABLE "User" ADD COLUMN IF NOT EXISTS "emailVerifiedAt" TIMESTAMP(3);
+  `,
+  `
   CREATE UNIQUE INDEX IF NOT EXISTS "User_email_key" ON "User"("email");
   `,
   `
@@ -65,6 +68,18 @@ const schemaStatements = [
   );
   `,
   `
+  ALTER TABLE "UserProfile" ADD COLUMN IF NOT EXISTS "timezone" TEXT NOT NULL DEFAULT 'Asia/Shanghai';
+  `,
+  `
+  ALTER TABLE "UserProfile" ADD COLUMN IF NOT EXISTS "weightUnit" "WeightUnit" NOT NULL DEFAULT 'KG';
+  `,
+  `
+  ALTER TABLE "UserProfile" ADD COLUMN IF NOT EXISTS "waterUnit" "WaterUnit" NOT NULL DEFAULT 'ML';
+  `,
+  `
+  ALTER TABLE "UserProfile" ADD COLUMN IF NOT EXISTS "reminderEnabled" BOOLEAN NOT NULL DEFAULT true;
+  `,
+  `
   CREATE UNIQUE INDEX IF NOT EXISTS "UserProfile_userId_key" ON "UserProfile"("userId");
   `,
   `
@@ -78,6 +93,9 @@ const schemaStatements = [
     CONSTRAINT "Session_pkey" PRIMARY KEY ("id"),
     CONSTRAINT "Session_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE
   );
+  `,
+  `
+  ALTER TABLE "Session" ADD COLUMN IF NOT EXISTS "lastAccessedAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP;
   `,
   `
   CREATE UNIQUE INDEX IF NOT EXISTS "Session_sessionToken_key" ON "Session"("sessionToken");
