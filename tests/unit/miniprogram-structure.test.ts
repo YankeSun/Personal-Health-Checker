@@ -183,6 +183,8 @@ describe("miniprogram structure", () => {
     expect(alphaReadinessScript).toContain("status: \"fail\"");
     expect(alphaReadinessScript).toContain("includeVercel");
     expect(alphaReadinessScript).toContain("--vercel");
+    expect(alphaReadinessScript).toContain("--experience-remote");
+    expect(alphaReadinessScript).toContain("isOptionalEmailAction");
     expect(alphaPreflightScript).toContain("Alpha Preflight Report");
     expect(alphaPreflightScript).toContain("alpha:readiness");
     expect(alphaPreflightScript).toContain("includeVercel");
@@ -255,6 +257,7 @@ describe("miniprogram structure", () => {
     );
 
     expect(readinessDoc).toContain("npm run launch:check:vercel");
+    expect(readinessDoc).toContain("npm run launch:check -- --vercel --experience-remote");
     expect(readinessDoc).toContain("npm run alpha:readiness");
     expect(readinessDoc).toContain("npm run alpha:readiness -- --vercel --remote");
     expect(readinessDoc).toContain("npm run miniprogram:check:experience");
@@ -279,6 +282,8 @@ describe("miniprogram structure", () => {
     expect(readinessScript).toContain("WECHAT_MINI_PROGRAM_MOCK_LOGIN_ENABLED");
     expect(readinessScript).toContain("looksLikeWechatAppId");
     expect(readinessScript).toContain("WECHAT_MINI_PROGRAM_APP_SECRET is not the AppID");
+    expect(readinessScript).toContain("experienceRemote");
+    expect(readinessScript).toContain("productionBackedLocalCheck");
     expect(readinessScript).toContain("nextActionFor");
     expect(readinessScript).toContain("describeVercelEnvListError");
     expect(readinessScript).toContain("network_unreachable");

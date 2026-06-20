@@ -88,6 +88,8 @@ function summarizeOutput(label: string, output: string, exitCode: number) {
 const optionalLaunchWarningLabels = new Set([
   "EMAIL_FROM is configured for account email flows",
   "RESEND_API_KEY is configured for real email delivery",
+  "Vercel production has EMAIL_FROM",
+  "Vercel production has RESEND_API_KEY",
 ]);
 
 function extractLaunchWarningLabels(output: string) {
@@ -228,6 +230,13 @@ function extractLaunchNextActions(output: string) {
         continue;
       }
 
+      const isOptionalEmailAction =
+        [...optionalLaunchWarningLabels].some((label) => action.startsWith(`${label}:`));
+
+      if (isOptionalEmailAction) {
+        continue;
+      }
+
       actions.push(match[2]);
       continue;
     }
@@ -272,6 +281,10 @@ const launchReadinessArgs = ["run", "launch:check"];
 
 if (includeVercel) {
   launchReadinessArgs.push("--", "--vercel");
+
+  if (includeRemote) {
+    launchReadinessArgs.push("--experience-remote");
+  }
 }
 
 const checks = [
@@ -319,7 +332,7 @@ const warnings = checks.filter((check) => check.status === "warn");
 console.log(`\nAlpha readiness: ${failures.length} failed, ${warnings.length} warning(s).`);
 
 if (warnings.length > 0) {
-  console.log("Warnings usually mean external launch setup is still missing, such as real AppID/AppSecret.");
+  console.log("Warnings usually mean optional email setup or manual launch evidence still needs review.");
 }
 
 if (failures.length > 0) {

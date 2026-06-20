@@ -242,6 +242,10 @@ npm run analytics:report -- --days=30
 
 下面这部分是按时间顺序记录的简短变更日志。
 
+## 2026-06-20
+
+- 对齐 Request 域名配置后的体验版 gate 口径：`alpha:readiness -- --vercel --remote` 现在会用 `launch:check -- --vercel --experience-remote` 判断生产体验版，不再让本地微信密钥、本地数据库超时或可选邮件配置干扰小程序发放判断；远程 Experience check 已验证线上 API、数据库和微信后端配置为可用，剩余 blocker 收敛为合规占位、微信后台隐私 / 类目 / 客服确认、体验版上传和真机证据。
+
 ## 2026-06-12
 
 - 调整体验版 gate 为生产环境优先：`miniprogram:check:experience` 在远程模式下不再要求本地保存微信 AppSecret，而是以 Vercel `/api/health` 的远程微信配置为准；`alpha:readiness -- --vercel --remote` 也会在远程数据库通过时，不再让本地 Neon 超时阻断体验版 gate。

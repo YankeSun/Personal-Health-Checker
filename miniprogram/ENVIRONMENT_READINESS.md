@@ -19,7 +19,7 @@ npm run launch:check
 npm run alpha:readiness -- --vercel --remote
 ```
 
-其中 `--vercel` 会把 Vercel Production 环境变量名称检查并入 readiness，`--remote` 会把体验版级远程小程序检查并入同一份输出，包括线上 API health、数据库状态、真实 AppID / AppSecret 和远程微信后端凭证状态。
+其中 `--vercel` 会把 Vercel Production 环境变量名称检查并入 readiness，`--remote` 会把体验版级远程小程序检查并入同一份输出，包括线上 API health、数据库状态、真实 AppID / AppSecret 和远程微信后端凭证状态。两者同时使用时，readiness 会按生产体验版口径运行 launch 检查：本地 `DATABASE_URL`、本地微信环境变量和本地 `db:doctor` 只影响本地后端验证，不阻断 Vercel-backed Experience build；最终以 Vercel env 加远程 `/api/health` / `miniprogram:check:experience` 为准。
 
 如果要把同一组检查留成 Day 0 私有证据报告：
 
@@ -43,7 +43,7 @@ npm run alpha:gate:experience -- --batch Alpha-001
 - 小程序 `apiBaseUrl` 是否是 HTTPS
 - `project.config.json` 是否还是游客 AppID
 - 小程序 mock 登录按钮是否仍保持关闭
-- 本地是否能看到 `DATABASE_URL`、`SESSION_SECRET`、微信小程序 AppID / AppSecret
+- 本地是否能看到 `DATABASE_URL`、`SESSION_SECRET`、微信小程序 AppID / AppSecret；如果使用 `--vercel --remote` 验证生产体验版，这些本地值不会替代或阻断 Vercel Production env
 - `WECHAT_MINI_PROGRAM_MOCK_LOGIN_ENABLED` 是否没有为正式体验版开启
 - 合规草案、测试清单、验证方案是否存在
 - 隐私保护指引、用户协议和提交清单是否仍有主体、联系方式、生效日期、收费规则等占位
@@ -64,6 +64,14 @@ npm run launch:check:vercel
 ```
 
 这个命令只读取变量名，不打印变量值。
+
+如果是在生产体验版口径下排查 launch 配置，而不是验证本地后端环境，可以使用：
+
+```bash
+npm run launch:check -- --vercel --experience-remote
+```
+
+这个口径会保留 Vercel 变量名、项目配置、合规文件和微信后台相关检查，但不会把本地 `.env.local` 缺少微信密钥或本地数据库超时当成体验版 blocker。
 
 ## 2. 必须补齐的配置
 
@@ -118,7 +126,7 @@ npm run miniprogram:check:experience
 
 如果 `launch:check:vercel` 通过，说明 Vercel 变量名齐全。
 
-如果 `miniprogram:check:strict` 通过，说明本地小程序 AppID 和微信后端变量齐全。
+如果 `miniprogram:check:strict` 通过，说明本地小程序 AppID 和微信后端变量齐全；如果只验证 Vercel-backed Experience build，则以 `miniprogram:check:experience` 和 `alpha:readiness -- --vercel --remote` 为准。
 
 如果 `miniprogram:check:experience` 通过，说明线上 API、数据库和远程微信后端凭证都满足体验版级检查。`miniprogram:check:remote` 只用于单独定位线上 API / 数据库可达性，不作为发放真实用户的通过标准。
 

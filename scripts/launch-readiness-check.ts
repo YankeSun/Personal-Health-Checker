@@ -22,6 +22,8 @@ type VercelProject = {
 const projectRoot = process.cwd();
 const strict = process.argv.includes("--strict");
 const checkVercel = process.argv.includes("--vercel");
+const experienceRemote = process.argv.includes("--experience-remote");
+const productionBackedExperience = checkVercel && experienceRemote;
 const scope = getArgValue("--scope") ?? process.env.VERCEL_SCOPE ?? "yankesuns-projects";
 const vercelEnvironment = getArgValue("--environment") ?? "production";
 const results: CheckResult[] = [];
@@ -217,6 +219,20 @@ function looksLikeWechatAppId(value: string) {
   return /^wx[a-zA-Z0-9]{10,}$/.test(value.trim());
 }
 
+function productionBackedLocalCheck(ok: boolean) {
+  return productionBackedExperience || ok;
+}
+
+function productionBackedLocalDetail(detail?: string) {
+  if (!productionBackedExperience) {
+    return detail;
+  }
+
+  return detail
+    ? `${detail}; local value is not required for --experience-remote`
+    : "local value is not required for --experience-remote; Vercel env and remote /api/health cover the production Experience build";
+}
+
 function collectKeys(value: unknown, keys = new Set<string>()) {
   if (Array.isArray(value)) {
     for (const item of value) {
@@ -358,26 +374,41 @@ blocker(
   `appid=${projectConfig?.appid ?? "missing"}`,
 );
 
-blocker("DATABASE_URL is configured locally", configured("DATABASE_URL"));
-warn("DATABASE_URL is not a localhost URL for launch", !envValue("DATABASE_URL").includes("localhost"));
+blocker(
+  "DATABASE_URL is configured locally",
+  productionBackedLocalCheck(configured("DATABASE_URL")),
+  productionBackedLocalDetail(),
+);
+warn(
+  "DATABASE_URL is not a localhost URL for launch",
+  productionBackedLocalCheck(!envValue("DATABASE_URL").includes("localhost")),
+  productionBackedLocalDetail(),
+);
 blocker(
   "SESSION_SECRET is configured and not a placeholder",
-  notPlaceholder("SESSION_SECRET", ["replace-with", "change-me", "secret"]),
+  productionBackedLocalCheck(notPlaceholder("SESSION_SECRET", ["replace-with", "change-me", "secret"])),
+  productionBackedLocalDetail(),
 );
 blocker(
   "WECHAT_MINI_PROGRAM_APP_ID is configured locally",
-  notPlaceholder("WECHAT_MINI_PROGRAM_APP_ID", ["wx_xxx"]) &&
-    looksLikeWechatAppId(envValue("WECHAT_MINI_PROGRAM_APP_ID")),
+  productionBackedLocalCheck(
+    notPlaceholder("WECHAT_MINI_PROGRAM_APP_ID", ["wx_xxx"]) &&
+      looksLikeWechatAppId(envValue("WECHAT_MINI_PROGRAM_APP_ID")),
+  ),
+  productionBackedLocalDetail(),
 );
 blocker(
   "WECHAT_MINI_PROGRAM_APP_SECRET is configured locally",
-  notPlaceholder("WECHAT_MINI_PROGRAM_APP_SECRET", ["wechat_secret_xxx"]),
+  productionBackedLocalCheck(notPlaceholder("WECHAT_MINI_PROGRAM_APP_SECRET", ["wechat_secret_xxx"])),
+  productionBackedLocalDetail(),
 );
 if (configured("WECHAT_MINI_PROGRAM_APP_ID") && configured("WECHAT_MINI_PROGRAM_APP_SECRET")) {
   blocker(
     "WECHAT_MINI_PROGRAM_APP_SECRET is not the AppID",
-    envValue("WECHAT_MINI_PROGRAM_APP_SECRET") !== envValue("WECHAT_MINI_PROGRAM_APP_ID"),
-    "AppSecret value is compared locally without printing it",
+    productionBackedLocalCheck(
+      envValue("WECHAT_MINI_PROGRAM_APP_SECRET") !== envValue("WECHAT_MINI_PROGRAM_APP_ID"),
+    ),
+    productionBackedLocalDetail("AppSecret value is compared locally without printing it"),
   );
 }
 warn("EMAIL_FROM is configured for account email flows", configured("EMAIL_FROM"));
@@ -387,13 +418,15 @@ warn(
 );
 blocker(
   "WECHAT_MINI_PROGRAM_MOCK_LOGIN_ENABLED is not enabled for launch",
-  envValue("WECHAT_MINI_PROGRAM_MOCK_LOGIN_ENABLED") !== "true",
+  productionBackedLocalCheck(envValue("WECHAT_MINI_PROGRAM_MOCK_LOGIN_ENABLED") !== "true"),
+  productionBackedLocalDetail(),
 );
 
 if (configured("WECHAT_MINI_PROGRAM_APP_ID") && projectConfig?.appid) {
   blocker(
     "local WECHAT_MINI_PROGRAM_APP_ID matches project.config.json AppID",
-    envValue("WECHAT_MINI_PROGRAM_APP_ID") === projectConfig.appid,
+    productionBackedLocalCheck(envValue("WECHAT_MINI_PROGRAM_APP_ID") === projectConfig.appid),
+    productionBackedLocalDetail(),
   );
 }
 

@@ -1,6 +1,6 @@
 # Personal Health Checker 小程序 Alpha 执行简报
 
-更新时间：2026-06-12
+更新时间：2026-06-20
 
 这份文档是给没有上下文的 agent / 开发者看的短交接材料。它不替代 `PRODUCT_ROADMAP_FRAMEWORK.md`、`PROGRESS_LOG.md`、`WECHAT_MINI_PROGRAM_VALIDATION_PLAN.md`，而是把当前最短执行路径压成一页操作判断。
 
@@ -19,7 +19,7 @@
 
 当前 Web 主路径已经具备稳定记录、趋势回看、目标、提醒、上下文标签、账号安全、基础合规和埋点能力。小程序端已经具备 Alpha 壳：登录、Today 记录、Dashboard、体重趋势、我的页、反馈、30 天观察报告意向、导出和删除入口。
 
-但真实 Alpha 还没有开始，因为微信真实 AppID、AppSecret、Vercel 生产环境变量、request 合法域名、数据库可达性、真机验收和真实用户证据尚未全部清零。
+但真实 Alpha 还没有开始，因为合规占位、微信后台隐私 / 类目 / 备案 / 客服配置、体验版上传、真机验收和真实用户证据尚未全部清零。真实 AppID、Vercel Production 微信环境变量和 request 合法域名已经进入生产体验版验证口径；本地环境变量只阻断本地后端验证，不应阻断 Vercel-backed Experience build。
 
 ## 2. 本阶段硬边界
 
@@ -72,17 +72,18 @@ Web 端已经可体验：
 
 这些 blocker 未清零前，不要邀请外部用户：
 
-- `miniprogram/project.config.json` 仍需替换成真实微信小程序 AppID
-- 本地和 Vercel Production 需要配置 `WECHAT_MINI_PROGRAM_APP_ID`
-- 本地和 Vercel Production 需要配置 `WECHAT_MINI_PROGRAM_APP_SECRET`
-- Vercel Production 需要确认 `DATABASE_URL`、`SESSION_SECRET`、邮件相关环境变量
-- 当前数据库连接在本地 readiness 中仍可能超时，需要先跑 `npm run db:doctor -- --timeout-ms 5000`
-- 如果远程数据库网络不可达，可以用 `npm run miniprogram:smoke:docker` 先验证本地小程序主路径
-- 微信公众平台需要配置 request 合法域名，且与 `miniprogram/src/config.js` 的 `apiBaseUrl` 一致
+- 隐私保护指引、用户协议、健康免责声明里的主体、联系方式、生效日期、收费 / 商业条款占位仍需清理
 - 微信公众平台隐私保护指引、类目、备案、客服入口仍需人工确认
 - 微信开发者工具需要导入 `miniprogram/`，上传体验版
 - 至少 2 台真机要跑通登录、记录、Dashboard、Trends、我的页、导出 / 删除，并留下私有证据
-- `npm run alpha:readiness` 顶部的 `Experience build gate` 必须为 `GREEN`
+- `npm run alpha:readiness -- --vercel --remote` 顶部的 `Experience build gate` 必须为 `GREEN`
+
+已经进入验证口径、但仍需用 gate 和真机确认的事项：
+
+- `miniprogram/project.config.json` 已使用真实小程序 AppID
+- Vercel Production 已配置微信小程序 AppID / AppSecret，远程 `/api/health` 应显示 `wechatMiniProgram.status=configured`
+- 微信公众平台 request 合法域名已由用户配置，最终以微信开发者工具 / 真机 `wx.request` 成功为准
+- 本地 `DATABASE_URL`、本地 `WECHAT_MINI_PROGRAM_*` 和本地 `db:doctor` 只阻断本地后端验证；生产体验版以 Vercel env 加远程 `/api/health` / `miniprogram:check:experience` 为准
 
 ## 5. 竞品实测状态
 
