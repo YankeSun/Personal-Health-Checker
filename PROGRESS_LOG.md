@@ -244,6 +244,7 @@ npm run analytics:report -- --days=30
 
 ## 2026-06-20
 
+- 完成微信开发者工具扫码登录后的内部预览：CLI 已确认 `login:true`，`miniprogram/` 项目可通过开发者工具打开，`preview` 成功生成 78.7KB 预览包和二维码；远程 Experience check 继续通过。体验版上传未执行，因为 `alpha:readiness -- --vercel --remote` 仍因合规占位 / 微信后台人工确认项保持 RED，按当前发放规则不能上传或分享 Experience build。
 - 安装并验证微信开发者工具本机环境：已安装 `wechatwebdevtools.app` 2.01.2510290，CLI 服务端口可启动到 `127.0.0.1:9420`，但导入 / 上传小程序被微信开发者工具账号登录拦截；已生成两次扫码二维码但均过期，下一步需要先完成微信开发者工具扫码登录，再继续 `open / preview / upload`。同时把 `miniprogram/project.private.config.json` 加入 `.gitignore`，避免开发者工具本地私有配置污染 Git。
 - 对齐 Request 域名配置后的体验版 gate 口径：`alpha:readiness -- --vercel --remote` 现在会用 `launch:check -- --vercel --experience-remote` 判断生产体验版，不再让本地微信密钥、本地数据库超时或可选邮件配置干扰小程序发放判断；远程 Experience check 已验证线上 API、数据库和微信后端配置为可用，剩余 blocker 收敛为合规占位、微信后台隐私 / 类目 / 客服确认、体验版上传和真机证据。
 
