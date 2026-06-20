@@ -240,38 +240,38 @@ export async function getReminderFeedByUserId(
       reminders.push({
         id: "inactive-return",
         tone: "warning",
-        title: `已经 ${inactivityDays} 天没有回来记录`,
-        description: "先把今天这组记下来，再决定要不要回补前几天。重新开始比一次补齐更重要。",
+        title: `${inactivityDays} 天没留下记录`,
+        description: "先记今天。重新开始，比一次补齐更重要。",
         actionHref: "/today",
-        actionLabel: "先记今天",
+        actionLabel: "记今天",
       });
     } else if (inactivityDays === 1) {
       reminders.push({
         id: "missing-all-today-soft",
         tone: "info",
-        title: "今天还没开始，但节奏还在",
-        description: "先把今天这组补上，连续记录就不会断掉。",
+        title: "今天还没落点",
+        description: "补上今天这组，节奏就还在。",
         actionHref: "/today",
-        actionLabel: "继续今天这组",
+        actionLabel: "继续今天",
       });
     } else {
       reminders.push({
         id: "missing-all-today",
         tone: "warning",
-        title: "今天还没有开始记录",
-        description: "先补上睡眠、体重和饮水，后面的趋势、达标率和连续记录才会更有参考意义。",
+        title: "今天还没有记录",
+        description: "先补睡眠、体重和饮水。线索从今天开始。",
         actionHref: "/today",
-        actionLabel: "去补录今天的数据",
+        actionLabel: "记录今天",
       });
     }
   } else if (missingMetrics.length > 0) {
     reminders.push({
       id: "missing-some-today",
       tone: "warning",
-      title: `今天还有 ${missingMetrics.length} 项待补录`,
-      description: `还差 ${missingMetrics.map((metric) => metricLabels[metric]).join("、")}，补齐后仪表盘的完成度和趋势会更完整。`,
+      title: `今天还差 ${missingMetrics.length} 项`,
+      description: `缺口是 ${missingMetrics.map((metric) => metricLabels[metric]).join("、")}。补齐后，今天就完整。`,
       actionHref: "/today",
-      actionLabel: "继续补录",
+      actionLabel: "继续记录",
     });
   }
 
@@ -288,13 +288,13 @@ export async function getReminderFeedByUserId(
     reminders.push({
       id: `missing-streak-${longestMissingMetric.metric.toLowerCase()}`,
       tone: "warning",
-      title: `${metricLabels[longestMissingMetric.metric]}已经连续 ${longestMissingMetric.streak} 天没有记录`,
-      description: `连续缺失会让趋势判断出现断层。先把 ${metricLabels[longestMissingMetric.metric]} 补起来，再看近 7 天波动会更准确。`,
+      title: `${metricLabels[longestMissingMetric.metric]}断了 ${longestMissingMetric.streak} 天`,
+      description: `先补这项，近 7 天的线会更连贯。`,
       actionHref:
         longestMissingMetric.latestDate === todayDate
           ? "/today"
           : `/today?date=${longestMissingMetric.latestDate}`,
-      actionLabel: "去补录这项数据",
+      actionLabel: "补这项",
     });
   }
 
@@ -304,19 +304,19 @@ export async function getReminderFeedByUserId(
     reminders.push({
       id: "goals-not-configured",
       tone: "info",
-      title: "还没有设置健康目标",
-      description: "设置睡眠、体重和饮水目标后，仪表盘和趋势页才会开始计算达标率。",
+      title: "目标还没设",
+      description: "设好目标后，达标率和趋势线会更清楚。",
       actionHref: "/settings",
-      actionLabel: "去设置目标",
+      actionLabel: "设置目标",
     });
   } else if (activeGoals.length < METRIC_ORDER.length) {
     reminders.push({
       id: "goals-partial",
       tone: "info",
-      title: `还有 ${METRIC_ORDER.length - activeGoals.length} 项未设置目标`,
-      description: "目标越完整，你看到的达标率和提醒提示就越准确。",
+      title: `还有 ${METRIC_ORDER.length - activeGoals.length} 项目标未设`,
+      description: "补上目标，提醒会更贴近你的节奏。",
       actionHref: "/settings",
-      actionLabel: "继续完善目标",
+      actionLabel: "补目标",
     });
   }
 
@@ -339,12 +339,12 @@ export async function getReminderFeedByUserId(
     reminders.push({
       id: `goal-underperforming-${weakestGoal.goal.metric.toLowerCase()}`,
       tone: "warning",
-      title: `最近 7 天${metricLabels[weakestGoal.goal.metric]}达标率偏低`,
-      description: `最近 7 天只有 ${weakestGoal.metDays}/7 天达到“${formatGoalShortLabel(
+      title: `${metricLabels[weakestGoal.goal.metric]}最近待观察`,
+      description: `最近 7 天有 ${weakestGoal.metDays}/7 天达到“${formatGoalShortLabel(
         weakestGoal.goal.metric,
         weakestGoal.goal,
         profile,
-      )}”，可以先把目标调到更容易坚持的区间，或者先保证每天补录。`,
+      )}”。可以先看这条线。`,
       actionHref: `/trends?metric=${metricQueryParams[weakestGoal.goal.metric]}&days=7`,
       actionLabel: "查看趋势",
     });
@@ -364,14 +364,14 @@ export async function getReminderFeedByUserId(
     reminders.push({
       id: `goal-miss-streak-${longestGoalMiss.goal.metric.toLowerCase()}`,
       tone: "info",
-      title: `${metricLabels[longestGoalMiss.goal.metric]}已经连续 ${longestGoalMiss.streak} 天未达标`,
-      description: `最近几天这项指标都没有达到“${formatGoalShortLabel(
+      title: `${metricLabels[longestGoalMiss.goal.metric]}连续 ${longestGoalMiss.streak} 天待观察`,
+      description: `最近几天没有达到“${formatGoalShortLabel(
         longestGoalMiss.goal.metric,
         longestGoalMiss.goal,
         profile,
-      )}”。可以先把目标调得更容易坚持，或者优先观察这项指标的日常节奏。`,
+      )}”。先看趋势，再决定是否调整目标。`,
       actionHref: `/trends?metric=${metricQueryParams[longestGoalMiss.goal.metric]}&days=7`,
-      actionLabel: "查看最近 7 天趋势",
+      actionLabel: "看 7 天趋势",
     });
   }
 
@@ -382,22 +382,22 @@ export async function getReminderFeedByUserId(
     reminders.push({
       id: "streak-building",
       tone: "success",
-      title: "今天这组已经完成",
-      description: `再坚持 ${streakMomentum.daysRemaining} 天，就会形成 ${streakMomentum.nextMilestone} 天连续记录。`,
+      title: "今天这组已完成",
+      description: `再 ${streakMomentum.daysRemaining} 天，就到 ${streakMomentum.nextMilestone} 天连续。`,
       actionHref: "/dashboard",
-      actionLabel: "看连续记录进展",
+      actionLabel: "看连续进展",
     });
   } else if (streakDays >= 3) {
     reminders.push({
       id: "consistency-streak",
       tone: "success",
-      title: `你已经连续完整记录 ${streakDays} 天`,
+      title: `已连续完整记录 ${streakDays} 天`,
       description:
         streakMomentum.nextMilestone === null
-          ? "继续保持现在的节奏，连续数据会让趋势判断更稳定，也更容易看出行为变化带来的影响。"
-          : `继续保持现在的节奏，再坚持 ${streakMomentum.daysRemaining} 天，就到 ${streakMomentum.nextMilestone} 天连续记录。`,
+          ? "连续数据会让趋势更稳定。"
+          : `再 ${streakMomentum.daysRemaining} 天，就到 ${streakMomentum.nextMilestone} 天连续。`,
       actionHref: "/dashboard",
-      actionLabel: "查看仪表盘",
+      actionLabel: "看概览",
     });
   }
 
@@ -421,12 +421,12 @@ export async function getReminderFeedByUserId(
       reminders.push({
         id: `weekly-highpoint-${bestGoal.goal.metric.toLowerCase()}`,
         tone: "success",
-        title: `最近 7 天最稳定的是${metricLabels[bestGoal.goal.metric]}`,
+        title: `${metricLabels[bestGoal.goal.metric]}最近最稳`,
         description: `${bestGoal.metDays}/7 天达到“${formatGoalShortLabel(
           bestGoal.goal.metric,
           bestGoal.goal,
           profile,
-        )}”。这是你当前最容易保持的一项。`,
+        )}”。这是当前最容易保持的一项。`,
         actionHref: `/trends?metric=${metricQueryParams[bestGoal.goal.metric]}&days=7`,
         actionLabel: "查看这项趋势",
       });

@@ -66,7 +66,7 @@ function buildInternalWechatEmail(appId: string, openid: string) {
 async function exchangeWechatCode(code: string): Promise<WechatSessionIdentity> {
   if (code.startsWith("mock:")) {
     if (!isWechatMiniProgramMockLoginEnabled()) {
-      throw new WechatAuthError("小程序测试登录未开启", 403);
+      throw new WechatAuthError("体验登录未开启", 403);
     }
 
     return {

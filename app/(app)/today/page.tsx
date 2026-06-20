@@ -92,8 +92,8 @@ export default async function TodayPage({ searchParams }: TodayPageProps) {
       onboarding={
         showWelcome
           ? {
-              title: "先记今天",
-              description: "把三项核心记录补齐，再去看第一张仪表盘。",
+              title: "从今天落点",
+              description: "三项到位，第一条线索就会出现。",
             }
           : undefined
       }

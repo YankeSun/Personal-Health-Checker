@@ -29,7 +29,7 @@ export default function LegalIndexPage() {
             协议与说明
           </h1>
           <p className="mt-4 max-w-2xl text-sm leading-7 text-slate-600">
-            了解本产品如何处理数据、如何界定使用边界，以及健康记录功能的非医疗属性。
+            数据如何保存，边界如何定义，都在这里说清楚。
           </p>
         </section>
 

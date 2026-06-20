@@ -86,9 +86,9 @@ export function ProfileForm({ initialValues, previewMode = false }: ProfileFormP
         onSubmit={handleSubmit}
       >
         <div className="space-y-2">
-          <h1 className="text-2xl font-semibold text-slate-900">个人设置</h1>
+          <h1 className="text-2xl font-semibold text-slate-900">偏好</h1>
           <p className="max-w-2xl text-sm leading-6 text-slate-600">
-            你的昵称、时区和记录偏好会影响每天的录入方式，以及统计页面的展示口径。
+            单位、时区和提醒，决定你每天看到的记录口径。
           </p>
         </div>
 
@@ -179,10 +179,10 @@ export function ProfileForm({ initialValues, previewMode = false }: ProfileFormP
           />
           <span className="space-y-1">
             <span className="block text-sm font-medium text-slate-800">
-              开启站内提醒
+              站内提醒
             </span>
             <span className="block text-sm leading-6 text-slate-600">
-              在今日记录页和仪表盘中显示缺失记录、未达标和连续打卡提示。
+              在记录页和概览页显示缺口、目标和连续状态。
             </span>
           </span>
         </label>
@@ -204,25 +204,25 @@ export function ProfileForm({ initialValues, previewMode = false }: ProfileFormP
             type="submit"
             disabled={isPending}
           >
-            {previewMode ? "应用设置" : isPending ? "保存中..." : "保存设置"}
+            {previewMode ? "应用偏好" : isPending ? "保存中..." : "保存偏好"}
           </button>
         </div>
       </form>
 
       <aside className="space-y-6">
         <section className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
-          <p className="text-sm font-medium text-slate-500">当前登录邮箱</p>
+          <p className="text-sm font-medium text-slate-500">登录邮箱</p>
           <p className="mt-2 break-all text-base font-semibold text-slate-900">
             {initialValues.email}
           </p>
         </section>
 
         <section className="rounded-3xl border border-emerald-200 bg-emerald-50/70 p-6">
-          <h2 className="text-base font-semibold text-emerald-950">这些设置会影响</h2>
+          <h2 className="text-base font-semibold text-emerald-950">会影响</h2>
           <ul className="mt-4 space-y-3 text-sm leading-6 text-emerald-900">
-            <li>今日记录页会按你的单位显示体重和饮水输入。</li>
-            <li>统计页面会按你的时区判断每天的自然日。</li>
-            <li>提醒开关会控制站内提示是否展示。</li>
+            <li>记录页的体重和饮水单位。</li>
+            <li>概览页判断自然日的时区。</li>
+            <li>站内提示是否出现。</li>
           </ul>
         </section>
       </aside>

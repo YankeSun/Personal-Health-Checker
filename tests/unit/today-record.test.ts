@@ -79,7 +79,7 @@ describe("today-record utils", () => {
       {
         metric: Metric.SLEEP,
         title: "睡眠",
-        statusLabel: "今天会这样判断",
+        statusLabel: "今日口径",
         detail: "每天睡够 7.5 小时",
         tone: "neutral",
       },
@@ -121,15 +121,15 @@ describe("today-record utils", () => {
       {
         metric: Metric.SLEEP,
         title: "睡眠",
-        statusLabel: "今天还差一点",
+        statusLabel: "待观察",
         detail: "距离目标还差 0.4 小时",
         tone: "warning",
       },
       {
         metric: Metric.WEIGHT,
         title: "体重",
-        statusLabel: "今天已对齐目标",
-        detail: "当前落在目标区间内",
+        statusLabel: "已对齐",
+        detail: "已在目标区间内",
         tone: "success",
       },
     ]);

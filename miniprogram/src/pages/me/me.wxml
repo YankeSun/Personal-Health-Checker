@@ -1,16 +1,16 @@
 <view class="page me-page">
   <view class="profile card">
     <view class="profile-topline">
-      <text class="eyebrow">ALPHA</text>
+      <text class="eyebrow">MY HEALTH</text>
       <text class="unit-pill">{{profile.weightUnit || "KG"}} / {{profile.waterUnit || "ML"}}</text>
     </view>
     <text class="title">{{profile.displayName || "微信用户"}}</text>
-    <text class="profile-copy">连续 7 天记录体重，看看这套节奏是否真的值得继续做成小程序 beta。</text>
+    <text class="profile-copy">记录、回看、调整。让每天的变化慢慢显影。</text>
   </view>
 
   <view class="card block alpha-card">
     <view class="section-head">
-      <text class="section-title">7 天测试任务</text>
+      <text class="section-title">日常路径</text>
       <text class="section-note">每天一轮</text>
     </view>
     <view
@@ -30,21 +30,21 @@
   </view>
 
   <view class="card block beta-card">
-    <text class="eyebrow light">WAITLIST</text>
-    <text class="beta-title">30 天体重观察报告</text>
-    <text class="beta-copy">感兴趣可以加入内测名单。当前不会创建订单，也不会收款。</text>
+    <text class="eyebrow light">REPORT</text>
+    <text class="beta-title">30 天体重回看</text>
+    <text class="beta-copy">报告开放前，可先加入等待名单；不会创建订单或收款。</text>
     <view class="report-list">
       <text wx:for="{{reportReasonItems}}" wx:key="*this" class="report-item">{{item}}</text>
     </view>
-    <button class="primary-button beta-button" loading="{{joiningReportBeta}}" bindtap="joinReportBeta">加入报告内测</button>
+    <button class="primary-button beta-button" loading="{{joiningReportBeta}}" bindtap="joinReportBeta">加入等待名单</button>
   </view>
 
   <view id="alpha-feedback" class="card block feedback-card">
     <view class="section-head">
-      <text class="section-title">Alpha 反馈</text>
+      <text class="section-title">使用反馈</text>
       <text class="section-note">30 秒</text>
     </view>
-    <text class="feedback-copy">最重要的是：你是否愿意明天继续打开？如果不愿意，是哪一步让你停下。</text>
+    <text class="feedback-copy">哪一步让你愿意继续？哪一步让你停下？</text>
     <view class="rating-row">
       <text wx:for="{{[1, 2, 3, 4, 5]}}" wx:key="*this" data-rating="{{item}}" bindtap="setFeedbackRating" class="rating-chip {{feedback.rating === item ? 'rating-active' : ''}}">{{item}}</text>
     </view>
@@ -56,13 +56,13 @@
     <view class="feedback-options">
       <text wx:for="{{feedbackFrictionOptions}}" wx:key="value" data-value="{{item.value}}" bindtap="selectFeedbackFriction" class="feedback-chip {{item.active ? 'feedback-chip-active' : ''}}">{{item.label}}</text>
     </view>
-    <textarea class="feedback-textarea" value="{{feedback.comment}}" maxlength="160" bindinput="handleFeedbackComment" placeholder="一句话告诉我们：你会不会继续用？为什么？" />
+    <textarea class="feedback-textarea" value="{{feedback.comment}}" maxlength="160" bindinput="handleFeedbackComment" placeholder="一句话告诉我们你的真实感受。" />
     <button class="ghost-button action-button" loading="{{submittingFeedback}}" bindtap="submitFeedback">提交反馈</button>
   </view>
 
   <view class="card block">
     <text class="section-title">目标</text>
-    <view wx:if="{{goals.length === 0}}" class="empty">还没有配置目标，Web 设置页可继续完善。</view>
+    <view wx:if="{{goals.length === 0}}" class="empty">还没有目标。目标可选，但会让回看更清楚。</view>
     <view wx:for="{{goals}}" wx:key="metric" class="goal-row">
       <text class="goal-label">{{item.metricLabel}}</text>
       <text class="goal-summary">{{item.summary}}</text>
@@ -70,10 +70,10 @@
   </view>
 
   <view class="card block">
-    <text class="section-title">数据与账号</text>
-    <text class="data-copy">你可以导出个人数据，也可以删除账号和全部关联数据。</text>
-    <button class="ghost-button action-button" loading="{{exporting}}" bindtap="exportAccount">导出个人数据</button>
-    <text class="export-hint">导出会复制一份 JSON 摘要到剪贴板，便于 Alpha 验收时确认数据权利入口可用。</text>
+    <text class="section-title">数据归你</text>
+    <text class="data-copy">你可以导出数据，也可以删除账号和全部关联数据。</text>
+    <button class="ghost-button action-button" loading="{{exporting}}" bindtap="exportAccount">导出数据</button>
+    <text class="export-hint">导出会复制一份 JSON 摘要到剪贴板。</text>
     <button class="danger-button action-button" loading="{{deleting}}" bindtap="confirmDeleteAccount">删除账号和全部数据</button>
     <text wx:if="{{message}}" class="message">{{message}}</text>
   </view>

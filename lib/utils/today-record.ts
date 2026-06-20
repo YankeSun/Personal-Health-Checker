@@ -122,7 +122,7 @@ export function getTodayGoalInsights(
         return {
           metric,
           title: metricLabels[metric],
-          statusLabel: "今天会这样判断",
+          statusLabel: "今日口径",
           detail: goalLabel,
           tone: "neutral",
         } satisfies TodayGoalInsight;
@@ -131,7 +131,7 @@ export function getTodayGoalInsights(
       return {
         metric,
         title: metricLabels[metric],
-        statusLabel: isMet ? "今天已对齐目标" : "今天还差一点",
+        statusLabel: isMet ? "已对齐" : "待观察",
         detail: deviation ?? goalLabel,
         tone: isMet ? "success" : "warning",
       } satisfies TodayGoalInsight;

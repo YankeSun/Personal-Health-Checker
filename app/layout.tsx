@@ -3,8 +3,8 @@ import type { Metadata } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "Health Tracker | 每日健康记录",
-  description: "记录睡眠、体重与饮水，用清晰趋势理解每天的身体状态。",
+  title: "Personal Health Checker | 把日常记成线索",
+  description: "记录睡眠、体重与饮水，让每天的变化慢慢显影。",
 };
 
 export default function RootLayout({

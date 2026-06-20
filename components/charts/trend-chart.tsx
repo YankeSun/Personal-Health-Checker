@@ -48,7 +48,7 @@ function CustomTooltip({
         {metricLabel}：{point.value ?? "--"} {point.value !== null ? unitLabel : ""}
       </p>
       {point.isBackfilled && (
-        <p className="mt-1 text-xs text-sky-600">此为补录记录</p>
+        <p className="mt-1 text-xs text-sky-600">补录</p>
       )}
     </div>
   );
@@ -60,7 +60,7 @@ export function TrendChart({ trend }: TrendChartProps) {
   if (!hasData) {
     return (
       <div className="flex h-[360px] items-center justify-center rounded-3xl border border-dashed border-slate-300 bg-slate-50 text-sm text-slate-500">
-        这一时间范围内还没有可用于绘制图表的记录。
+        这一段还没有可绘制的记录。
       </div>
     );
   }

@@ -11,14 +11,14 @@ type DashboardOverviewProps = {
 
 function getGoalStatusLabel(goalMet: boolean | null, recorded: boolean) {
   if (!recorded) {
-    return "今日未记录";
+    return "今天未记";
   }
 
   if (goalMet === null) {
-    return "尚未设置目标";
+    return "目标未设";
   }
 
-  return goalMet ? "今日已达标" : "今日未达标";
+  return goalMet ? "已对齐" : "待观察";
 }
 
 function getComparisonToneClass(direction: "up" | "down" | "flat" | "none") {
@@ -39,18 +39,18 @@ function getComparisonToneClass(direction: "up" | "down" | "flat" | "none") {
 
 function getComparisonLabel(direction: "up" | "down" | "flat" | "none") {
   if (direction === "up") {
-    return "较上一周期升高";
+    return "比上一段更高";
   }
 
   if (direction === "down") {
-    return "较上一周期下降";
+    return "比上一段更低";
   }
 
   if (direction === "flat") {
-    return "较上一周期持平";
+    return "和上一段接近";
   }
 
-  return "上一周期数据不足";
+  return "上一段数据不足";
 }
 
 function getWeightContextToneClass(trend: DashboardOverview["weightContext"]["trend"]) {
@@ -77,27 +77,27 @@ export function DashboardOverviewPanel({ overview, reminderFeed }: DashboardOver
     <div className="space-y-6">
       <section className="grid gap-4 md:grid-cols-3">
         <article className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
-          <p className="text-sm font-medium text-slate-500">连续记录天数</p>
+          <p className="text-sm font-medium text-slate-500">连续天数</p>
           <p className="mt-3 text-3xl font-semibold text-slate-900">
             {overview.streakDays}
           </p>
           <p className="mt-2 text-sm text-slate-600">
-            只有睡眠、体重、饮水三项都填写，才会计入连续记录。
+            三项齐了，才算一次完整连续。
           </p>
         </article>
 
         <article className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
-          <p className="text-sm font-medium text-slate-500">今日完成度</p>
+          <p className="text-sm font-medium text-slate-500">今日进度</p>
           <p className="mt-3 text-3xl font-semibold text-slate-900">
             {overview.todayCompletedMetrics}/{overview.totalTrackedMetrics}
           </p>
           <p className="mt-2 text-sm text-slate-600">
-            先把今天的数据补齐，后面的趋势和达标率会更有参考意义。
+            今天越完整，后面的线越清楚。
           </p>
         </article>
 
         <article className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
-          <p className="text-sm font-medium text-slate-500">最近 30 天完整记录率</p>
+          <p className="text-sm font-medium text-slate-500">30 天完整率</p>
           <p className="mt-3 text-3xl font-semibold text-slate-900">
             {summary30.completionRate}%
           </p>
@@ -115,7 +115,7 @@ export function DashboardOverviewPanel({ overview, reminderFeed }: DashboardOver
         <div className="flex flex-col gap-5 lg:flex-row lg:items-start lg:justify-between">
           <div className="max-w-3xl">
             <p className="text-sm font-semibold tracking-[0.18em] text-slate-500">
-              体重变化线索
+            体重线索
             </p>
             <h2 className="mt-2 text-2xl font-semibold text-slate-900">
               {weightContext.title}
@@ -126,13 +126,13 @@ export function DashboardOverviewPanel({ overview, reminderFeed }: DashboardOver
           </div>
           <dl className="grid min-w-52 grid-cols-2 gap-3 text-sm lg:text-right">
             <div className="rounded-2xl bg-white/70 px-4 py-3">
-              <dt className="text-slate-500">体重记录</dt>
+              <dt className="text-slate-500">记录</dt>
               <dd className="mt-1 font-semibold text-slate-900">
                 {weightContext.recordedDays}/{weightContext.days} 天
               </dd>
             </div>
             <div className="rounded-2xl bg-white/70 px-4 py-3">
-              <dt className="text-slate-500">最近值</dt>
+              <dt className="text-slate-500">最近</dt>
               <dd className="mt-1 font-semibold text-slate-900">
                 {weightContext.latestDisplay ?? "暂无"}
               </dd>
@@ -159,9 +159,9 @@ export function DashboardOverviewPanel({ overview, reminderFeed }: DashboardOver
             <p className="text-sm font-semibold tracking-[0.18em] text-amber-200">
               REPORT BETA
             </p>
-            <h2 className="mt-2 text-2xl font-semibold">30 天体重观察报告</h2>
+            <h2 className="mt-2 text-2xl font-semibold">30 天体重回看</h2>
             <p className="mt-3 text-sm leading-6 text-slate-200">
-              把体重变化、记录密度、目标进度和日常背景整理成一份月度回看。当前开放内测意向，不收取费用。
+              体重变化、记录密度、目标进度和日常线索，整理成一份清晰月报。当前可加入等待名单。
             </p>
           </div>
           <div className="rounded-3xl bg-white p-4 text-slate-900">
@@ -196,21 +196,21 @@ export function DashboardOverviewPanel({ overview, reminderFeed }: DashboardOver
 
       <ReminderPanel
         feed={reminderFeed}
-        title="本周关注点"
-        description="这里会优先提示今天缺失的记录、最近 7 天的达标压力，以及你的连续记录状态。"
+        title="本周留心"
+        description="只保留最值得先看的两条。"
       />
 
       <section className="rounded-3xl border border-slate-200 bg-white p-8 shadow-sm">
         <div className="space-y-2">
-          <h1 className="text-2xl font-semibold text-slate-900">仪表盘</h1>
+          <h1 className="text-2xl font-semibold text-slate-900">状态概览</h1>
           <p className="text-sm leading-6 text-slate-600">
-            这里汇总最近 7 天和 30 天的记录情况、达标率和今天的即时状态。
+            今天、7 天、30 天，放到一张图景里。
           </p>
         </div>
 
         <div className="mt-8">
           <div className="mb-4 flex items-center justify-between gap-4">
-            <h2 className="text-lg font-semibold text-slate-900">今天的状态</h2>
+            <h2 className="text-lg font-semibold text-slate-900">今天</h2>
             <p className="text-sm text-slate-500">{overview.todayDate}</p>
           </div>
           <div className="grid gap-4 md:grid-cols-3">
@@ -224,7 +224,7 @@ export function DashboardOverviewPanel({ overview, reminderFeed }: DashboardOver
                   {metric.displayValue ? `${metric.displayValue} ${metric.unitLabel}` : "未记录"}
                 </p>
                 <p className="mt-2 text-sm text-slate-600">
-                  {metric.goalDescription ?? "还没有为这项配置目标"}
+                  {metric.goalDescription ?? "目标还未设"}
                 </p>
                 <p
                   className={`mt-4 inline-flex rounded-full px-3 py-1 text-xs font-medium ${
@@ -256,14 +256,14 @@ export function DashboardOverviewPanel({ overview, reminderFeed }: DashboardOver
           <div className="flex flex-col gap-2 md:flex-row md:items-end md:justify-between">
             <div>
               <h2 className="text-xl font-semibold text-slate-900">
-                最近 {window.days} 天概览
+                最近 {window.days} 天
               </h2>
               <p className="text-sm text-slate-600">
-                时间范围：{window.startDate} 至 {window.endDate}
+                {window.startDate} 至 {window.endDate}
               </p>
             </div>
             <p className="text-sm text-slate-500">
-              完整记录 {window.completeRecordDays} 天，记录率 {window.completionRate}%
+              完整 {window.completeRecordDays} 天，记录率 {window.completionRate}%
             </p>
           </div>
 
@@ -282,7 +282,7 @@ export function DashboardOverviewPanel({ overview, reminderFeed }: DashboardOver
 
                 <dl className="mt-5 space-y-3 text-sm text-slate-600">
                   <div className="flex items-center justify-between gap-4">
-                    <dt>记录天数</dt>
+                    <dt>记录</dt>
                     <dd className="font-medium text-slate-900">
                       {metric.recordedDays} / {window.days}
                     </dd>
@@ -294,7 +294,7 @@ export function DashboardOverviewPanel({ overview, reminderFeed }: DashboardOver
                     </dd>
                   </div>
                   <div className="flex items-center justify-between gap-4">
-                    <dt>最近值</dt>
+                    <dt>最近</dt>
                     <dd className="font-medium text-slate-900">
                       {metric.latestDisplay
                         ? `${metric.latestDisplay} ${metric.unitLabel}`
@@ -302,7 +302,7 @@ export function DashboardOverviewPanel({ overview, reminderFeed }: DashboardOver
                     </dd>
                   </div>
                   <div className="flex items-center justify-between gap-4">
-                    <dt>平均值</dt>
+                    <dt>平均</dt>
                     <dd className="font-medium text-slate-900">
                       {metric.averageDisplay
                         ? `${metric.averageDisplay} ${metric.unitLabel}`
@@ -317,14 +317,14 @@ export function DashboardOverviewPanel({ overview, reminderFeed }: DashboardOver
           <div className="mt-8 rounded-3xl border border-slate-200 bg-slate-50 p-5">
             <div className="flex flex-col gap-2 md:flex-row md:items-end md:justify-between">
               <div>
-                <h3 className="text-lg font-semibold text-slate-900">与上一周期对比</h3>
+                <h3 className="text-lg font-semibold text-slate-900">和上一段比</h3>
                 <p className="text-sm text-slate-600">
-                  对比范围：{window.comparison.previousStartDate} 至 {window.comparison.previousEndDate}
+                  {window.comparison.previousStartDate} 至 {window.comparison.previousEndDate}
                 </p>
               </div>
               <p className="text-sm text-slate-500">
-                完整记录率变化 {window.comparison.completionRateChange > 0 ? "+" : ""}
-                {window.comparison.completionRateChange}% ，上一周期为 {window.comparison.previousCompletionRate}%
+                完整率变化 {window.comparison.completionRateChange > 0 ? "+" : ""}
+                {window.comparison.completionRateChange}% ，上一段为 {window.comparison.previousCompletionRate}%
               </p>
             </div>
 
@@ -347,7 +347,7 @@ export function DashboardOverviewPanel({ overview, reminderFeed }: DashboardOver
 
                   <dl className="mt-4 space-y-3 text-sm text-slate-600">
                     <div className="flex items-center justify-between gap-4">
-                      <dt>当前平均值</dt>
+                      <dt>当前平均</dt>
                       <dd className="font-medium text-slate-900">
                         {metric.currentAverageDisplay
                           ? `${metric.currentAverageDisplay} ${metric.unitLabel}`
@@ -355,7 +355,7 @@ export function DashboardOverviewPanel({ overview, reminderFeed }: DashboardOver
                       </dd>
                     </div>
                     <div className="flex items-center justify-between gap-4">
-                      <dt>上一周期平均值</dt>
+                      <dt>上一段平均</dt>
                       <dd className="font-medium text-slate-900">
                         {metric.previousAverageDisplay
                           ? `${metric.previousAverageDisplay} ${metric.unitLabel}`
@@ -363,7 +363,7 @@ export function DashboardOverviewPanel({ overview, reminderFeed }: DashboardOver
                       </dd>
                     </div>
                     <div className="flex items-center justify-between gap-4">
-                      <dt>平均值变化</dt>
+                      <dt>平均变化</dt>
                       <dd className="font-medium text-slate-900">
                         {metric.averageDeltaDisplay
                           ? `${metric.averageDeltaDisplay} ${metric.unitLabel}`

@@ -44,7 +44,7 @@ export function ResetPasswordForm({ token }: ResetPasswordFormProps) {
         return;
       }
 
-      setSuccess("密码已更新，正在带你回到登录页。");
+      setSuccess("密码已更新，正在回到登录页。");
       window.setTimeout(() => {
         router.push("/login", { scroll: false });
       }, 1200);
@@ -96,12 +96,12 @@ export function ResetPasswordForm({ token }: ResetPasswordFormProps) {
         type="submit"
         disabled={isPending}
       >
-        {isPending ? "更新中..." : "更新密码"}
+        {isPending ? "更新中..." : "保存新密码"}
       </button>
       <p className="text-sm text-slate-600">
         想直接登录？{" "}
         <AppLink className="font-medium text-emerald-700" href="/login">
-          返回登录
+          继续登录
         </AppLink>
       </p>
     </form>

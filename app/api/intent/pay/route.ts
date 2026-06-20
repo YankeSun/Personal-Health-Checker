@@ -45,7 +45,7 @@ export async function POST(request: Request) {
     return Response.json({
       success: true,
       status: "waitlist",
-      message: "已记录你的内测意向，开放时会优先通知。",
+      message: "已加入等待名单，开放时会优先通知。",
     });
   } catch (error) {
     if (error instanceof ZodError) {
@@ -53,6 +53,6 @@ export async function POST(request: Request) {
     }
 
     console.error("pay intent error", error);
-    return jsonError("记录内测意向失败，请稍后再试", 500);
+    return jsonError("加入等待名单失败，请稍后再试", 500);
   }
 }

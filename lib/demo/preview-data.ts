@@ -370,15 +370,15 @@ export const previewDashboardOverview: DashboardOverview = {
       title: "今天先补饮水",
       description: "只差这一项，今天这组就完整了。",
       actionHref: "/experience?screen=today",
-      actionLabel: "回到今日记录",
+      actionLabel: "回到记录",
     },
     {
       id: "weekly-focus-goal",
       tone: "warning",
-      title: "这周最该先看的是饮水",
-      description: "最近 7 天饮水目标完成得最不稳定，先把这项拉回稳定节奏更划算。",
+      title: "这周先看饮水",
+      description: "最近 7 天饮水达标率最不稳定，先把这项拉回节奏。",
       actionHref: "/experience?screen=trends&metric=water&days=7",
-      actionLabel: "查看最近 7 天",
+      actionLabel: "看 7 天",
     },
   ],
   weightContext: {
@@ -389,7 +389,7 @@ export const previewDashboardOverview: DashboardOverview = {
     trend: "stable",
     title: "最近 7 天体重基本稳定",
     description:
-      "窗口内记录了 6/7 天，较窗口内第一条记录 -0.2 kg。常见背景是清淡、正常活动和晨起称重，这些只是回看线索，不代表直接原因。",
+      "记录 6/7 天，较第一条 -0.2 kg。常见线索是清淡、正常活动和晨起称重，它们是线索，不是结论。",
     topContextLabels: [
       { label: "清淡", count: 3 },
       { label: "正常", count: 3 },
@@ -406,24 +406,24 @@ export const previewReminderFeed: ReminderFeed = {
     {
       id: "missing-water-today",
       tone: "warning",
-      title: "今天还差饮水数据没有补录",
-      description: "睡眠和体重已经记下来了，再补上饮水，今天的完成度就会从 2/3 变成完整记录。",
+      title: "今天还差饮水",
+      description: "睡眠和体重已落点，再补饮水，今天就完整。",
       actionHref: "/experience?screen=today",
-      actionLabel: "回到今日记录",
+      actionLabel: "回到记录",
     },
     {
       id: "water-attainment-pressure",
       tone: "info",
-      title: "最近 7 天饮水达标率只有 42.9%",
-      description: "趋势图里能看见饮水记录很不稳定，这是当前最值得先改善的一项。",
+      title: "饮水最近待观察",
+      description: "最近 7 天达标率 42.9%，这条线值得先看。",
       actionHref: "/experience?screen=trends&metric=water&days=7",
       actionLabel: "查看饮水趋势",
     },
     {
       id: "weight-in-range",
       tone: "success",
-      title: "体重仍然稳定在目标区间附近",
-      description: "最近一个月的体重波动相对平稳，说明你的作息和饮食节奏正在逐渐稳定下来。",
+      title: "体重仍在目标区间附近",
+      description: "最近一个月波动平稳，节奏正在成形。",
       actionHref: "/experience?screen=trends&metric=weight&days=30",
       actionLabel: "查看体重趋势",
     },
@@ -540,7 +540,7 @@ function buildTrend(metricParam: TrendMetricParam, daysParam: TrendDaysParam): T
             ? {
                 tone: "info",
                 title: `${metricLabels[metricParam]}最近出现了明显变化`,
-                description: `相比上一周期，平均值变化了 ${averageDeltaDisplay}。`,
+                description: `比上一段平均变化 ${averageDeltaDisplay}。`,
               }
             : {
                 tone: "success",

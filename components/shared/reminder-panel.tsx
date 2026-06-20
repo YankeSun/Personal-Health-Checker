@@ -16,7 +16,7 @@ const toneStyles = {
 export function ReminderPanel({
   feed,
   title = "站内提醒",
-  description = "系统会根据你最近的记录和目标状态，给出需要优先关注的提醒。",
+  description = "最近最值得先看的事。",
 }: ReminderPanelProps) {
   if (!feed.enabled) {
     return (
@@ -26,15 +26,15 @@ export function ReminderPanel({
           <p className="text-sm leading-6 text-slate-600">{description}</p>
         </div>
         <article className="mt-5 rounded-2xl border border-slate-200 bg-slate-50 p-5">
-          <p className="text-sm font-semibold text-slate-900">站内提醒已关闭</p>
+          <p className="text-sm font-semibold text-slate-900">提醒已关闭</p>
           <p className="mt-2 text-sm leading-6 text-slate-600">
-            你可以在设置页重新打开提醒，这样系统才会根据缺失记录和达标情况给你提示。
+            在“我的”里重新打开，就能看到缺口、目标和连续状态。
           </p>
           <AppLink
             className="mt-4 inline-flex rounded-full border border-slate-300 px-4 py-2 text-sm font-medium text-slate-700 transition hover:border-slate-400 hover:bg-slate-100"
             href="/settings"
           >
-            去设置页开启提醒
+            去开启
           </AppLink>
         </article>
       </section>
@@ -50,9 +50,9 @@ export function ReminderPanel({
 
       {feed.reminders.length === 0 ? (
         <article className="mt-5 rounded-2xl border border-emerald-200 bg-emerald-50 p-5">
-          <p className="text-sm font-semibold text-emerald-950">当前没有新的提醒</p>
+          <p className="text-sm font-semibold text-emerald-950">现在很安静</p>
           <p className="mt-2 text-sm leading-6 text-emerald-800">
-            这通常意味着今天的数据已经补齐，最近的目标状态也比较稳定，继续保持现在的节奏就好。
+            今天的记录和最近的节奏都在轨道上。
           </p>
         </article>
       ) : (

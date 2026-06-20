@@ -149,7 +149,7 @@ function getNextStepText(steps) {
 
   return nextStep
     ? `还差 ${nextStep.label}`
-    : "记录完整，可以看今日概览";
+    : "三项齐了，可以看概览";
 }
 
 function shiftDateString(dateString, offsetDays) {
@@ -188,7 +188,7 @@ function getDateActionLabel(dateString, todayDate) {
 }
 
 function getRecordFocusLabel(dateString, todayDate) {
-  return isTodayDate(dateString, todayDate) ? "今日称重" : "补录称重";
+  return isTodayDate(dateString, todayDate) ? "今日体重" : "补录体重";
 }
 
 function getSaveButtonLabel(dateString, todayDate) {
@@ -197,15 +197,15 @@ function getSaveButtonLabel(dateString, todayDate) {
 
 function getWeightHint(weightValue, dateString, todayDate) {
   if (weightValue !== null) {
-    return "体重已记录";
+    return "体重已落点";
   }
 
-  return isTodayDate(dateString, todayDate) ? "先填今天体重" : "补上这天体重";
+  return isTodayDate(dateString, todayDate) ? "先留下今天体重" : "补上这天体重";
 }
 
 function getSaveSuccessMessage(completedCount, isToday) {
   if (completedCount === 3) {
-    return isToday ? "今日三项已完成" : "这一天三项已补齐";
+    return isToday ? "今天这组已完成" : "这一天已补齐";
   }
 
   return isToday ? `已保存 ${completedCount}/3` : `已补录 ${completedCount}/3`;
@@ -220,7 +220,7 @@ Page({
     maxRecordDate: "",
     dateDisplayLabel: "同步中",
     dateActionLabel: "补录",
-    recordFocusLabel: "今日称重",
+    recordFocusLabel: "今日体重",
     saveButtonLabel: "保存今天",
     profile: normalizeProfile(null),
     form: {
@@ -236,13 +236,13 @@ Page({
       weightKg: "",
       waterMl: "",
     }),
-    nextStepText: "先记录今天体重",
+    nextStepText: "先留下今天体重",
     weightDisplay: "-- kg",
     weightUnitLabel: "kg",
     waterUnitLabel: "ml",
     weightPlaceholder: "例如 63.2",
     waterPlaceholder: "2000",
-    weightHint: "先填今天体重",
+    weightHint: "先留下今天体重",
     qualityWarnings: [],
     dietOptions: decorateOptions(dietBaseOptions, []),
     activityOptions: decorateOptions(activityBaseOptions, []),
@@ -476,7 +476,7 @@ Page({
 
     if (this.data.completedCount === 0) {
       this.setData({
-        error: "至少先记录一项数据",
+        error: "至少先留下一项记录",
         errorDetail: "",
         errorRetryLabel: "",
         errorRetryAction: "",

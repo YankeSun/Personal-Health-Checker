@@ -88,9 +88,9 @@ export function AccountDataPanel() {
           <p className="text-sm font-semibold uppercase tracking-[0.24em] text-slate-400">
             Data Rights
           </p>
-          <h2 className="text-2xl font-semibold text-slate-900">数据与账号</h2>
+          <h2 className="text-2xl font-semibold text-slate-900">数据归你</h2>
           <p className="max-w-2xl text-sm leading-6 text-slate-600">
-            你可以导出个人资料、目标、每日记录、体重背景、微信身份映射和产品事件，也可以删除账号和全部关联数据。
+            记录、目标、体重线索和账号数据，都可以导出；也可以全部删除。
           </p>
         </div>
         <button
@@ -99,7 +99,7 @@ export function AccountDataPanel() {
           onClick={handleExport}
           disabled={isExporting || isDeleting}
         >
-          {isExporting ? "正在导出..." : "导出个人数据"}
+          {isExporting ? "导出中..." : "导出数据"}
         </button>
       </div>
 
@@ -107,7 +107,7 @@ export function AccountDataPanel() {
         <div className="space-y-2">
           <h3 className="text-base font-semibold text-rose-950">删除账号</h3>
           <p className="text-sm leading-6 text-rose-900">
-            删除后会清空账号、资料、目标、记录、会话、微信身份映射和与账号关联的产品事件。此操作不可恢复。
+            删除后会清空账号、资料、目标、记录、会话和关联事件。此操作不可恢复。
           </p>
         </div>
 

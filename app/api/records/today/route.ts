@@ -90,6 +90,6 @@ export async function PUT(request: Request) {
     }
 
     console.error("today record update error", error);
-    return jsonError("保存今日记录失败，请稍后再试", 500);
+    return jsonError("保存记录失败，请稍后再试", 500);
   }
 }

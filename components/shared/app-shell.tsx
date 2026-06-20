@@ -13,11 +13,11 @@ type AppShellProps = {
 };
 
 const navigation = [
-  { href: "/dashboard", label: "仪表盘", shortLabel: "仪表盘" },
-  { href: "/today", label: "今日记录", shortLabel: "今日" },
-  { href: "/history", label: "历史记录", shortLabel: "历史" },
-  { href: "/trends", label: "历史趋势", shortLabel: "趋势" },
-  { href: "/settings", label: "设置与目标", shortLabel: "设置" },
+  { href: "/dashboard", label: "概览", shortLabel: "概览" },
+  { href: "/today", label: "记录", shortLabel: "记录" },
+  { href: "/history", label: "回看", shortLabel: "回看" },
+  { href: "/trends", label: "趋势", shortLabel: "趋势" },
+  { href: "/settings", label: "我的", shortLabel: "我的" },
 ];
 
 export function AppShell({
@@ -33,19 +33,19 @@ export function AppShell({
           <Logo />
           <AppNavigation items={navigation} />
           <div className="flex items-center gap-3">
-            <span className="hidden text-sm text-slate-500 md:inline">你好，{userName}</span>
+            <span className="hidden text-sm text-slate-500 md:inline">{userName}</span>
             <AppLink
               className="hidden rounded-full border border-emerald-300 bg-emerald-50 px-4 py-2 text-sm font-medium text-emerald-900 transition hover:bg-emerald-100 md:inline-flex"
               href="/experience"
             >
-              产品概览
+              体验页
             </AppLink>
             <form action="/api/auth/logout" method="post">
               <button
                 className="rounded-full border border-slate-200 px-4 py-2 text-sm font-medium text-slate-700 transition hover:border-slate-300 hover:bg-slate-100"
                 type="submit"
               >
-                退出登录
+                退出
               </button>
             </form>
           </div>

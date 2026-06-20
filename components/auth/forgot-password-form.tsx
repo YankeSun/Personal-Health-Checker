@@ -31,7 +31,7 @@ export function ForgotPasswordForm() {
         return;
       }
 
-      setSuccess("如果该邮箱已注册，我们已发送重置链接。");
+      setSuccess("如果邮箱已注册，重置链接已经发出。");
     } catch {
       setError("网络异常，请稍后再试");
     } finally {
@@ -68,12 +68,12 @@ export function ForgotPasswordForm() {
         type="submit"
         disabled={isPending}
       >
-        {isPending ? "发送中..." : "发送重置链接"}
+        {isPending ? "发送中..." : "发送链接"}
       </button>
       <p className="text-sm text-slate-600">
         想起来了？{" "}
         <AppLink className="font-medium text-emerald-700" href="/login">
-          返回登录
+          继续登录
         </AppLink>
       </p>
     </form>

@@ -184,9 +184,9 @@ export function GoalsForm({ initialValues, previewMode = false }: GoalsFormProps
         onSubmit={handleSubmit}
       >
         <div className="space-y-2">
-          <h2 className="text-2xl font-semibold text-slate-900">健康目标</h2>
+          <h2 className="text-2xl font-semibold text-slate-900">目标</h2>
           <p className="max-w-2xl text-sm leading-6 text-slate-600">
-            为睡眠、体重和饮水设定清晰目标，让仪表盘和趋势页面更准确地判断你每天的状态变化。
+            给三项记录一把尺。目标可选，但会让回看更清楚。
           </p>
         </div>
 
@@ -255,7 +255,7 @@ export function GoalsForm({ initialValues, previewMode = false }: GoalsFormProps
                         }))
                       }
                     />
-                    启用目标
+                    启用
                   </label>
                 </div>
 
@@ -367,11 +367,11 @@ export function GoalsForm({ initialValues, previewMode = false }: GoalsFormProps
                   )}
 
                   <div className="rounded-2xl border border-slate-200 bg-white px-4 py-4">
-                    <p className="text-sm font-medium text-slate-900">系统会这样判断</p>
+                    <p className="text-sm font-medium text-slate-900">判断方式</p>
                     <p className="mt-2 text-sm leading-6 text-slate-600">
                       {goal.isActive
-                        ? (goalRuleDescription ?? "先把目标值填好，系统才会开始判断这项是否达标。")
-                        : "关闭后，这项不会参与达标率、提醒和趋势线判断。"}
+                        ? (goalRuleDescription ?? "填好目标值后，这项才会参与判断。")
+                        : "关闭后，这项不参与达标率、提醒和趋势线。"}
                     </p>
                   </div>
                 </div>
@@ -404,20 +404,20 @@ export function GoalsForm({ initialValues, previewMode = false }: GoalsFormProps
 
       <aside className="space-y-6">
         <section className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
-          <h3 className="text-base font-semibold text-slate-900">目标怎么选更自然</h3>
+          <h3 className="text-base font-semibold text-slate-900">怎么设更顺</h3>
           <ul className="mt-4 space-y-3 text-sm leading-6 text-slate-600">
-            <li>睡眠和饮水更适合用“至少”，因为日常更像是在追一个下限。</li>
-            <li>体重更适合用“区间”，因为长期观察时通常看稳定范围，不看单点命中。</li>
-            <li>只有你明确想控制上限时，才需要用“不超过”。</li>
+            <li>睡眠和饮水，多数时候看下限。</li>
+            <li>体重更适合看区间，而不是单点命中。</li>
+            <li>只有明确控上限时，再选择“不超过”。</li>
           </ul>
         </section>
 
         <section className="rounded-3xl border border-emerald-200 bg-emerald-50/70 p-6">
           <h3 className="text-base font-semibold text-emerald-950">目标会影响</h3>
           <ul className="mt-4 space-y-3 text-sm leading-6 text-emerald-900">
-            <li>仪表盘会根据目标模式计算 7 天 / 30 天达标率。</li>
-            <li>提醒模块会提示你哪些项目连续未达标。</li>
-            <li>历史趋势页会对目标线做视觉标记。</li>
+            <li>概览页的 7 天 / 30 天达标率。</li>
+            <li>站内提醒的优先级。</li>
+            <li>趋势图里的目标线。</li>
           </ul>
         </section>
       </aside>

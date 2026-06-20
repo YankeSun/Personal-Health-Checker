@@ -142,9 +142,9 @@ describe("reminder-service", () => {
     expect(feed.enabled).toBe(true);
     expect(feed.reminders[0]).toMatchObject({
       id: "missing-some-today",
-      title: "今天还有 1 项待补录",
+      title: "今天还差 1 项",
     });
-    expect(feed.reminders.some((reminder) => reminder.title.includes("饮水达标率偏低"))).toBe(true);
+    expect(feed.reminders.some((reminder) => reminder.title.includes("饮水最近待观察"))).toBe(true);
   });
 
   it("returns no reminders when in-app reminders are disabled", async () => {
@@ -302,7 +302,7 @@ describe("reminder-service", () => {
       expect.arrayContaining([
         expect.objectContaining({
           id: "missing-streak-water",
-          title: "饮水已经连续 2 天没有记录",
+          title: "饮水断了 2 天",
           actionHref: "/today",
         }),
       ]),
@@ -332,8 +332,8 @@ describe("reminder-service", () => {
       expect.arrayContaining([
         expect.objectContaining({
           id: "inactive-return",
-          title: "已经 4 天没有回来记录",
-          actionLabel: "先记今天",
+          title: "4 天没留下记录",
+          actionLabel: "记今天",
         }),
       ]),
     );
@@ -429,7 +429,7 @@ describe("reminder-service", () => {
       expect.arrayContaining([
         expect.objectContaining({
           id: "goal-miss-streak-sleep",
-          title: "睡眠已经连续 3 天未达标",
+          title: "睡眠连续 3 天待观察",
           actionHref: "/trends?metric=sleep&days=7",
         }),
       ]),
@@ -526,7 +526,7 @@ describe("reminder-service", () => {
       expect.arrayContaining([
         expect.objectContaining({
           id: "weekly-highpoint-weight",
-          title: "最近 7 天最稳定的是体重",
+          title: "体重最近最稳",
         }),
         expect.objectContaining({
           id: "consistency-streak",
@@ -565,8 +565,8 @@ describe("reminder-service", () => {
       expect.arrayContaining([
         expect.objectContaining({
           id: "streak-building",
-          title: "今天这组已经完成",
-          description: expect.stringContaining("再坚持 1 天"),
+          title: "今天这组已完成",
+          description: expect.stringContaining("再 1 天"),
         }),
       ]),
     );

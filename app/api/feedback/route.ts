@@ -37,7 +37,7 @@ export async function POST(request: Request) {
 
     return Response.json({
       success: true,
-      message: "已收到反馈，谢谢你帮我们打磨这个版本。",
+      message: "反馈已收到，谢谢。",
     });
   } catch (error) {
     if (error instanceof ZodError) {

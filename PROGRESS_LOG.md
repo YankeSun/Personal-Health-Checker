@@ -244,6 +244,7 @@ npm run analytics:report -- --days=30
 
 ## 2026-06-20
 
+- 统一 Web 与小程序用户可见文案：将首页、登录注册、Today、Dashboard、Trends、History、Settings、等待名单、提醒和动态洞察从说明书式表达改为更简洁的产品语言，核心语气收敛为“把日常记成线索 / 变化显影”；同步更新小程序登录、记录、概览、趋势、我的页面，清理用户可见的 Alpha / 测试 / 验收口吻，并更新相关测试断言与小程序检查脚本。
 - 修正小程序 Today 页按钮 / 标签文字视觉不居中：保存主按钮不再使用微信原生 `button`，改为自绘胶囊容器加独立文字 label；体重背景选项从直接用 `text` 当按钮改为 `view + chip-label`，并补全全局 button reset、固定高度和结构防回退检查，避免微信默认 line-height / baseline 再次造成偏移。
 - 优化小程序 Today 记录入口：保存按钮改为更窄的胶囊形态并强制居中，顶部日期胶囊升级为记录日期选择器；用户可在同一张 Today 表单中切换最近 365 天日期并补录历史记录，保存历史日期继续复用现有 `/api/records/[date]`，后端自动标记补录。
 - 修复小程序微信登录线上 500：Vercel 日志定位为生产数据库缺少新版账号字段导致 `prisma.user.create()` 报 `P2022`，已在数据库自愈脚本中补齐 `User.emailVerifiedAt`、`UserProfile` 偏好字段和 `Session.lastAccessedAt` 的旧库兼容迁移，并增加回归测试，避免早期生产库阻断小程序首次登录。

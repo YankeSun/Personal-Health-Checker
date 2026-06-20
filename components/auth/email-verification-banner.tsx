@@ -40,9 +40,9 @@ export function EmailVerificationBanner({ email }: EmailVerificationBannerProps)
     <section className="rounded-[28px] border border-amber-200 bg-amber-50/90 px-5 py-4 shadow-sm">
       <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
         <div className="space-y-1">
-          <p className="text-sm font-semibold text-amber-950">邮箱尚未验证</p>
+          <p className="text-sm font-semibold text-amber-950">邮箱还差一步</p>
           <p className="text-sm leading-6 text-amber-900">
-            完成邮箱验证后，你可以更安全地找回密码并保护账号。当前邮箱：{email}
+            验证后，找回密码会更安心。当前邮箱：{email}
           </p>
           {error ? <p className="text-sm text-rose-700">{error}</p> : null}
           {success ? <p className="text-sm text-emerald-700">{success}</p> : null}
@@ -53,7 +53,7 @@ export function EmailVerificationBanner({ email }: EmailVerificationBannerProps)
           onClick={handleResend}
           disabled={isPending}
         >
-          {isPending ? "发送中..." : "重新发送验证邮件"}
+          {isPending ? "发送中..." : "重新发送"}
         </button>
       </div>
     </section>

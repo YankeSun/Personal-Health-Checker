@@ -14,8 +14,8 @@ export default async function LoginPage() {
   return (
     <main className="flex min-h-screen items-center justify-center px-6 py-12">
       <AuthCard
-        title="登录"
-        description="回来继续。"
+        title="继续记录"
+        description="回到你的日常线索。"
       >
         <LoginForm />
       </AuthCard>

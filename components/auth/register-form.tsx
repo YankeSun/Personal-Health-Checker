@@ -141,12 +141,12 @@ export function RegisterForm() {
         type="submit"
         disabled={isPending}
       >
-        {isPending ? "注册中..." : "创建账号"}
+        {isPending ? "创建中..." : "创建记录空间"}
       </button>
       <p className="text-sm text-slate-600">
-        已有账号？{" "}
+        已有记录空间？{" "}
         <AppLink className="font-medium text-emerald-700" href="/login">
-          去登录
+          直接登录
         </AppLink>
       </p>
     </form>

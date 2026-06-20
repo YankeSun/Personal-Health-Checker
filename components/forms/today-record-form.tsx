@@ -205,7 +205,7 @@ export function TodayRecordForm({
       setSavedQualityWarnings(currentQualityWarnings);
       setSuccess(
         nextSummary.isComplete
-          ? "三项记录已完成。"
+          ? "这一组已成形。"
           : `已更新，还差 ${nextSummary.missingMetrics.join("、")}`,
       );
       setIsPending(false);
@@ -245,10 +245,10 @@ export function TodayRecordForm({
       setSuccess(
         nextSummary.isComplete
           ? initialValues.date === dateControls?.maxDate
-            ? "今日三项已记录完成"
+            ? "今天这组已完成"
             : payload?.record?.isBackfilled
-              ? "这次补录已保存完成"
-              : "该日三项已记录完成"
+              ? "这次补录已入列"
+              : "这一天已完成"
           : `已保存，还差 ${nextSummary.missingMetrics.join("、")}`,
       );
       startTransition(() => {
@@ -298,7 +298,7 @@ export function TodayRecordForm({
       });
       setHasRecord(false);
       setSavedQualityWarnings([]);
-      setSuccess("该日记录已清空");
+      setSuccess("这一天已清空");
       startTransition(() => {
         router.refresh();
       });
@@ -355,10 +355,10 @@ export function TodayRecordForm({
       >
         <div className="space-y-2">
           <h1 className="text-2xl font-semibold text-slate-900">
-            {dateControls?.isToday ? "今日记录" : "每日记录"}
+            {dateControls?.isToday ? "今天落点" : "每日落点"}
           </h1>
           <p className="text-sm leading-6 text-slate-600">
-            睡眠、体重、饮水，记完今天这一组就够了。
+            睡眠、体重、饮水。三项到位，今天就有线索。
           </p>
         </div>
 
@@ -368,7 +368,7 @@ export function TodayRecordForm({
               <div>
                 <p className="text-sm font-medium text-emerald-950">{initialValues.dateLabel}</p>
                 <p className="mt-1 text-sm text-emerald-800">
-                  统计时区：{initialValues.timezone}
+                  时区：{initialValues.timezone}
                 </p>
               </div>
               {!dateControls.isToday ? (
@@ -401,7 +401,7 @@ export function TodayRecordForm({
                 ) : null}
               </div>
               <label className="flex items-center gap-3 text-sm text-emerald-950">
-                <span className="font-medium">选择日期</span>
+                <span className="font-medium">日期</span>
                 <input
                   className="rounded-xl border border-emerald-200 bg-white px-3 py-2 text-sm text-slate-900 outline-none transition focus:border-emerald-500"
                   type="date"
@@ -429,7 +429,7 @@ export function TodayRecordForm({
           <div className="mt-6 rounded-2xl border border-emerald-200 bg-emerald-50/70 px-4 py-4">
             <p className="text-sm font-medium text-emerald-950">{initialValues.dateLabel}</p>
             <p className="mt-1 text-sm text-emerald-800">
-              统计时区：{initialValues.timezone}
+              时区：{initialValues.timezone}
             </p>
           </div>
         )}
@@ -438,11 +438,11 @@ export function TodayRecordForm({
           <div className="mt-4 rounded-2xl border border-sky-200 bg-sky-50 px-4 py-4 text-sm text-sky-900">
             <p className="font-medium">
               {hasRecord || initialValues.isBackfilled
-                ? "这一天的记录已按补录处理。"
-                : "这一天的记录会按补录处理。"}
+                ? "这一天已标记为补录。"
+                : "保存后会标记为补录。"}
             </p>
             <p className="mt-1 text-sky-800">
-              趋势里会保留这条日期，但会标记为补录，方便后续回看时区分当日记录和回填记录。
+              趋势会保留日期，并区分当日记录与补录。
             </p>
           </div>
         ) : null}
@@ -454,16 +454,16 @@ export function TodayRecordForm({
               <p className="mt-1 text-sm text-emerald-800">{onboarding?.description}</p>
               <div className="mt-4 grid gap-2 sm:grid-cols-3">
                 <div className="rounded-2xl bg-white px-3 py-3 text-sm text-slate-700 shadow-sm">
-                  <p className="font-medium text-slate-900">1. 记下今天</p>
-                  <p className="mt-1 text-xs text-slate-500">先补三项核心数据</p>
+                  <p className="font-medium text-slate-900">1. 先落点</p>
+                  <p className="mt-1 text-xs text-slate-500">三项记下</p>
                 </div>
                 <div className="rounded-2xl bg-white px-3 py-3 text-sm text-slate-700 shadow-sm">
-                  <p className="font-medium text-slate-900">2. 看仪表盘</p>
-                  <p className="mt-1 text-xs text-slate-500">立刻看到当前状态</p>
+                  <p className="font-medium text-slate-900">2. 看概览</p>
+                  <p className="mt-1 text-xs text-slate-500">状态显影</p>
                 </div>
                 <div className="rounded-2xl bg-white px-3 py-3 text-sm text-slate-700 shadow-sm">
-                  <p className="font-medium text-slate-900">3. 明天回来</p>
-                  <p className="mt-1 text-xs text-slate-500">连续几天更容易看出变化</p>
+                  <p className="font-medium text-slate-900">3. 明天继续</p>
+                  <p className="mt-1 text-xs text-slate-500">变化成线</p>
                 </div>
               </div>
             </div>
@@ -476,10 +476,10 @@ export function TodayRecordForm({
               </p>
               <p className="mt-1 text-sm text-slate-600">
                 {completion.isComplete
-                  ? "三项都已记录，可以去看仪表盘。"
+                  ? "三项齐了，可以看概览。"
                   : completion.hasAnyValue
                     ? `还差 ${completion.missingMetrics.join("、")}`
-                    : "先记下一项，剩下的可以稍后补齐。"}
+                    : "先写下一项，剩下的稍后补齐。"}
               </p>
             </div>
             <div className="flex flex-wrap gap-2">
@@ -492,7 +492,7 @@ export function TodayRecordForm({
 
         <div className="mt-8 grid gap-5 md:grid-cols-3">
           <label className="block space-y-2">
-            <span className="text-sm font-medium text-slate-700">睡眠时长（小时）</span>
+            <span className="text-sm font-medium text-slate-700">睡眠（小时）</span>
             <input
               className="w-full rounded-2xl border border-slate-200 px-4 py-3 text-sm text-slate-900 outline-none transition focus:border-emerald-500"
               inputMode="decimal"
@@ -578,13 +578,13 @@ export function TodayRecordForm({
         <section className="mt-6 rounded-3xl border border-slate-200 bg-slate-50/80 p-5">
           <div className="flex flex-wrap items-start justify-between gap-3">
             <div>
-              <h2 className="text-base font-semibold text-slate-900">体重背景</h2>
+              <h2 className="text-base font-semibold text-slate-900">体重线索</h2>
               <p className="mt-1 text-sm leading-6 text-slate-600">
-                可选填写，用来帮助回看体重波动，不会作为医疗判断。
+                给这次称重一点上下文。
               </p>
             </div>
             <span className="rounded-full bg-white px-3 py-1.5 text-xs font-medium text-slate-600 ring-1 ring-slate-200">
-              已选 {contextTagCount}
+              {contextTagCount} 条线索
             </span>
           </div>
           <div className="mt-5 grid gap-4 lg:grid-cols-2">
@@ -623,7 +623,7 @@ export function TodayRecordForm({
         ) : null}
         {qualityWarnings.length > 0 ? (
           <div className="mt-4 rounded-2xl border border-amber-200 bg-amber-50 px-4 py-4 text-sm text-amber-950">
-            <p className="font-medium">请再确认一下这条记录</p>
+            <p className="font-medium">再看一眼这条记录</p>
             <ul className="mt-2 space-y-2 text-amber-900">
               {qualityWarnings.map((warning) => (
                 <li key={warning.id}>
@@ -643,7 +643,7 @@ export function TodayRecordForm({
                   className="inline-flex rounded-full bg-slate-900 px-5 py-2.5 text-sm font-medium text-white transition hover:bg-slate-800"
                   href="/dashboard"
                 >
-                  查看仪表盘
+                  看概览
                 </AppLink>
               </div>
             )}
@@ -658,26 +658,26 @@ export function TodayRecordForm({
               disabled={isPending || isRefreshing || isClearing || !hasRecord}
               onClick={handleClear}
             >
-              {isClearing ? "清空中..." : "清空该日记录"}
+              {isClearing ? "清空中..." : "清空这一天"}
             </button>
             <button
               className="rounded-2xl bg-slate-900 px-5 py-3 text-sm font-medium text-white transition hover:bg-slate-800 disabled:cursor-not-allowed disabled:opacity-60"
               type="submit"
               disabled={isPending || isRefreshing || isClearing}
             >
-            {previewMode
-                ? "更新当前视图"
+              {previewMode
+                ? "更新预览"
                 : isPending
                   ? "保存中..."
                   : isRefreshing
                     ? "刷新中..."
                     : completion.isComplete && !hasRecord
                       ? initialValues.date === dateControls?.maxDate
-                        ? "完成今日记录"
-                        : "完成该日记录"
+                        ? "完成今天"
+                        : "完成这一天"
                       : initialValues.date === dateControls?.maxDate
-                        ? "保存今日记录"
-                        : "保存该日记录"}
+                        ? "保存今天"
+                        : "保存这一天"}
             </button>
           </div>
         </div>
@@ -686,16 +686,16 @@ export function TodayRecordForm({
       <aside className="space-y-6">
         <ReminderPanel
           feed={reminderFeed}
-          title={dateControls?.isToday === false ? "最近的提醒" : "今天的提醒"}
-          description="这里会优先提示最近哪项记录缺失最多、哪项目标最值得先关注。"
+          title={dateControls?.isToday === false ? "最近留心" : "今天留心"}
+          description="只显示最值得先处理的两件事。"
         />
 
         <section className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
-          <h2 className="text-base font-semibold text-slate-900">填写建议</h2>
+          <h2 className="text-base font-semibold text-slate-900">记录口径</h2>
           <ul className="mt-4 space-y-3 text-sm leading-6 text-slate-600">
-            <li>睡眠建议填写昨晚总睡眠时长，例如 7.5 小时。</li>
-            <li>体重使用早晨固定时段测量，趋势会更稳定。</li>
-            <li>饮水可以按全天累计量填写，晚些再回来补录也可以。</li>
+            <li>睡眠：昨晚总时长，例如 7.5 小时。</li>
+            <li>体重：尽量固定时段，线条更干净。</li>
+            <li>饮水：按全天累计量，晚些补也可以。</li>
           </ul>
         </section>
 
@@ -725,7 +725,7 @@ export function TodayRecordForm({
 
         {dateControls ? (
           <section className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
-            <h2 className="text-base font-semibold text-slate-900">最近 14 天记录</h2>
+            <h2 className="text-base font-semibold text-slate-900">最近 14 天</h2>
             <div className="mt-4 space-y-3">
               {dateControls.recentRecords.map((record) => {
                 const statusLabel = record.isComplete

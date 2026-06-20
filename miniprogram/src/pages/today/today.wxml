@@ -3,7 +3,7 @@
     <view class="hero-topline">
       <text class="eyebrow">TODAY</text>
       <view class="date-control">
-        <text class="date-mode">记录日期</text>
+        <text class="date-mode">日期</text>
         <picker mode="date" value="{{selectedDate}}" start="{{minRecordDate}}" end="{{maxRecordDate}}" bindchange="handleDateChange">
           <view class="date-label date-picker {{selectedDate !== todayDate ? 'date-label-backfill' : ''}}">
             <text>{{dateDisplayLabel}}</text>
@@ -41,8 +41,8 @@
 
   <view class="record-card card">
     <view class="section-head">
-      <text class="section-title">核心记录</text>
-      <text class="section-note">体重优先，睡眠和饮水辅助回看节奏。</text>
+      <text class="section-title">今日三项</text>
+      <text class="section-note">三项到位，今天就有线索。</text>
     </view>
 
     <view class="field weight-field">
@@ -63,7 +63,7 @@
   </view>
 
   <view wx:if="{{qualityWarnings.length > 0}}" class="warning-card card">
-    <text class="warning-kicker">请确认</text>
+    <text class="warning-kicker">再看一眼</text>
     <view wx:for="{{qualityWarnings}}" wx:key="id" class="warning-item">
       <text class="warning-title">{{item.title}}</text>
       <text class="warning-copy">{{item.description}}</text>
@@ -72,8 +72,8 @@
 
   <view class="context-card card">
     <view class="section-head">
-      <text class="section-title">体重背景</text>
-      <text class="section-note">只选今天最影响判断的线索。</text>
+      <text class="section-title">体重线索</text>
+      <text class="section-note">给这次称重一点上下文。</text>
     </view>
 
     <view class="context-group">
@@ -125,7 +125,7 @@
     </view>
     <view wx:if="{{message}}" class="save-feedback">
       <text class="success">{{message}}</text>
-      <button class="ghost-button dashboard-button" bindtap="goDashboard">看今日概览</button>
+      <button class="ghost-button dashboard-button" bindtap="goDashboard">看概览</button>
     </view>
     <view wx:if="{{error}}" class="error-card">
       <text class="error">{{error}}</text>

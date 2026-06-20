@@ -1,7 +1,7 @@
 const config = require("../../config");
 const { request, saveAuth, toErrorState } = require("../../utils/api");
 
-const LEGAL_CONSENT_VERSION = "alpha-2026-06-12";
+const LEGAL_CONSENT_VERSION = "product-2026-06-20";
 
 Page({
   data: {
@@ -42,7 +42,7 @@ Page({
           this.setData({
             loading: false,
             error: "没有拿到微信登录 code，请重试",
-            errorDetail: "wx.login 未返回 code，通常是微信登录态、AppID 或开发者工具配置需要重新确认。",
+            errorDetail: "微信登录状态暂时不可用，请稍后重试。",
           });
           return;
         }
@@ -80,7 +80,7 @@ Page({
         this.setData({
           loading: false,
           error: "微信登录失败，请稍后再试",
-          errorDetail: "wx.login 调用失败，请先确认微信开发者工具、真机微信版本和小程序 AppID。",
+          errorDetail: "微信登录暂时不可用，请稍后再试。",
         });
       },
     });
@@ -107,7 +107,7 @@ Page({
         method: "POST",
         data: {
           code: `mock:${Date.now()}`,
-          displayName: "体验测试用户",
+          displayName: "体验用户",
           legalConsentAccepted: true,
           legalConsentVersion: LEGAL_CONSENT_VERSION,
           legalConsentAt: new Date().toISOString(),

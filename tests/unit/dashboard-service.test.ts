@@ -175,11 +175,11 @@ describe("dashboard-service", () => {
     expect(overview.todayCompletedMetrics).toBe(3);
     expect(overview.insights[0]).toMatchObject({
       id: "streak-momentum",
-      title: "连续记录已经到 4 天",
+      title: "已连续 4 天",
     });
     expect(overview.insights[1]).toMatchObject({
       id: "weekly-focus-goal",
-      title: "这周最该先看的是睡眠",
+      title: "这周先看睡眠",
     });
     expect(overview.windows[0].days).toBe(7);
     expect(overview.windows[0].completeRecordDays).toBe(4);

@@ -189,7 +189,7 @@ describe("wechat-auth-service", () => {
         code: "mock:alpha-tester",
       }),
     ).rejects.toMatchObject<WechatAuthError>({
-      message: "小程序测试登录未开启",
+      message: "体验登录未开启",
       status: 403,
     });
 

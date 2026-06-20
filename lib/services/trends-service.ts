@@ -297,24 +297,24 @@ function buildTrendInsight({
   if (completionRate < 50) {
     return {
       tone: "warning",
-      title: `先把${metricLabel}记录补齐`,
-      description: `最近 ${days} 天只记录了 ${recordedDays}/${days} 天，这项趋势更容易被缺口打断。`,
+      title: `${metricLabel}线还不够连续`,
+      description: `最近 ${days} 天记录 ${recordedDays}/${days} 天，先把缺口补稳。`,
     };
   }
 
   if (attainmentRate !== null && attainmentRate < 50) {
     return {
       tone: "warning",
-      title: `${metricLabel}最近值得多看一眼`,
-      description: `最近 ${days} 天达标率只有 ${attainmentRate}% ，可以先观察这项是不是最近最难保持。`,
+      title: `${metricLabel}值得多看一眼`,
+      description: `最近 ${days} 天达标率 ${attainmentRate}%。`,
     };
   }
 
   if (isFluctuating && fluctuationDisplay) {
     return {
       tone: "info",
-      title: `${metricLabel}波动有点大`,
-      description: `最近 ${days} 天的标准差是 ${fluctuationDisplay}。可以回顾一下，最近是不是这项的日常节奏被打乱了。`,
+      title: `${metricLabel}波动更明显`,
+      description: `最近 ${days} 天波动值 ${fluctuationDisplay}，适合回看日常节奏。`,
     };
   }
 
@@ -325,15 +325,15 @@ function buildTrendInsight({
   ) {
     return {
       tone: "info",
-      title: `${metricLabel}最近出现了明显变化`,
-      description: `相比上一周期，平均值变化了 ${averageDeltaDisplay}。`,
+      title: `${metricLabel}出现变化`,
+      description: `比上一段平均变化 ${averageDeltaDisplay}。`,
     };
   }
 
   return {
     tone: "success",
-    title: `${metricLabel}最近比较稳定`,
-    description: `最近 ${days} 天的记录频率和整体波动都比较平稳，可以继续保持现在的节奏。`,
+    title: `${metricLabel}最近很稳`,
+    description: `记录频率和波动都在稳定区间。`,
   };
 }
 
@@ -385,8 +385,8 @@ function buildContextSummary({
 
   if (recordedWeightDays === 0) {
     return {
-      title: "先建立体重趋势",
-      description: "有了几天体重记录后，这里会把体重趋势和你记录的日常背景放在一起回看。",
+      title: "先留下体重线",
+      description: "几天之后，体重和日常背景会开始同屏出现。",
       taggedDays: 0,
       topContextLabels: [],
     };
@@ -394,16 +394,16 @@ function buildContextSummary({
 
   if (taggedDays === 0) {
     return {
-      title: "给体重趋势补一点背景",
-      description: "体重已经有记录了。下次记录时补充饮食状态、活动量或称重时段，趋势会更容易读懂。",
+      title: "给体重线补一点上下文",
+      description: "下次记录时加上饮食、活动或称重时段，线条会更好读。",
       taggedDays: 0,
       topContextLabels: [],
     };
   }
 
   return {
-    title: "这些背景经常和体重记录同天出现",
-    description: `当前窗口内有 ${taggedDays}/${recordedWeightDays} 天带有背景标签。它们是回看线索，不代表体重变化的直接原因。`,
+    title: "这些线索常和体重同天出现",
+    description: `${taggedDays}/${recordedWeightDays} 天带有背景。它们是线索，不是结论。`,
     taggedDays,
     topContextLabels,
   };

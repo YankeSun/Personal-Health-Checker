@@ -187,7 +187,7 @@ describe("mini program page behavior", () => {
     await page.saveRecord();
 
     expect(page.data.completedCount).toBe(3);
-    expect(page.data.message).toBe("今日三项已完成");
+    expect(page.data.message).toBe("今天这组已完成");
     expect(page.data.saving).toBe(false);
     expect(page.data.qualityWarnings).toEqual([{ id: "weight-outlier" }]);
     expect((globalThis as MiniProgramGlobals).wx.request).toHaveBeenCalledWith(
@@ -217,7 +217,7 @@ describe("mini program page behavior", () => {
     });
     await page.saveRecord();
 
-    expect(page.data.error).toBe("至少先记录一项数据");
+    expect(page.data.error).toBe("至少先留下一项记录");
     expect((globalThis as MiniProgramGlobals).wx.request).not.toHaveBeenCalled();
   });
 
@@ -409,7 +409,7 @@ describe("mini program page behavior", () => {
     expect(page.data.selectedDate).toBe("2026-06-10");
     expect(page.data.dateDisplayLabel).toBe("6/10 补录");
     expect(page.data.dateActionLabel).toBe("换一天");
-    expect(page.data.recordFocusLabel).toBe("补录称重");
+    expect(page.data.recordFocusLabel).toBe("补录体重");
     expect(page.data.saveButtonLabel).toBe("保存补录");
 
     page.setData({
@@ -428,7 +428,7 @@ describe("mini program page behavior", () => {
     page.refreshDerivedState();
     await page.saveRecord();
 
-    expect(page.data.message).toBe("这一天三项已补齐");
+    expect(page.data.message).toBe("这一天已补齐");
     expect((globalThis as MiniProgramGlobals).wx.request).toHaveBeenCalledWith(
       expect.objectContaining({
         url: "https://api.example.test/api/records/2026-06-10",
@@ -483,7 +483,7 @@ describe("mini program page behavior", () => {
 
     expect(page.data.loading).toBe(false);
     expect(page.data.error).toBe("微信登录失败，请稍后再试");
-    expect(page.data.errorDetail).toContain("小程序 AppID");
+    expect(page.data.errorDetail).toContain("微信登录暂时不可用");
   });
 
   it("sends legal consent metadata when logging into the mini program", () => {
@@ -513,7 +513,7 @@ describe("mini program page behavior", () => {
         data: expect.objectContaining({
           code: "wechat-code",
           legalConsentAccepted: true,
-          legalConsentVersion: "alpha-2026-06-12",
+          legalConsentVersion: "product-2026-06-20",
           legalConsentAt: expect.any(String),
         }),
       }),
@@ -629,7 +629,7 @@ describe("mini program page behavior", () => {
 
     expect(page.data.trendAction).toEqual(
       expect.objectContaining({
-        title: "先记录第一条体重",
+        title: "先留下第一条体重",
         route: "/pages/today/today",
       }),
     );
@@ -678,8 +678,8 @@ describe("mini program page behavior", () => {
 
     expect(page.data.trendAction).toEqual(
       expect.objectContaining({
-        title: "先把记录密度补起来",
-        description: "当前窗口只有 4/30 天体重记录，趋势还容易被缺口影响。",
+        title: "先把密度补起来",
+        description: "当前窗口有 4/30 天体重记录，线条还容易被缺口打断。",
         route: "/pages/today/today",
       }),
     );
@@ -856,7 +856,7 @@ describe("mini program page behavior", () => {
         data: expect.stringContaining('"dailyRecords": 1'),
       }),
     );
-    expect(page.data.message).toBe("已复制个人数据摘要，共 1 条记录。");
+    expect(page.data.message).toBe("数据摘要已复制，共 1 条记录。");
     expect(page.data.exporting).toBe(false);
   });
 

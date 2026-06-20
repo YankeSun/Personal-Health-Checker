@@ -16,7 +16,7 @@ export function PlaceholderPanel({
         </p>
       </div>
       <div className="mt-8 rounded-3xl border border-dashed border-emerald-200 bg-emerald-50/60 p-6 text-sm leading-7 text-emerald-900">
-        这里会承接与你当前场景相关的核心内容，保持和整体产品一致的浏览与操作节奏。
+        内容会在这里继续展开，保持同一套记录与回看节奏。
       </div>
     </section>
   );

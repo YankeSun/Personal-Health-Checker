@@ -133,20 +133,20 @@ function buildHistoryInsights({
     if (densityDelta >= 10) {
       insights.push({
         tone: "success",
-        title: "这个月回来得更稳定了",
-        description: `有记录的天数占比比上个月高了 ${densityDelta} 个百分点。`,
+        title: "这个月更稳定",
+        description: `记录密度比上个月高 ${densityDelta} 个百分点。`,
       });
     } else if (densityDelta <= -10) {
       insights.push({
         tone: "warning",
-        title: "这个月的记录节奏放慢了",
-        description: `有记录的天数占比比上个月低了 ${Math.abs(densityDelta)} 个百分点，可以先补最容易漏掉的那一项。`,
+        title: "这个月节奏放慢",
+        description: `记录密度比上个月低 ${Math.abs(densityDelta)} 个百分点。先补最容易漏的那一项。`,
       });
     } else {
       insights.push({
         tone: "info",
-        title: "这个月的回看节奏和上月接近",
-        description: "记录密度整体比较稳定，适合继续保持同样的记录频率。",
+        title: "这个月和上月接近",
+        description: "记录密度稳定，继续保持同样节奏。",
       });
     }
   }
@@ -165,14 +165,14 @@ function buildHistoryInsights({
     if (minCount === maxCount) {
       insights.push({
         tone: "success",
-        title: "三项记录比较均衡",
-        description: "睡眠、体重、饮水的记录天数接近，回看时更容易对照同一段时间的变化。",
+        title: "三项记录很均衡",
+        description: "睡眠、体重、饮水落在同一段时间里，更好对照。",
       });
     } else {
       insights.push({
         tone: "info",
         title: `${weakestMetric.label}最容易漏记`,
-        description: `这个月只有 ${weakestMetric.count} 天记了${weakestMetric.label}，先把这项补齐，月度变化会更容易看清。`,
+        description: `这个月有 ${weakestMetric.count} 天记了${weakestMetric.label}。先补这项，月度线会更清楚。`,
       });
     }
   }

@@ -74,9 +74,9 @@ export default async function TrendsPage({ searchParams }: TrendsPageProps) {
     <div className="space-y-6">
       <section className="rounded-3xl border border-slate-200 bg-white p-8 shadow-sm">
         <div className="space-y-2">
-          <h1 className="text-2xl font-semibold text-slate-900">历史趋势</h1>
+          <h1 className="text-2xl font-semibold text-slate-900">趋势</h1>
           <p className="text-sm leading-6 text-slate-600">
-            查看睡眠、体重和饮水在最近 7 天或 30 天内的变化，并结合目标线理解每天的波动节奏。
+            7 天或 30 天，把变化放到同一条线上。
           </p>
         </div>
 
@@ -114,7 +114,7 @@ export default async function TrendsPage({ searchParams }: TrendsPageProps) {
               className="ml-2 inline-flex rounded-full border border-slate-300 bg-white px-4 py-2 text-sm font-medium text-slate-800 transition hover:border-slate-400"
               href={`/api/export?format=csv&from=${trend.startDate}&to=${trend.endDate}`}
             >
-              导出当前范围
+              导出这一段
             </a>
           </div>
         </div>
@@ -133,7 +133,7 @@ export default async function TrendsPage({ searchParams }: TrendsPageProps) {
           <p className="mt-3 text-3xl font-semibold text-slate-900">
             {trend.latestDisplay ? `${trend.latestDisplay} ${trend.unitLabel}` : "暂无"}
           </p>
-          <p className="mt-2 text-sm text-slate-600">{trend.metricLabel} 最近一次记录</p>
+          <p className="mt-2 text-sm text-slate-600">最近一次{trend.metricLabel}</p>
         </article>
         <article className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
           <p className="text-sm font-medium text-slate-500">平均值</p>
@@ -150,7 +150,7 @@ export default async function TrendsPage({ searchParams }: TrendsPageProps) {
             {trend.attainmentRate === null ? "未设置" : `${trend.attainmentRate}%`}
           </p>
           <p className="mt-2 text-sm text-slate-600">
-            {trend.goalDescription ?? "先去设置页配置目标"}
+            {trend.goalDescription ?? "先去设置目标"}
           </p>
           {trend.goalDeviationDescription ? (
             <p className="mt-3 text-sm font-medium text-slate-900">
@@ -168,21 +168,21 @@ export default async function TrendsPage({ searchParams }: TrendsPageProps) {
 
         <article className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
           <div className="space-y-1">
-            <p className="text-sm font-semibold text-slate-900">与上一周期对比</p>
+            <p className="text-sm font-semibold text-slate-900">和上一段比</p>
             <p className="text-sm text-slate-500">
               {trend.comparison.previousStartDate} 至 {trend.comparison.previousEndDate}
             </p>
           </div>
           <dl className="mt-4 space-y-3 text-sm text-slate-600">
             <div className="flex items-center justify-between gap-4">
-              <dt>记录率变化</dt>
+              <dt>记录率</dt>
               <dd className="font-medium text-slate-900">
                 {trend.comparison.completionRateChange > 0 ? "+" : ""}
                 {trend.comparison.completionRateChange}%
               </dd>
             </div>
             <div className="flex items-center justify-between gap-4">
-              <dt>平均值变化</dt>
+              <dt>平均变化</dt>
               <dd className="font-medium text-slate-900">
                 {trend.comparison.averageDeltaDisplay ?? "变化不明显"}
               </dd>
@@ -204,7 +204,7 @@ export default async function TrendsPage({ searchParams }: TrendsPageProps) {
           <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
             <div className="max-w-3xl">
               <p className="text-sm font-semibold tracking-[0.18em] text-sky-700">
-                体重背景回看
+              体重线索
               </p>
               <h2 className="mt-2 text-xl font-semibold text-slate-900">
                 {trend.contextSummary.title}
@@ -217,7 +217,7 @@ export default async function TrendsPage({ searchParams }: TrendsPageProps) {
               <span className="font-semibold text-slate-900">
                 {trend.contextSummary.taggedDays}
               </span>{" "}
-              天带有背景标签
+              天有线索
             </div>
           </div>
           {trend.contextSummary.topContextLabels.length > 0 ? (
@@ -236,7 +236,7 @@ export default async function TrendsPage({ searchParams }: TrendsPageProps) {
               className="mt-5 inline-flex rounded-full bg-slate-900 px-4 py-2 text-sm font-medium text-white transition hover:bg-slate-800"
               href="/today"
             >
-              去补今天的背景
+              补今天的线索
             </AppLink>
           )}
         </section>
@@ -246,10 +246,10 @@ export default async function TrendsPage({ searchParams }: TrendsPageProps) {
         <div className="flex flex-col gap-2 md:flex-row md:items-end md:justify-between">
           <div>
             <h2 className="text-xl font-semibold text-slate-900">
-              {trend.metricLabel}趋势图
+              {trend.metricLabel}线
             </h2>
             <p className="text-sm text-slate-600">
-              时间范围：{trend.startDate} 至 {trend.endDate}
+              {trend.startDate} 至 {trend.endDate}
             </p>
           </div>
           <div className="text-sm text-slate-500">

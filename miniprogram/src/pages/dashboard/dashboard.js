@@ -23,8 +23,8 @@ function buildFallbackInsight(dashboard) {
     return {
       id: "fallback-today",
       tone: "warning",
-      title: "先把今天补完整",
-      description: `今天已完成 ${completed}/${total}，补齐后趋势会更有参考价值。`,
+      title: "今天还差一点",
+      description: `已完成 ${completed}/${total}。补齐后，今天就成一组。`,
       actionHref: "/today",
       actionLabel: "继续记录",
     };
@@ -33,8 +33,8 @@ function buildFallbackInsight(dashboard) {
   return {
     id: "fallback-trends",
     tone: "success",
-    title: "今天已经记录完整",
-    description: "可以看看最近几天体重和背景线索有没有一起变化。",
+      title: "今天这组已完成",
+      description: "现在可以看体重和日常线索有没有一起变化。",
     actionHref: "/trends",
     actionLabel: "看体重趋势",
   };
@@ -58,7 +58,7 @@ function buildActionCards(dashboard, reminders) {
     title: reminder.title,
     description: reminder.description,
     actionHref: reminder.actionHref || "/today",
-    actionLabel: reminder.actionLabel || "去处理",
+    actionLabel: reminder.actionLabel || "去看看",
   }));
 
   return cards.concat(reminderCards).slice(0, 3).map(decorateAction);
@@ -82,7 +82,7 @@ function decorateMetric(metric) {
   return {
     ...metric,
     valueLabel: metric.displayValue || "未记录",
-    detailLabel: metric.goalDeviationDescription || metric.goalDescription || "先保持记录节奏",
+    detailLabel: metric.goalDeviationDescription || metric.goalDescription || "保持现在的节奏",
     statusLabel,
     statusClass,
   };
@@ -91,8 +91,8 @@ function decorateMetric(metric) {
 function buildWeightContext(rawContext) {
   if (!rawContext) {
     return {
-      title: "先建立体重记录",
-      description: "连续几天记录体重后，这里会把体重变化和日常背景放在一起回看。",
+      title: "先留下体重线索",
+      description: "连续几天后，体重和日常背景会开始同屏出现。",
       latestDisplay: "--",
       changeDisplay: "暂无变化",
       recordedDays: 0,

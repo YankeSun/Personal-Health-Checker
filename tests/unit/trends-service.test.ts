@@ -107,7 +107,7 @@ describe("trends-service", () => {
     expect(trend.averageDisplay).toBe("7.6");
     expect(trend.insight).toMatchObject({
       tone: "warning",
-      title: "先把睡眠记录补齐",
+      title: "睡眠线还不够连续",
     });
     expect(trend.comparison).toMatchObject({
       previousStartDate: "2026-03-21",
@@ -154,7 +154,7 @@ describe("trends-service", () => {
     expect(trend.latestDisplay).toBe("140");
     expect(trend.insight.title).toContain("体重");
     expect(trend.contextSummary).toMatchObject({
-      title: "这些背景经常和体重记录同天出现",
+      title: "这些线索常和体重同天出现",
       taggedDays: 1,
       topContextLabels: [
         { label: "偏少", count: 1 },

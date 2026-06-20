@@ -14,8 +14,8 @@ export default async function ForgotPasswordPage() {
   return (
     <main className="flex min-h-screen items-center justify-center px-6 py-12">
       <AuthCard
-        title="重置密码"
-        description="输入邮箱，我们会把重置链接发给你。"
+        title="找回入口"
+        description="输入邮箱，重置链接会发到那里。"
       >
         <ForgotPasswordForm />
       </AuthCard>

@@ -18,10 +18,10 @@ describe("settings account data panel", () => {
     expect(settingsPage).toContain("AccountDataPanel");
     expect(accountPanel).toContain("/api/account/export");
     expect(accountPanel).toContain("/api/account");
-    expect(accountPanel).toContain("导出个人数据");
+    expect(accountPanel).toContain("导出数据");
     expect(accountPanel).toContain("删除账号");
     expect(accountPanel).toContain("DELETE");
     expect(accountPanel).toContain("personal-health-checker-account.json");
-    expect(accountPanel).toContain("产品事件");
+    expect(accountPanel).toContain("关联事件");
   });
 });

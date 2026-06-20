@@ -74,7 +74,7 @@ describe("dashboard route", () => {
         {
           id: "today-focus",
           tone: "success",
-          title: "连续记录已经到 4 天",
+          title: "已连续 4 天",
           description: "继续保持今天这组。",
           actionHref: "/trends",
           actionLabel: "看最近趋势",
@@ -109,7 +109,7 @@ describe("dashboard route", () => {
         {
           id: "missing-some-today",
           tone: "warning",
-          title: "今天还有 1 项待补录",
+          title: "今天还差 1 项",
           description: "还差饮水",
           actionHref: "/today",
           actionLabel: "继续补录",

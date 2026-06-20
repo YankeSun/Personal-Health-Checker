@@ -113,7 +113,7 @@ describe("mini program wechat login route", () => {
         body: JSON.stringify({
           code: "wx_login_code",
           legalConsentAccepted: true,
-          legalConsentVersion: "alpha-2026-06-12",
+          legalConsentVersion: "product-2026-06-20",
           legalConsentAt: "2026-06-14T03:00:00.000Z",
         }),
       }),
@@ -123,7 +123,7 @@ describe("mini program wechat login route", () => {
     expect(loginWechatMiniProgramUser).toHaveBeenCalledWith({
       code: "wx_login_code",
       legalConsentAccepted: true,
-      legalConsentVersion: "alpha-2026-06-12",
+      legalConsentVersion: "product-2026-06-20",
       legalConsentAt: "2026-06-14T03:00:00.000Z",
     });
     expect(trackProductEventSafely).toHaveBeenCalledWith({
@@ -134,7 +134,7 @@ describe("mini program wechat login route", () => {
         platform: "wechat_mp",
         isNewUser: false,
         legalConsentAccepted: true,
-        legalConsentVersion: "alpha-2026-06-12",
+        legalConsentVersion: "product-2026-06-20",
         legalConsentAt: "2026-06-14T03:00:00.000Z",
       },
     });

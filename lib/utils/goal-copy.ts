@@ -10,9 +10,9 @@ type GoalCopyProfile = {
 
 const goalMeta = {
   [Metric.SLEEP]: {
-    title: "睡眠目标",
+    title: "睡眠",
     metricLabel: "睡眠",
-    description: "每天睡够这个时长，身体的恢复效果会更好。",
+    description: "给夜晚一个可回看的下限。",
     recommendedMode: GoalMode.AT_LEAST,
     modeLabels: {
       [GoalMode.AT_LEAST]: "每天至少睡够",
@@ -21,9 +21,9 @@ const goalMeta = {
     },
   },
   [Metric.WEIGHT]: {
-    title: "体重目标",
+    title: "体重",
     metricLabel: "体重",
-    description: "用一个稳定的区间来观察体重变化，比单值更容易判断趋势。",
+    description: "用区间观察长期变化，比单点更稳。",
     recommendedMode: GoalMode.IN_RANGE,
     modeLabels: {
       [GoalMode.AT_LEAST]: "至少保持",
@@ -32,9 +32,9 @@ const goalMeta = {
     },
   },
   [Metric.WATER]: {
-    title: "饮水目标",
+    title: "饮水",
     metricLabel: "饮水",
-    description: "每天累计喝够这个量，帮助身体保持水分平衡。",
+    description: "给每天的饮水留一个清楚下限。",
     recommendedMode: GoalMode.AT_LEAST,
     modeLabels: {
       [GoalMode.AT_LEAST]: "每天至少喝够",
@@ -134,18 +134,18 @@ export function formatGoalRuleDescription(
   const metricLabel = getGoalMeta(metric).metricLabel;
 
   if (goal.mode === GoalMode.IN_RANGE && min && max) {
-    return `${metricLabel}记录落在 ${min} - ${max} ${unitLabel} 之间时，会算作当日达标。`;
+    return `${metricLabel}落在 ${min} - ${max} ${unitLabel} 之间，计为达标。`;
   }
 
   if (goal.mode === GoalMode.AT_MOST && target) {
-    return `${metricLabel}记录在 ${target} ${unitLabel} 以内时，会算作当日达标。`;
+    return `${metricLabel}不高于 ${target} ${unitLabel}，计为达标。`;
   }
 
   if (!target) {
     return null;
   }
 
-  return `${metricLabel}记录达到 ${target} ${unitLabel} 及以上时，会算作当日达标。`;
+  return `${metricLabel}达到 ${target} ${unitLabel} 及以上，计为达标。`;
 }
 
 export function formatGoalDeviationDescription(
@@ -173,7 +173,7 @@ export function formatGoalDeviationDescription(
       return `高出目标区间 ${formatDelta(value - goal.maxValue)}`;
     }
 
-    return "当前落在目标区间内";
+    return "已在目标区间内";
   }
 
   if (goal.targetValue === null) {
@@ -185,7 +185,7 @@ export function formatGoalDeviationDescription(
       return `超出上限 ${formatDelta(value - goal.targetValue)}`;
     }
 
-    return `距离上限还剩 ${formatDelta(goal.targetValue - value)}`;
+    return `距离上限还余 ${formatDelta(goal.targetValue - value)}`;
   }
 
   if (value < goal.targetValue) {
@@ -195,7 +195,7 @@ export function formatGoalDeviationDescription(
   const delta = value - goal.targetValue;
 
   if (delta < 0.01) {
-    return "刚好达到目标";
+    return "刚好对齐目标";
   }
 
   return `超过目标 ${formatDelta(delta)}`;

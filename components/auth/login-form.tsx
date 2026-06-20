@@ -90,18 +90,18 @@ export function LoginForm() {
         type="submit"
         disabled={isPending}
       >
-        {isPending ? "登录中..." : "登录"}
+        {isPending ? "登录中..." : "继续记录"}
       </button>
       <p className="text-sm text-slate-600">
-        还没有账号？{" "}
+        还没有记录空间？{" "}
         <AppLink className="font-medium text-emerald-700" href="/register">
-          去注册
+          创建一个
         </AppLink>
       </p>
       <p className="text-sm text-slate-600">
         忘记密码？{" "}
         <AppLink className="font-medium text-emerald-700" href="/forgot-password">
-          重置密码
+          找回入口
         </AppLink>
       </p>
     </form>

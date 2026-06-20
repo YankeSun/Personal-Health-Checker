@@ -44,7 +44,7 @@ describe("goal-copy", () => {
         },
         profile,
       ),
-    ).toBe("体重记录落在 60 - 63 kg 之间时，会算作当日达标。");
+    ).toBe("体重落在 60 - 63 kg 之间，计为达标。");
   });
 
   it("describes how far an at-least goal is from target", () => {
@@ -80,6 +80,6 @@ describe("goal-copy", () => {
         61.4,
         profile,
       ),
-    ).toBe("当前落在目标区间内");
+    ).toBe("已在目标区间内");
   });
 });

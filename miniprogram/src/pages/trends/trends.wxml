@@ -5,11 +5,11 @@
       <text class="date-label">最近 {{trend.days || 30}} 天</text>
     </view>
     <text class="hero-value">{{trend.latestDisplay || "--"}} {{trend.unitLabel || "kg"}}</text>
-    <text class="hero-subtitle">最新体重 · 记录 {{trend.recordedDays || 0}}/{{trend.days || 30}} 天</text>
+    <text class="hero-subtitle">最新体重 · {{trend.recordedDays || 0}}/{{trend.days || 30}} 天</text>
   </view>
 
   <view class="insight-card card {{insight.toneClass}}">
-    <text class="insight-kicker">趋势结论</text>
+    <text class="insight-kicker">趋势洞察</text>
     <text class="insight-title">{{insight.title}}</text>
     <text class="insight-copy">{{insight.description}}</text>
   </view>
@@ -17,7 +17,7 @@
   <view class="card spark-card">
     <view class="section-head">
       <text class="section-title">最近走势</text>
-      <text class="section-note">空位代表未记录</text>
+      <text class="section-note">空位代表缺口</text>
     </view>
     <view class="spark-chart">
       <view wx:for="{{sparkPoints}}" wx:key="date" class="spark-column">
@@ -54,8 +54,8 @@
 
   <view wx:if="{{contextSummary}}" class="card context-card">
     <view class="section-head">
-      <text class="section-title">体重背景</text>
-      <text class="section-note">{{contextSummary.taggedDays || 0}} 天有背景</text>
+      <text class="section-title">体重线索</text>
+      <text class="section-note">{{contextSummary.taggedDays || 0}} 天有线索</text>
     </view>
     <text class="context-title">{{contextSummary.title}}</text>
     <text class="context-copy">{{contextSummary.description}}</text>

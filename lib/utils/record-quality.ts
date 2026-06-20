@@ -18,8 +18,8 @@ export function getRecordQualityWarnings(values: RecordValues) {
     warnings.push({
       id: "sleep-outlier",
       metric: "sleep",
-      title: "这次睡眠时长偏离常见范围",
-      description: "如果不是一次特殊情况，建议再确认一下输入，避免影响趋势判断。",
+      title: "睡眠数值不太常见",
+      description: "如果不是特殊情况，可以再确认一次，避免拉偏趋势。",
     });
   }
 
@@ -27,8 +27,8 @@ export function getRecordQualityWarnings(values: RecordValues) {
     warnings.push({
       id: "weight-outlier",
       metric: "weight",
-      title: "这次体重偏离常见范围",
-      description: "如果单位或小数点输错了，趋势会被明显拉偏，建议再检查一次。",
+      title: "体重数值不太常见",
+      description: "如果单位或小数点有误，趋势会被明显拉偏。",
     });
   }
 
@@ -36,8 +36,8 @@ export function getRecordQualityWarnings(values: RecordValues) {
     warnings.push({
       id: "water-outlier",
       metric: "water",
-      title: "这次饮水量偏离常见范围",
-      description: "如果是分次补录后的累计值可以保留，否则建议再确认一下数字。",
+      title: "饮水数值不太常见",
+      description: "如果是累计补录可以保留，否则建议再确认数字。",
     });
   }
 

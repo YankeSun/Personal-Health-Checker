@@ -11,9 +11,9 @@ export function RecordHistoryTable({ history }: RecordHistoryTableProps) {
     <section className="rounded-3xl border border-slate-200 bg-white p-8 shadow-sm">
       <div className="flex flex-col gap-4 md:flex-row md:items-start md:justify-between">
         <div className="space-y-2">
-          <h2 className="text-xl font-semibold text-slate-900">原始记录</h2>
+          <h2 className="text-xl font-semibold text-slate-900">每日记录</h2>
           <p className="text-sm leading-6 text-slate-600">
-            直接查看当前时间范围内每天的实际记录，快速发现缺失、补录和需要修正的日期。
+            每一天都在这里。缺口、补录、修正，一眼回到原位。
           </p>
         </div>
 
@@ -37,17 +37,17 @@ export function RecordHistoryTable({ history }: RecordHistoryTableProps) {
         <article className="rounded-2xl border border-emerald-200 bg-emerald-50 p-5">
           <p className="text-sm font-medium text-emerald-800">完整记录</p>
           <p className="mt-3 text-3xl font-semibold text-emerald-950">{history.completeDays}</p>
-          <p className="mt-2 text-sm text-emerald-900">三项数据都已补齐</p>
+          <p className="mt-2 text-sm text-emerald-900">三项齐了</p>
         </article>
         <article className="rounded-2xl border border-amber-200 bg-amber-50 p-5">
           <p className="text-sm font-medium text-amber-800">部分记录</p>
           <p className="mt-3 text-3xl font-semibold text-amber-950">{history.partialDays}</p>
-          <p className="mt-2 text-sm text-amber-900">还有部分指标需要补录</p>
+          <p className="mt-2 text-sm text-amber-900">还有缺口</p>
         </article>
         <article className="rounded-2xl border border-slate-200 bg-slate-50 p-5">
           <p className="text-sm font-medium text-slate-600">空白日期</p>
           <p className="mt-3 text-3xl font-semibold text-slate-900">{history.emptyDays}</p>
-          <p className="mt-2 text-sm text-slate-600">尚未留下任何记录</p>
+          <p className="mt-2 text-sm text-slate-600">还没有线索</p>
         </article>
       </div>
 
@@ -59,7 +59,7 @@ export function RecordHistoryTable({ history }: RecordHistoryTableProps) {
               <th className="pb-4 pr-4 font-medium">睡眠</th>
               <th className="pb-4 pr-4 font-medium">体重</th>
               <th className="pb-4 pr-4 font-medium">饮水</th>
-              <th className="pb-4 pr-4 font-medium">完成度</th>
+              <th className="pb-4 pr-4 font-medium">状态</th>
               <th className="pb-4 font-medium text-right">操作</th>
             </tr>
           </thead>
@@ -109,7 +109,7 @@ export function RecordHistoryTable({ history }: RecordHistoryTableProps) {
                       className="inline-flex rounded-full border border-slate-300 px-4 py-2 text-sm font-medium text-slate-700 transition hover:border-slate-400 hover:bg-slate-100"
                       href={`/today?date=${row.date}`}
                     >
-                      查看并编辑
+                        打开这天
                     </AppLink>
                   </td>
                 </tr>

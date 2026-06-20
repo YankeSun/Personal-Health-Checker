@@ -17,29 +17,29 @@ const feedbackFrictionOptions = [
 const alphaTaskItems = [
   {
     key: "record",
-    title: "记录今天体重",
-    description: "完成一条体重记录，并尽量补充睡眠、饮水和背景标签。",
+    title: "记录今天",
+    description: "先留下体重，再补睡眠、饮水和体重线索。",
     actionLabel: "去记录",
     route: "/pages/today/today",
   },
   {
     key: "dashboard",
     title: "看今日概览",
-    description: "确认系统有没有给出清楚的下一步和体重变化线索。",
+    description: "看看今天的进度、连续状态和体重线索。",
     actionLabel: "看概览",
     route: "/pages/dashboard/dashboard",
   },
   {
     key: "trend",
     title: "回看体重趋势",
-    description: "观察趋势结论、走势条和背景标签是否能帮助理解波动。",
+    description: "看最近 30 天的体重线和日常线索。",
     actionLabel: "看趋势",
     route: "/pages/trends/trends",
   },
   {
     key: "feedback",
-    title: "提交 Alpha 反馈",
-    description: "告诉我们你是否愿意连续使用 7 天，以及最卡的地方。",
+    title: "留下反馈",
+    description: "告诉我们哪一步最顺，哪一步最卡。",
     actionLabel: "去反馈",
     anchor: "feedback",
   },
@@ -47,8 +47,8 @@ const alphaTaskItems = [
 
 const reportReasonItems = [
   "汇总 30 天体重变化和目标进度",
-  "回看经常同天出现的饮食、活动和称重时段",
-  "为下一版报告内测预留名额",
+  "回看饮食、活动和称重时段线索",
+  "开放后优先体验",
 ];
 
 const metricLabels = {
@@ -261,7 +261,7 @@ Page({
       });
 
       this.setData({
-        message: payload.message || "已记录你的内测意向。",
+        message: payload.message || "已加入等待名单。",
       });
     } catch (error) {
       const errorState = toErrorState(error);
@@ -301,18 +301,18 @@ Page({
           data: exportText,
           success: () => {
             this.setData({
-              message: `已复制个人数据摘要，共 ${recordCount} 条记录。`,
+              message: `数据摘要已复制，共 ${recordCount} 条记录。`,
             });
           },
           fail: () => {
             this.setData({
-              message: `已生成个人数据导出，共 ${recordCount} 条记录。复制失败，可稍后重试。`,
+              message: `数据导出已生成，共 ${recordCount} 条记录。复制失败，可稍后重试。`,
             });
           },
         });
       } else {
         this.setData({
-          message: `已生成个人数据导出，共 ${recordCount} 条记录。当前微信版本不支持自动复制。`,
+          message: `数据导出已生成，共 ${recordCount} 条记录。当前微信版本不支持自动复制。`,
         });
       }
     } catch (error) {
@@ -415,7 +415,7 @@ Page({
       });
 
       this.setData({
-        message: payload.message || "已收到反馈，谢谢。",
+        message: payload.message || "反馈已收到，谢谢。",
         feedback: {
           rating: 0,
           valueCue: "",

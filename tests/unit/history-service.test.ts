@@ -108,13 +108,13 @@ describe("history-service", () => {
     expect(overview.insights).toEqual([
       {
         tone: "info",
-        title: "这个月的回看节奏和上月接近",
-        description: "记录密度整体比较稳定，适合继续保持同样的记录频率。",
+        title: "这个月和上月接近",
+        description: "记录密度稳定，继续保持同样节奏。",
       },
       {
         tone: "info",
         title: "睡眠最容易漏记",
-        description: "这个月只有 1 天记了睡眠，先把这项补齐，月度变化会更容易看清。",
+        description: "这个月有 1 天记了睡眠。先补这项，月度线会更清楚。",
       },
     ]);
     expect(overview.rows[0]).toMatchObject({

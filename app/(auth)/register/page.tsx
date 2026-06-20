@@ -14,8 +14,8 @@ export default async function RegisterPage() {
   return (
     <main className="flex min-h-screen items-center justify-center px-6 py-12">
       <AuthCard
-        title="创建账号"
-        description="从今天开始。"
+        title="创建记录空间"
+        description="从今天留下一条清晰起点。"
       >
         <RegisterForm />
       </AuthCard>

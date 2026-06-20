@@ -65,7 +65,7 @@ export function PayIntentButton({ offer, source }: PayIntentButtonProps) {
           }
         | null;
 
-      setMessage(payload?.message ?? "已记录你的内测意向。");
+      setMessage(payload?.message ?? "已加入等待名单。");
     } catch {
       setError("网络异常，请稍后再试");
     } finally {
@@ -81,7 +81,7 @@ export function PayIntentButton({ offer, source }: PayIntentButtonProps) {
         onClick={handleClick}
         type="button"
       >
-        {isPending ? "记录中..." : "加入报告内测"}
+        {isPending ? "加入中..." : "加入等待名单"}
       </button>
       {message ? <p className="text-sm text-emerald-700">{message}</p> : null}
       {error ? <p className="text-sm text-rose-700">{error}</p> : null}

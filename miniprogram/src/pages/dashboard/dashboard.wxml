@@ -4,7 +4,7 @@
       <text class="eyebrow">DASHBOARD</text>
       <text class="date-label">{{dashboard.todayDate || "今日"}}</text>
     </view>
-    <text class="hero-title">今天已完成 {{dashboard.todayCompletedMetrics || 0}}/{{dashboard.totalTrackedMetrics || 3}}</text>
+    <text class="hero-title">今天 {{dashboard.todayCompletedMetrics || 0}}/{{dashboard.totalTrackedMetrics || 3}}</text>
     <text class="hero-subtitle">连续记录 {{dashboard.streakDays || 0}} 天</text>
     <view class="progress-track">
       <view class="progress-fill" style="width: {{completionPercent}}%;"></view>
@@ -19,7 +19,7 @@
       data-route="{{item.route}}"
       bindtap="handleAction"
     >
-      <text class="action-kicker">{{item.isPrimary ? "今天先做什么" : "接下来可以看"}}</text>
+      <text class="action-kicker">{{item.isPrimary ? "今天先看" : "继续回看"}}</text>
       <text class="action-title">{{item.title}}</text>
       <text class="action-copy">{{item.description}}</text>
       <text class="action-link">{{item.actionLabel}}</text>
@@ -35,13 +35,13 @@
     <view class="stat card">
       <text class="label">达标率</text>
       <text class="metric-value">{{windowAttainmentRate}}%</text>
-      <text class="stat-note">目标对齐情况</text>
+      <text class="stat-note">目标对齐</text>
     </view>
   </view>
 
   <view class="card weight-card">
     <view class="section-head">
-      <text class="section-title">体重变化线索</text>
+      <text class="section-title">体重线索</text>
       <text class="weight-badge">{{weightContext.recordedDays || 0}}/{{weightContext.days || 7}} 天</text>
     </view>
     <view class="weight-values">
