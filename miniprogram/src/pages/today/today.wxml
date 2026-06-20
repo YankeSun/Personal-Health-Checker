@@ -2,11 +2,19 @@
   <view class="hero-card card">
     <view class="hero-topline">
       <text class="eyebrow">TODAY</text>
-      <text class="date-label">{{record.date || "同步中"}}</text>
+      <view class="date-control">
+        <text class="date-mode">记录日期</text>
+        <picker mode="date" value="{{selectedDate}}" start="{{minRecordDate}}" end="{{maxRecordDate}}" bindchange="handleDateChange">
+          <view class="date-label date-picker {{selectedDate !== todayDate ? 'date-label-backfill' : ''}}">
+            <text>{{dateDisplayLabel}}</text>
+            <text class="date-picker-action">{{dateActionLabel}}</text>
+          </view>
+        </picker>
+      </view>
     </view>
 
     <view class="weight-focus">
-      <text class="focus-label">今日称重</text>
+      <text class="focus-label">{{recordFocusLabel}}</text>
       <text class="focus-value">{{weightDisplay}}</text>
       <text class="focus-hint">{{weightHint}}</text>
     </view>
@@ -108,7 +116,7 @@
   </view>
 
   <view class="submit-card card">
-    <button class="primary-button save-button" loading="{{saving}}" bindtap="saveRecord">保存今天</button>
+    <button class="primary-button save-button" loading="{{saving || loadingRecord}}" bindtap="saveRecord">{{saveButtonLabel}}</button>
     <view wx:if="{{message}}" class="save-feedback">
       <text class="success">{{message}}</text>
       <button class="ghost-button dashboard-button" bindtap="goDashboard">看今日概览</button>

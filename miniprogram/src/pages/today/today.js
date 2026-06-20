@@ -152,9 +152,76 @@ function getNextStepText(steps) {
     : "记录完整，可以看今日概览";
 }
 
+function shiftDateString(dateString, offsetDays) {
+  const date = new Date(`${dateString}T00:00:00.000Z`);
+
+  date.setUTCDate(date.getUTCDate() + offsetDays);
+  return date.toISOString().slice(0, 10);
+}
+
+function formatShortDateLabel(dateString) {
+  if (!dateString) {
+    return "同步中";
+  }
+
+  const [, month, day] = dateString.split("-");
+
+  return `${Number(month)}/${Number(day)}`;
+}
+
+function isTodayDate(dateString, todayDate) {
+  return Boolean(dateString && todayDate && dateString === todayDate);
+}
+
+function getDateDisplayLabel(dateString, todayDate) {
+  if (!dateString) {
+    return "同步中";
+  }
+
+  return isTodayDate(dateString, todayDate)
+    ? `今天 ${formatShortDateLabel(dateString)}`
+    : `${formatShortDateLabel(dateString)} 补录`;
+}
+
+function getDateActionLabel(dateString, todayDate) {
+  return isTodayDate(dateString, todayDate) ? "补录" : "换一天";
+}
+
+function getRecordFocusLabel(dateString, todayDate) {
+  return isTodayDate(dateString, todayDate) ? "今日称重" : "补录称重";
+}
+
+function getSaveButtonLabel(dateString, todayDate) {
+  return isTodayDate(dateString, todayDate) ? "保存今天" : "保存补录";
+}
+
+function getWeightHint(weightValue, dateString, todayDate) {
+  if (weightValue !== null) {
+    return "体重已记录";
+  }
+
+  return isTodayDate(dateString, todayDate) ? "先填今天体重" : "补上这天体重";
+}
+
+function getSaveSuccessMessage(completedCount, isToday) {
+  if (completedCount === 3) {
+    return isToday ? "今日三项已完成" : "这一天三项已补齐";
+  }
+
+  return isToday ? `已保存 ${completedCount}/3` : `已补录 ${completedCount}/3`;
+}
+
 Page({
   data: {
     record: {},
+    selectedDate: "",
+    todayDate: "",
+    minRecordDate: "",
+    maxRecordDate: "",
+    dateDisplayLabel: "同步中",
+    dateActionLabel: "补录",
+    recordFocusLabel: "今日称重",
+    saveButtonLabel: "保存今天",
     profile: normalizeProfile(null),
     form: {
       sleepHours: "",
@@ -181,6 +248,7 @@ Page({
     activityOptions: decorateOptions(activityBaseOptions, []),
     energyOptions: decorateOptions(energyBaseOptions, []),
     timingOptions: decorateOptions(timingBaseOptions, []),
+    loadingRecord: false,
     saving: false,
     message: "",
     error: "",
@@ -197,35 +265,58 @@ Page({
     this.loadToday();
   },
 
+  applyRecordPayload(payload, options = {}) {
+    const record = payload.record || {};
+    const date = record.date || options.date || this.data.selectedDate;
+    const todayDate = options.todayDate || this.data.todayDate || date;
+    const maxRecordDate = options.maxRecordDate || this.data.maxRecordDate || todayDate;
+    const minRecordDate = options.minRecordDate || this.data.minRecordDate || shiftDateString(maxRecordDate, -364);
+    const profile = payload.profile ? normalizeProfile(payload.profile) : this.data.profile;
+    const contextTags = record.contextTags || emptyTags();
+
+    this.setData({
+      record: {
+        ...record,
+        date,
+      },
+      selectedDate: date,
+      todayDate,
+      minRecordDate,
+      maxRecordDate,
+      profile,
+      form: {
+        sleepHours: record.sleepHours === null || record.sleepHours === undefined ? "" : String(record.sleepHours),
+        weightKg: toDisplayWeight(record.weightKg, profile),
+        waterMl: toDisplayWater(record.waterMl, profile),
+        contextTags,
+      },
+      weightUnitLabel: getWeightUnitLabel(profile),
+      waterUnitLabel: getWaterUnitLabel(profile),
+      weightPlaceholder: profile.weightUnit === "LB" ? "例如 140" : "例如 63.2",
+      waterPlaceholder: profile.waterUnit === "OZ" ? "68" : "2000",
+      qualityWarnings: payload.qualityWarnings || [],
+      message: "",
+      error: "",
+      errorDetail: "",
+      errorRetryLabel: "",
+      errorRetryAction: "",
+    });
+    this.refreshDerivedState();
+  },
+
   async loadToday() {
     try {
       const payload = await request({
         url: "/api/records/today",
       });
-      const record = payload.record || {};
-      const profile = normalizeProfile(payload.profile);
-      const contextTags = record.contextTags || emptyTags();
+      const todayDate = payload.record && payload.record.date;
 
-      this.setData({
-        record,
-        profile,
-        form: {
-          sleepHours: record.sleepHours === null || record.sleepHours === undefined ? "" : String(record.sleepHours),
-          weightKg: toDisplayWeight(record.weightKg, profile),
-          waterMl: toDisplayWater(record.waterMl, profile),
-          contextTags,
-        },
-        weightUnitLabel: getWeightUnitLabel(profile),
-        waterUnitLabel: getWaterUnitLabel(profile),
-        weightPlaceholder: profile.weightUnit === "LB" ? "例如 140" : "例如 63.2",
-        waterPlaceholder: profile.waterUnit === "OZ" ? "68" : "2000",
-        qualityWarnings: payload.qualityWarnings || [],
-        error: "",
-        errorDetail: "",
-        errorRetryLabel: "",
-        errorRetryAction: "",
+      this.applyRecordPayload(payload, {
+        date: todayDate,
+        todayDate,
+        maxRecordDate: todayDate,
+        minRecordDate: shiftDateString(todayDate, -364),
       });
-      this.refreshDerivedState();
     } catch (error) {
       const errorState = toErrorState(error, { retryLabel: "重新加载" });
 
@@ -234,6 +325,54 @@ Page({
         errorRetryAction: errorState.errorRetryLabel ? "load" : "",
       });
     }
+  },
+
+  async loadRecordByDate(date) {
+    if (!date) {
+      return;
+    }
+
+    this.setData({
+      loadingRecord: true,
+      selectedDate: date,
+      message: "",
+      error: "",
+      errorDetail: "",
+      errorRetryLabel: "",
+      errorRetryAction: "",
+      qualityWarnings: [],
+    });
+
+    try {
+      const payload = await request({
+        url: isTodayDate(date, this.data.todayDate) ? "/api/records/today" : `/api/records/${date}`,
+      });
+
+      this.applyRecordPayload(payload, {
+        date,
+      });
+    } catch (error) {
+      const errorState = toErrorState(error, { retryLabel: "重新加载" });
+
+      this.setData({
+        ...errorState,
+        errorRetryAction: errorState.errorRetryLabel ? "loadDate" : "",
+      });
+    } finally {
+      this.setData({
+        loadingRecord: false,
+      });
+    }
+  },
+
+  handleDateChange(event) {
+    const date = event.detail.value;
+
+    if (!date || date === this.data.selectedDate) {
+      return Promise.resolve();
+    }
+
+    return this.loadRecordByDate(date);
   },
 
   handleInput(event) {
@@ -296,6 +435,8 @@ Page({
     const completedCount = completionSteps.filter((step) => step.done).length;
     const weightValue = normalizeNumber(form.weightKg);
     const weightUnitLabel = this.data.weightUnitLabel || "kg";
+    const selectedDate = this.data.selectedDate || this.data.record.date;
+    const todayDate = this.data.todayDate || selectedDate;
 
     this.setData({
       completedCount,
@@ -303,7 +444,11 @@ Page({
       completionSteps,
       nextStepText: getNextStepText(completionSteps),
       weightDisplay: weightValue === null ? `-- ${weightUnitLabel}` : `${form.weightKg} ${weightUnitLabel}`,
-      weightHint: weightValue === null ? "先填今天体重" : "体重已记录",
+      weightHint: getWeightHint(weightValue, selectedDate, todayDate),
+      dateDisplayLabel: getDateDisplayLabel(selectedDate, todayDate),
+      dateActionLabel: getDateActionLabel(selectedDate, todayDate),
+      recordFocusLabel: getRecordFocusLabel(selectedDate, todayDate),
+      saveButtonLabel: getSaveButtonLabel(selectedDate, todayDate),
       dietOptions: decorateOptions(dietBaseOptions, tags.dietTags || []),
       activityOptions: decorateOptions(activityBaseOptions, tags.activityLevel ? [tags.activityLevel] : []),
       energyOptions: decorateOptions(energyBaseOptions, tags.energyLevel ? [tags.energyLevel] : []),
@@ -313,11 +458,11 @@ Page({
 
   async saveRecord() {
     const form = this.data.form;
-    const date = this.data.record.date;
+    const date = this.data.selectedDate || this.data.record.date;
 
     if (!date) {
       this.setData({
-        error: "今天的日期还没有同步完成",
+        error: "记录日期还没有同步完成",
         errorDetail: "",
         errorRetryLabel: "",
         errorRetryAction: "",
@@ -345,6 +490,8 @@ Page({
     });
 
     try {
+      const completedCount = this.data.completedCount;
+      const isToday = isTodayDate(date, this.data.todayDate);
       const payload = await request({
         url: `/api/records/${date}`,
         method: "PUT",
@@ -359,12 +506,13 @@ Page({
       this.setData({
         record: savedRecord,
         qualityWarnings: payload.qualityWarnings || [],
-        message: this.data.completedCount === 3 ? "今日三项已完成" : `已保存 ${this.data.completedCount}/3`,
+        message: getSaveSuccessMessage(completedCount, isToday),
         error: "",
         errorDetail: "",
         errorRetryLabel: "",
         errorRetryAction: "",
       });
+      this.refreshDerivedState();
     } catch (error) {
       const errorState = toErrorState(error, { retryLabel: "重新保存" });
 
@@ -388,6 +536,11 @@ Page({
   retryLastAction() {
     if (this.data.errorRetryAction === "save") {
       this.saveRecord();
+      return;
+    }
+
+    if (this.data.errorRetryAction === "loadDate") {
+      this.loadRecordByDate(this.data.selectedDate || this.data.todayDate);
       return;
     }
 

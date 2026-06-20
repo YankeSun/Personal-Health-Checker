@@ -169,6 +169,8 @@ describe("mini program page behavior", () => {
       record: {
         date: "2026-06-12",
       },
+      selectedDate: "2026-06-12",
+      todayDate: "2026-06-12",
       form: {
         sleepHours: "7.5",
         weightKg: "68.4",
@@ -241,6 +243,8 @@ describe("mini program page behavior", () => {
       record: {
         date: "2026-06-12",
       },
+      selectedDate: "2026-06-12",
+      todayDate: "2026-06-12",
       form: {
         sleepHours: "",
         weightKg: "68.4",
@@ -328,6 +332,111 @@ describe("mini program page behavior", () => {
         data: expect.objectContaining({
           weightKg: 63.96,
           waterMl: 2070,
+        }),
+      }),
+    );
+  });
+
+  it("loads and saves a historical record from the Today date picker", async () => {
+    installMiniProgramGlobals({
+      "/api/records/today": {
+        record: {
+          date: "2026-06-12",
+          sleepHours: null,
+          weightKg: null,
+          waterMl: null,
+          contextTags: {
+            dietTags: [],
+            activityLevel: null,
+            energyLevel: null,
+            weighTiming: null,
+          },
+        },
+        profile: {
+          weightUnit: "KG",
+          waterUnit: "ML",
+        },
+        qualityWarnings: [],
+      },
+      "/api/records/2026-06-10": {
+        record: {
+          date: "2026-06-10",
+          sleepHours: null,
+          weightKg: null,
+          waterMl: null,
+          isBackfilled: false,
+          contextTags: {
+            dietTags: [],
+            activityLevel: null,
+            energyLevel: null,
+            weighTiming: null,
+          },
+        },
+        qualityWarnings: [],
+      },
+    });
+    const page = loadPage("miniprogram/src/pages/today/today.js") as {
+      data: {
+        selectedDate: string;
+        todayDate: string;
+        minRecordDate: string;
+        maxRecordDate: string;
+        dateDisplayLabel: string;
+        dateActionLabel: string;
+        recordFocusLabel: string;
+        saveButtonLabel: string;
+        form: Record<string, unknown>;
+        message: string;
+      };
+      loadToday: () => Promise<void>;
+      handleDateChange: (event: { detail: { value: string } }) => Promise<void>;
+      refreshDerivedState: () => void;
+      saveRecord: () => Promise<void>;
+    };
+
+    await page.loadToday();
+
+    expect(page.data.todayDate).toBe("2026-06-12");
+    expect(page.data.maxRecordDate).toBe("2026-06-12");
+    expect(page.data.minRecordDate).toBe("2025-06-13");
+
+    await page.handleDateChange({
+      detail: {
+        value: "2026-06-10",
+      },
+    });
+
+    expect(page.data.selectedDate).toBe("2026-06-10");
+    expect(page.data.dateDisplayLabel).toBe("6/10 补录");
+    expect(page.data.dateActionLabel).toBe("换一天");
+    expect(page.data.recordFocusLabel).toBe("补录称重");
+    expect(page.data.saveButtonLabel).toBe("保存补录");
+
+    page.setData({
+      form: {
+        sleepHours: "7",
+        weightKg: "68.4",
+        waterMl: "1800",
+        contextTags: {
+          dietTags: ["NORMAL"],
+          activityLevel: "NORMAL",
+          energyLevel: "GOOD",
+          weighTiming: "MORNING",
+        },
+      },
+    });
+    page.refreshDerivedState();
+    await page.saveRecord();
+
+    expect(page.data.message).toBe("这一天三项已补齐");
+    expect((globalThis as MiniProgramGlobals).wx.request).toHaveBeenCalledWith(
+      expect.objectContaining({
+        url: "https://api.example.test/api/records/2026-06-10",
+        method: "PUT",
+        data: expect.objectContaining({
+          sleepHours: 7,
+          weightKg: 68.4,
+          waterMl: 1800,
         }),
       }),
     );

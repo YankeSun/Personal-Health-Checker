@@ -463,7 +463,12 @@ describe("miniprogram structure", () => {
     expect(todayPage).toContain("goDashboard");
     expect(todayPage).toContain("retryLastAction");
     expect(todayPage).toContain("errorRetryAction");
-    expect(todayMarkup).toContain("今日称重");
+    expect(todayPage).toContain("handleDateChange");
+    expect(todayPage).toContain("loadRecordByDate");
+    expect(todayPage).toContain("今日称重");
+    expect(todayMarkup).toContain("{{recordFocusLabel}}");
+    expect(todayMarkup).toContain('mode="date"');
+    expect(todayMarkup).toContain("{{dateActionLabel}}");
     expect(todayMarkup).toContain("qualityWarnings");
     expect(todayMarkup).toContain("看今日概览");
     expect(todayMarkup).toContain("errorDetail");

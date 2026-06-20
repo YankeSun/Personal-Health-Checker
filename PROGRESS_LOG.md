@@ -244,6 +244,7 @@ npm run analytics:report -- --days=30
 
 ## 2026-06-20
 
+- 优化小程序 Today 记录入口：保存按钮改为更窄的胶囊形态并强制居中，顶部日期胶囊升级为记录日期选择器；用户可在同一张 Today 表单中切换最近 365 天日期并补录历史记录，保存历史日期继续复用现有 `/api/records/[date]`，后端自动标记补录。
 - 修复小程序微信登录线上 500：Vercel 日志定位为生产数据库缺少新版账号字段导致 `prisma.user.create()` 报 `P2022`，已在数据库自愈脚本中补齐 `User.emailVerifiedAt`、`UserProfile` 偏好字段和 `Session.lastAccessedAt` 的旧库兼容迁移，并增加回归测试，避免早期生产库阻断小程序首次登录。
 - 完成微信开发者工具扫码登录后的内部预览：CLI 已确认 `login:true`，`miniprogram/` 项目可通过开发者工具打开，`preview` 成功生成 78.7KB 预览包和二维码；远程 Experience check 继续通过。体验版上传未执行，因为 `alpha:readiness -- --vercel --remote` 仍因合规占位 / 微信后台人工确认项保持 RED，按当前发放规则不能上传或分享 Experience build。
 - 安装并验证微信开发者工具本机环境：已安装 `wechatwebdevtools.app` 2.01.2510290，CLI 服务端口可启动到 `127.0.0.1:9420`，但导入 / 上传小程序被微信开发者工具账号登录拦截；已生成两次扫码二维码但均过期，下一步需要先完成微信开发者工具扫码登录，再继续 `open / preview / upload`。同时把 `miniprogram/project.private.config.json` 加入 `.gitignore`，避免开发者工具本地私有配置污染 Git。

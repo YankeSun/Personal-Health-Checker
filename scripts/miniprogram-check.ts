@@ -212,7 +212,10 @@ check(
 check("login exposes legal links", hasAll(loginWxml, ["隐私保护指引", "用户协议", "健康免责声明"]));
 check("today page reads and saves records", hasAll(todayJs, ["/api/records/today", "/api/records/${date}"]));
 check("today page keeps weight-first alpha flow", hasAll(todayJs, ["qualityWarnings", "goDashboard", "completionSteps"]));
-check("today page shows record quality and dashboard CTA", hasAll(todayWxml, ["今日称重", "qualityWarnings", "看今日概览"]));
+check(
+  "today page shows record quality and dashboard CTA",
+  hasAll(todayWxml, ["recordFocusLabel", "qualityWarnings", "看今日概览"]),
+);
 check(
   "today page supports save/load retry diagnostics",
   hasAll(todayJs, ["toErrorState", "retryLastAction", "errorRetryAction"]) &&
