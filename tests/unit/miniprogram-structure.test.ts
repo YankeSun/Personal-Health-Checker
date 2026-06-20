@@ -469,6 +469,9 @@ describe("miniprogram structure", () => {
     expect(todayMarkup).toContain("{{recordFocusLabel}}");
     expect(todayMarkup).toContain('mode="date"');
     expect(todayMarkup).toContain("{{dateActionLabel}}");
+    expect(todayMarkup).toContain("chip-label");
+    expect(todayMarkup).toContain("button-label");
+    expect(todayMarkup).not.toContain('<button class="primary-button save-button"');
     expect(todayMarkup).toContain("qualityWarnings");
     expect(todayMarkup).toContain("看今日概览");
     expect(todayMarkup).toContain("errorDetail");

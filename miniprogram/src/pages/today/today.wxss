@@ -260,21 +260,75 @@
   margin-top: 18rpx;
 }
 
+.chip {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 88rpx;
+  height: 72rpx;
+  padding: 0 22rpx;
+  line-height: 1;
+  white-space: nowrap;
+}
+
+.chip-label {
+  display: block;
+  color: inherit;
+  font-size: 24rpx;
+  line-height: 1;
+  text-align: center;
+}
+
 .submit-card {
   position: sticky;
   bottom: 24rpx;
 }
 
-.save-button {
+.save-button,
+.dashboard-button,
+.retry-button {
   display: flex;
   align-items: center;
   justify-content: center;
+  box-sizing: border-box;
+  min-height: 80rpx;
+  margin: 0;
+  padding: 0 36rpx;
+  line-height: 1;
+}
+
+.save-button::after,
+.dashboard-button::after,
+.retry-button::after {
+  border: 0;
+}
+
+.save-button {
   width: 360rpx;
   height: 88rpx;
   margin: 0 auto;
   border-radius: 999rpx;
-  padding: 0 36rpx;
+  font-size: 30rpx;
+  font-weight: 900;
   line-height: 1;
+  text-align: center;
+}
+
+.button-label {
+  display: block;
+  color: inherit;
+  font-size: inherit;
+  font-weight: inherit;
+  line-height: 1;
+  text-align: center;
+}
+
+.save-button-hover {
+  opacity: 0.88;
+}
+
+.save-button-loading {
+  opacity: 0.72;
 }
 
 .save-feedback {

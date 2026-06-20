@@ -214,7 +214,8 @@ check("today page reads and saves records", hasAll(todayJs, ["/api/records/today
 check("today page keeps weight-first alpha flow", hasAll(todayJs, ["qualityWarnings", "goDashboard", "completionSteps"]));
 check(
   "today page shows record quality and dashboard CTA",
-  hasAll(todayWxml, ["recordFocusLabel", "qualityWarnings", "看今日概览"]),
+  hasAll(todayWxml, ["recordFocusLabel", "qualityWarnings", "看今日概览", "chip-label", "button-label"]) &&
+    !todayWxml.includes('<button class="primary-button save-button"'),
 );
 check(
   "today page supports save/load retry diagnostics",

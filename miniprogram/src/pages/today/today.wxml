@@ -79,9 +79,9 @@
     <view class="context-group">
       <text class="context-label">饮食状态</text>
       <view class="chips">
-        <text wx:for="{{dietOptions}}" wx:key="value" class="chip {{item.active ? 'chip-active' : ''}}" data-value="{{item.value}}" bindtap="toggleDiet">
-          {{item.label}}
-        </text>
+        <view wx:for="{{dietOptions}}" wx:key="value" class="chip {{item.active ? 'chip-active' : ''}}" data-value="{{item.value}}" bindtap="toggleDiet">
+          <text class="chip-label">{{item.label}}</text>
+        </view>
       </view>
     </view>
 
@@ -89,18 +89,18 @@
       <view class="context-group compact">
         <text class="context-label">活动量</text>
         <view class="chips">
-          <text wx:for="{{activityOptions}}" wx:key="value" class="chip {{item.active ? 'chip-active' : ''}}" data-value="{{item.value}}" data-field="activityLevel" bindtap="toggleSingleContext">
-            {{item.label}}
-          </text>
+          <view wx:for="{{activityOptions}}" wx:key="value" class="chip {{item.active ? 'chip-active' : ''}}" data-value="{{item.value}}" data-field="activityLevel" bindtap="toggleSingleContext">
+            <text class="chip-label">{{item.label}}</text>
+          </view>
         </view>
       </view>
 
       <view class="context-group compact">
         <text class="context-label">精神状态</text>
         <view class="chips">
-          <text wx:for="{{energyOptions}}" wx:key="value" class="chip {{item.active ? 'chip-active' : ''}}" data-value="{{item.value}}" data-field="energyLevel" bindtap="toggleSingleContext">
-            {{item.label}}
-          </text>
+          <view wx:for="{{energyOptions}}" wx:key="value" class="chip {{item.active ? 'chip-active' : ''}}" data-value="{{item.value}}" data-field="energyLevel" bindtap="toggleSingleContext">
+            <text class="chip-label">{{item.label}}</text>
+          </view>
         </view>
       </view>
     </view>
@@ -108,15 +108,21 @@
     <view class="context-group">
       <text class="context-label">称重时段</text>
       <view class="chips">
-        <text wx:for="{{timingOptions}}" wx:key="value" class="chip {{item.active ? 'chip-active' : ''}}" data-value="{{item.value}}" data-field="weighTiming" bindtap="toggleSingleContext">
-          {{item.label}}
-        </text>
+        <view wx:for="{{timingOptions}}" wx:key="value" class="chip {{item.active ? 'chip-active' : ''}}" data-value="{{item.value}}" data-field="weighTiming" bindtap="toggleSingleContext">
+          <text class="chip-label">{{item.label}}</text>
+        </view>
       </view>
     </view>
   </view>
 
   <view class="submit-card card">
-    <button class="primary-button save-button" loading="{{saving || loadingRecord}}" bindtap="saveRecord">{{saveButtonLabel}}</button>
+    <view
+      class="primary-button save-button {{saving || loadingRecord ? 'save-button-loading' : ''}}"
+      hover-class="save-button-hover"
+      bindtap="saveRecord"
+    >
+      <text class="button-label">{{saving || loadingRecord ? "保存中" : saveButtonLabel}}</text>
+    </view>
     <view wx:if="{{message}}" class="save-feedback">
       <text class="success">{{message}}</text>
       <button class="ghost-button dashboard-button" bindtap="goDashboard">看今日概览</button>

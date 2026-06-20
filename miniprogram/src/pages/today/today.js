@@ -457,6 +457,10 @@ Page({
   },
 
   async saveRecord() {
+    if (this.data.saving || this.data.loadingRecord) {
+      return;
+    }
+
     const form = this.data.form;
     const date = this.data.selectedDate || this.data.record.date;
 

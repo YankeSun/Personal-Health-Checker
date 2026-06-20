@@ -13,6 +13,13 @@ button {
 
 button {
   border-radius: 999px;
+  margin: 0;
+  padding: 0;
+  line-height: 1;
+}
+
+button::after {
+  border: 0;
 }
 
 .page {
@@ -28,17 +35,25 @@ button {
 }
 
 .primary-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
   background: #172033;
   color: #ffffff;
   font-size: 30rpx;
   font-weight: 700;
+  line-height: 1;
 }
 
 .ghost-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
   border: 1rpx solid rgba(15, 23, 42, 0.16);
   background: #ffffff;
   color: #172033;
   font-size: 28rpx;
+  line-height: 1;
 }
 
 .muted {
@@ -46,11 +61,18 @@ button {
 }
 
 .chip {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 88rpx;
+  height: 72rpx;
   border: 1rpx solid rgba(15, 23, 42, 0.12);
   border-radius: 999rpx;
-  padding: 14rpx 22rpx;
+  padding: 0 22rpx;
   color: #5e574d;
   font-size: 24rpx;
+  line-height: 1;
+  text-align: center;
 }
 
 .chip-active {

@@ -244,6 +244,7 @@ npm run analytics:report -- --days=30
 
 ## 2026-06-20
 
+- 修正小程序 Today 页按钮 / 标签文字视觉不居中：保存主按钮不再使用微信原生 `button`，改为自绘胶囊容器加独立文字 label；体重背景选项从直接用 `text` 当按钮改为 `view + chip-label`，并补全全局 button reset、固定高度和结构防回退检查，避免微信默认 line-height / baseline 再次造成偏移。
 - 优化小程序 Today 记录入口：保存按钮改为更窄的胶囊形态并强制居中，顶部日期胶囊升级为记录日期选择器；用户可在同一张 Today 表单中切换最近 365 天日期并补录历史记录，保存历史日期继续复用现有 `/api/records/[date]`，后端自动标记补录。
 - 修复小程序微信登录线上 500：Vercel 日志定位为生产数据库缺少新版账号字段导致 `prisma.user.create()` 报 `P2022`，已在数据库自愈脚本中补齐 `User.emailVerifiedAt`、`UserProfile` 偏好字段和 `Session.lastAccessedAt` 的旧库兼容迁移，并增加回归测试，避免早期生产库阻断小程序首次登录。
 - 完成微信开发者工具扫码登录后的内部预览：CLI 已确认 `login:true`，`miniprogram/` 项目可通过开发者工具打开，`preview` 成功生成 78.7KB 预览包和二维码；远程 Experience check 继续通过。体验版上传未执行，因为 `alpha:readiness -- --vercel --remote` 仍因合规占位 / 微信后台人工确认项保持 RED，按当前发放规则不能上传或分享 Experience build。
