@@ -244,6 +244,7 @@ npm run analytics:report -- --days=30
 
 ## 2026-06-12
 
+- 调整体验版 gate 为生产环境优先：`miniprogram:check:experience` 在远程模式下不再要求本地保存微信 AppSecret，而是以 Vercel `/api/health` 的远程微信配置为准；`alpha:readiness -- --vercel --remote` 也会在远程数据库通过时，不再让本地 Neon 超时阻断体验版 gate。
 - 接入真实微信小程序 AppID：`miniprogram/project.config.json` 已从 `touristappid` 替换为真实小程序 AppID；AppSecret 继续按安全边界处理，不写入 Git、文档、脚本或命令日志，后续只通过不回显的本机输入或平台密钥配置完成验证。
 - 补强小程序 Alpha 前的 P1 体验与追溯：登录时会把协议同意状态、版本和时间写入 `WECHAT_LOGIN_COMPLETED` 事件 metadata；小程序“我的”页目标从内部枚举改为自然语言摘要；账号导出会复制一份 JSON 摘要到剪贴板，便于真机验收确认数据权利入口可用。
 - 增加 goal 受限时的替代目标控制台：新增 `ACTIVE_OBJECTIVE.md`，把当前目标收敛为清零小程序 Alpha-001 发放前 P0 blocker，并明确下一步队列、sub-agent 拆分边界、完成条件和每轮结束标准；执行简报的读取顺序同步加入该文件。

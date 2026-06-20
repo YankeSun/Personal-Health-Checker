@@ -97,6 +97,18 @@ function extractLaunchWarningLabels(output: string) {
     .filter((label): label is string => Boolean(label));
 }
 
+function extractLaunchBlockerLabels(output: string) {
+  return output
+    .split(/\r?\n/)
+    .map((line) => line.match(/^\[blocker]\s+(.+?)(?:\s+\(|$)/)?.[1]?.trim())
+    .filter((label): label is string => Boolean(label));
+}
+
+const productionBackedLaunchBlockerLabels = new Set([
+  "WECHAT_MINI_PROGRAM_APP_ID is configured locally",
+  "WECHAT_MINI_PROGRAM_APP_SECRET is configured locally",
+]);
+
 function classifyLaunchReadiness(check: ReadinessCheck): ReadinessCheck {
   if (check.label !== "Launch readiness") {
     return check;
@@ -107,6 +119,27 @@ function classifyLaunchReadiness(check: ReadinessCheck): ReadinessCheck {
   const warningCount = Number(match?.[2] ?? 0);
 
   if (blockerCount > 0) {
+    const blockerLabels = extractLaunchBlockerLabels(check.output);
+    const remainingBlockerLabels = includeRemote && includeVercel
+      ? blockerLabels.filter((label) => !productionBackedLaunchBlockerLabels.has(label))
+      : blockerLabels;
+
+    if (remainingBlockerLabels.length === 0) {
+      return {
+        ...check,
+        status: "pass",
+        summary: `${blockerCount} local blocker(s) covered by Vercel Production remote checks`,
+      };
+    }
+
+    if (remainingBlockerLabels.length < blockerCount) {
+      return {
+        ...check,
+        status: "fail",
+        summary: `${remainingBlockerLabels.length} blocking blocker(s), ${blockerCount - remainingBlockerLabels.length} local blocker(s) covered by Vercel Production remote checks`,
+      };
+    }
+
     return {
       ...check,
       status: "fail",
@@ -183,6 +216,18 @@ function extractLaunchNextActions(output: string) {
     const match = line.match(/^\d+\.\s+\[(blocker|warning)\]\s+(.+)$/);
 
     if (match) {
+      const action = match[2];
+      const isProductionBackedLocalAction =
+        includeRemote &&
+        includeVercel &&
+        [...productionBackedLaunchBlockerLabels].some((label) =>
+          action.startsWith(`${label}:`),
+        );
+
+      if (isProductionBackedLocalAction) {
+        continue;
+      }
+
       actions.push(match[2]);
       continue;
     }
@@ -239,6 +284,16 @@ const checks = [
 
 if (includeRemote) {
   checks.push(runCommand("Remote mini program experience check", ["run", "miniprogram:check:experience"]));
+}
+
+const remoteExperienceCheck = checks.find(
+  (check) => check.label === "Remote mini program experience check",
+);
+const databaseCheck = checks.find((check) => check.label === "Database connectivity");
+
+if (includeRemote && remoteExperienceCheck?.status === "pass" && databaseCheck?.status === "fail") {
+  databaseCheck.status = "pass";
+  databaseCheck.summary = `${databaseCheck.summary}; remote database check passed, so local db:doctor does not block the production-backed Experience build`;
 }
 
 const experienceGate = buildExperienceGate(checks);

@@ -257,18 +257,27 @@ if (strict) {
     Boolean(projectConfig?.appid && projectConfig.appid !== "touristappid" && looksLikeWechatAppId(projectConfig.appid)),
     `appid=${projectConfig?.appid ?? "missing"}`,
   );
-  check(
-    "WECHAT_MINI_PROGRAM_APP_ID is available for backend login",
-    Boolean(process.env.WECHAT_MINI_PROGRAM_APP_ID && looksLikeWechatAppId(process.env.WECHAT_MINI_PROGRAM_APP_ID)),
-  );
-  check(
-    "WECHAT_MINI_PROGRAM_APP_SECRET is available for backend login",
-    Boolean(process.env.WECHAT_MINI_PROGRAM_APP_SECRET),
-  );
-  if (process.env.WECHAT_MINI_PROGRAM_APP_ID && process.env.WECHAT_MINI_PROGRAM_APP_SECRET) {
+
+  if (!remote) {
     check(
-      "WECHAT_MINI_PROGRAM_APP_SECRET is not the AppID",
-      process.env.WECHAT_MINI_PROGRAM_APP_SECRET !== process.env.WECHAT_MINI_PROGRAM_APP_ID,
+      "WECHAT_MINI_PROGRAM_APP_ID is available for backend login",
+      Boolean(process.env.WECHAT_MINI_PROGRAM_APP_ID && looksLikeWechatAppId(process.env.WECHAT_MINI_PROGRAM_APP_ID)),
+    );
+    check(
+      "WECHAT_MINI_PROGRAM_APP_SECRET is available for backend login",
+      Boolean(process.env.WECHAT_MINI_PROGRAM_APP_SECRET),
+    );
+    if (process.env.WECHAT_MINI_PROGRAM_APP_ID && process.env.WECHAT_MINI_PROGRAM_APP_SECRET) {
+      check(
+        "WECHAT_MINI_PROGRAM_APP_SECRET is not the AppID",
+        process.env.WECHAT_MINI_PROGRAM_APP_SECRET !== process.env.WECHAT_MINI_PROGRAM_APP_ID,
+      );
+    }
+  } else {
+    warn(
+      "local WeChat backend env is not required for remote Experience check",
+      true,
+      "remote /api/health verifies the Vercel runtime configuration",
     );
   }
 }

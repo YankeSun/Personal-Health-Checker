@@ -148,6 +148,8 @@ describe("miniprogram structure", () => {
     expect(checkScript).toContain("WECHAT_MINI_PROGRAM_APP_SECRET");
     expect(checkScript).toContain("looksLikeWechatAppId");
     expect(checkScript).toContain("WECHAT_MINI_PROGRAM_APP_SECRET is not the AppID");
+    expect(checkScript).toContain("local WeChat backend env is not required for remote Experience check");
+    expect(checkScript).toContain("remote /api/health verifies the Vercel runtime configuration");
     expect(checkScript).toContain("apiBaseUrl uses HTTPS");
     expect(checkScript).toContain("/api/health");
     expect(checkScript).toContain("describeRemoteError");
@@ -172,6 +174,9 @@ describe("miniprogram structure", () => {
     expect(alphaReadinessScript).toContain("extractLaunchNextActions");
     expect(alphaReadinessScript).toContain("classifyLaunchReadiness");
     expect(alphaReadinessScript).toContain("optionalLaunchWarningLabels");
+    expect(alphaReadinessScript).toContain("productionBackedLaunchBlockerLabels");
+    expect(alphaReadinessScript).toContain("local blocker(s) covered by Vercel Production remote checks");
+    expect(alphaReadinessScript).toContain("remote database check passed");
     expect(alphaReadinessScript).toContain("optional email warning(s)");
     expect(alphaReadinessScript).toContain("EMAIL_FROM is configured for account email flows");
     expect(alphaReadinessScript).toContain("RESEND_API_KEY is configured for real email delivery");
