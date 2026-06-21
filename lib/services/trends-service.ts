@@ -297,8 +297,8 @@ function buildTrendInsight({
   if (completionRate < 50) {
     return {
       tone: "warning",
-      title: `${metricLabel}记录较少`,
-      description: `近 ${days} 天记录 ${recordedDays}/${days} 天。`,
+      title: `${metricLabel}点位偏少`,
+      description: `已记录 ${recordedDays}/${days} 天。`,
     };
   }
 
@@ -385,8 +385,8 @@ function buildContextSummary({
 
   if (recordedWeightDays === 0) {
     return {
-      title: "开始记录体重",
-      description: "有了连续记录，趋势会更清楚。",
+      title: "开始落点",
+      description: "先记录一次体重。",
       taggedDays: 0,
       topContextLabels: [],
     };
@@ -394,8 +394,8 @@ function buildContextSummary({
 
   if (taggedDays === 0) {
     return {
-      title: "添加日常标签",
-      description: "饮食、活动和称重时段可帮助回顾趋势。",
+      title: "补上标签",
+      description: "给变化多一条线索。",
       taggedDays: 0,
       topContextLabels: [],
     };
@@ -403,7 +403,7 @@ function buildContextSummary({
 
   return {
     title: "日常标签",
-    description: `${taggedDays}/${recordedWeightDays} 天已添加。仅供回顾，不作判断。`,
+    description: `${taggedDays}/${recordedWeightDays} 天带标签。`,
     taggedDays,
     topContextLabels,
   };

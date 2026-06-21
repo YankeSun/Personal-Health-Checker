@@ -24,30 +24,30 @@ function buildFallbackInsight(dashboard) {
     return {
       id: "fallback-today",
       tone: "warning",
-      title: "补上今日记录",
-      description: `已记录 ${completed}/${total}，还差 ${remaining} 项。`,
+      title: "今日待完成",
+      description: `还差 ${remaining} 项。`,
       actionHref: "/today",
-      actionLabel: "继续记录",
+      actionLabel: "去记录",
     };
   }
 
   return {
     id: "fallback-trends",
     tone: "success",
-    title: "今日记录已完成",
-    description: "可以查看近期趋势。",
+    title: "今日已落点",
+    description: "看一眼近期走势。",
     actionHref: "/trends",
-    actionLabel: "查看趋势",
+    actionLabel: "看趋势",
   };
 }
 
 function getActionKicker(action, index) {
   const href = action.actionHref || "";
 
-  if (href.startsWith("/today")) return index === 0 ? "今日记录" : "记录提醒";
-  if (href.startsWith("/trends")) return index === 0 ? "近期趋势" : "趋势";
+  if (href.startsWith("/today")) return index === 0 ? "今日" : "记录";
+  if (href.startsWith("/trends")) return index === 0 ? "走势" : "趋势";
   if (href.startsWith("/settings")) return "目标";
-  return index === 0 ? "今日重点" : "下一步";
+  return index === 0 ? "今日" : "行动";
 }
 
 function decorateAction(action, index) {

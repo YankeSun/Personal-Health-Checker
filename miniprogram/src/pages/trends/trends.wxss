@@ -251,28 +251,47 @@
 }
 
 .action-card {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  column-gap: 22rpx;
+  overflow: hidden;
   background: #172033;
   color: #fffaf0;
 }
 
 .action-title {
+  grid-column: 1;
   color: #fffaf0;
   font-size: 32rpx;
 }
 
 .action-copy {
+  grid-column: 1;
   color: rgba(255, 250, 240, 0.74);
+  line-height: 1.42;
 }
 
 .action-link {
-  display: inline-block;
-  margin-top: 20rpx;
+  display: flex;
+  grid-row: 1 / span 2;
+  grid-column: 2;
+  align-items: center;
+  justify-content: center;
+  justify-self: end;
+  box-sizing: border-box;
+  min-width: 132rpx;
+  height: 52rpx;
+  margin-top: 0;
   border-radius: 999rpx;
   background: #f7c86f;
-  padding: 12rpx 20rpx;
+  padding: 0 20rpx;
   color: #172033;
   font-size: 24rpx;
   font-weight: 900;
+  line-height: 1;
+  text-align: center;
+  white-space: nowrap;
 }
 
 .point-row {
@@ -339,5 +358,9 @@
 }
 
 .retry-button {
+  min-width: 144rpx;
+  height: 56rpx;
   margin-top: 18rpx;
+  padding: 0 24rpx;
+  font-size: 24rpx;
 }

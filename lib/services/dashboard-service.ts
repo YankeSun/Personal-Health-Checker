@@ -390,7 +390,7 @@ function buildTodayInsight(
           ? "今天还差这一项。"
           : `还差 ${missingLabels}。`,
       actionHref: "/today",
-      actionLabel: "继续记录",
+      actionLabel: "去记录",
     };
   }
 
@@ -400,20 +400,20 @@ function buildTodayInsight(
     return {
       id: "streak-momentum",
       tone: "success",
-      title: `已连续 ${streakDays} 天`,
-      description: `距离 ${streakMomentum.nextMilestone} 天还差 ${streakMomentum.daysRemaining} 天。`,
+      title: `连续 ${streakDays} 天`,
+      description: `再 ${streakMomentum.daysRemaining} 天，点亮 ${streakMomentum.nextMilestone} 天。`,
       actionHref: "/today",
-      actionLabel: "记录今天",
+      actionLabel: "记今天",
     };
   }
 
   return {
     id: "streak-stable",
     tone: "success",
-    title: "节奏正在形成",
-    description: "继续记录，趋势会更清楚。",
+    title: "节奏已成形",
+    description: "看看最近走势。",
     actionHref: "/trends",
-    actionLabel: "查看趋势",
+    actionLabel: "看趋势",
   };
 }
 
@@ -460,7 +460,7 @@ function buildPeriodChangeInsight(
       title: "近期变化",
       description: `${mostImproved.label}达成提升 ${mostImproved.attainmentRateChange}%，${mostDeclined.label}变化 ${mostDeclined.attainmentRateChange}%。`,
       actionHref: `/trends?metric=${mostDeclined.metric.toLowerCase()}&days=${windowSummary.days}`,
-      actionLabel: "查看趋势",
+      actionLabel: "看趋势",
     };
   }
 
@@ -471,7 +471,7 @@ function buildPeriodChangeInsight(
       title: `${mostImproved.label}更稳定`,
       description: `近 ${windowSummary.days} 天目标达成提升 ${mostImproved.attainmentRateChange}%。`,
       actionHref: `/trends?metric=${mostImproved.metric.toLowerCase()}&days=${windowSummary.days}`,
-      actionLabel: "查看趋势",
+      actionLabel: "看趋势",
     };
   }
 
@@ -482,7 +482,7 @@ function buildPeriodChangeInsight(
       title: `${mostDeclined.label}需要关注`,
       description: `近 ${windowSummary.days} 天目标达成变化 ${mostDeclined.attainmentRateChange}%。`,
       actionHref: `/trends?metric=${mostDeclined.metric.toLowerCase()}&days=${windowSummary.days}`,
-      actionLabel: "查看趋势",
+      actionLabel: "看趋势",
     };
   }
 
@@ -514,7 +514,7 @@ function buildWeeklyFocusInsight(
       title: `${lowestRecordedMetric.label}记录较少`,
       description: `近 ${windowSummary.days} 天记录 ${lowestRecordedMetric.recordedDays}/${windowSummary.days} 天。`,
       actionHref: `/trends?metric=${lowestRecordedMetric.metric.toLowerCase()}&days=7`,
-      actionLabel: "查看趋势",
+      actionLabel: "看趋势",
     };
   }
 
@@ -529,7 +529,7 @@ function buildWeeklyFocusInsight(
       title: `${weakestGoalMetric.label}目标偏低`,
       description: `近 ${windowSummary.days} 天达成 ${weakestGoalMetric.attainmentRate}%。`,
       actionHref: `/trends?metric=${weakestGoalMetric.metric.toLowerCase()}&days=7`,
-      actionLabel: "查看趋势",
+      actionLabel: "看趋势",
     };
   }
 
@@ -544,7 +544,7 @@ function buildWeeklyFocusInsight(
       title: `${strongestMetric.label}保持良好`,
       description: `近 ${windowSummary.days} 天达成 ${strongestMetric.attainmentRate}%。`,
       actionHref: `/trends?metric=${strongestMetric.metric.toLowerCase()}&days=7`,
-      actionLabel: "查看趋势",
+      actionLabel: "看趋势",
     };
   }
 
@@ -707,10 +707,10 @@ export async function getDashboardOverviewByUserId(
     insights.push({
       id: "dashboard-goals-cta",
       tone: "info",
-      title: "先记录，目标稍后设置",
-      description: "目标会让趋势和提醒更清楚。",
+      title: "先有记录",
+      description: "目标稍后校准。",
       actionHref: "/settings",
-      actionLabel: "设置目标",
+      actionLabel: "设目标",
     });
   } else {
     if (summary7) {

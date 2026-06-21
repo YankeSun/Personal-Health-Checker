@@ -73,8 +73,13 @@
 }
 
 .action-card {
-  margin-top: 18rpx;
-  padding: 30rpx;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  column-gap: 22rpx;
+  overflow: hidden;
+  margin-top: 16rpx;
+  padding: 24rpx;
 }
 
 .action-primary {
@@ -97,6 +102,7 @@
 
 .action-kicker {
   display: block;
+  grid-column: 1;
   color: #8a6a2d;
   font-size: 22rpx;
   font-weight: 900;
@@ -105,9 +111,10 @@
 
 .action-title {
   display: block;
+  grid-column: 1;
   margin-top: 12rpx;
   color: #172033;
-  font-size: 34rpx;
+  font-size: 32rpx;
   font-weight: 950;
   line-height: 1.25;
 }
@@ -124,19 +131,25 @@
 }
 
 .action-copy {
+  grid-column: 1;
   margin-top: 10rpx;
+  line-height: 1.42;
 }
 
 .action-link {
-  display: inline-flex;
+  display: flex;
+  grid-row: 1 / span 3;
+  grid-column: 2;
   align-items: center;
   justify-content: center;
+  justify-self: end;
   box-sizing: border-box;
-  margin-top: 18rpx;
+  min-width: 132rpx;
+  height: 52rpx;
+  margin-top: 0;
   border-radius: 999rpx;
   background: #172033;
-  height: 56rpx;
-  padding: 0 22rpx;
+  padding: 0 20rpx;
   color: #fffaf0;
   font-size: 24rpx;
   font-weight: 900;
@@ -326,5 +339,9 @@
 }
 
 .retry-button {
+  min-width: 144rpx;
+  height: 56rpx;
   margin-top: 18rpx;
+  padding: 0 24rpx;
+  font-size: 24rpx;
 }

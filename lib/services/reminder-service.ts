@@ -271,7 +271,7 @@ export async function getReminderFeedByUserId(
       title: `今天还差 ${missingMetrics.length} 项`,
       description: `待补：${missingMetrics.map((metric) => metricLabels[metric]).join("、")}。`,
       actionHref: "/today",
-      actionLabel: "继续记录",
+      actionLabel: "去记录",
     });
   }
 
@@ -304,10 +304,10 @@ export async function getReminderFeedByUserId(
     reminders.push({
       id: "goals-not-configured",
       tone: "info",
-      title: "先记录，目标稍后设置",
-      description: "目标会让趋势和提醒更清楚。",
+      title: "先有记录",
+      description: "目标稍后校准。",
       actionHref: "/settings",
-      actionLabel: "设置目标",
+      actionLabel: "设目标",
     });
   } else if (activeGoals.length < METRIC_ORDER.length) {
     reminders.push({
@@ -346,7 +346,7 @@ export async function getReminderFeedByUserId(
         profile,
       )}”。可以先看这条线。`,
       actionHref: `/trends?metric=${metricQueryParams[weakestGoal.goal.metric]}&days=7`,
-      actionLabel: "查看趋势",
+      actionLabel: "看趋势",
     });
   }
 
@@ -371,7 +371,7 @@ export async function getReminderFeedByUserId(
         profile,
       )}”。先看趋势，再决定是否调整目标。`,
       actionHref: `/trends?metric=${metricQueryParams[longestGoalMiss.goal.metric]}&days=7`,
-      actionLabel: "看 7 天趋势",
+      actionLabel: "看趋势",
     });
   }
 
@@ -428,7 +428,7 @@ export async function getReminderFeedByUserId(
           profile,
         )}”。这是当前最容易保持的一项。`,
         actionHref: `/trends?metric=${metricQueryParams[bestGoal.goal.metric]}&days=7`,
-        actionLabel: "查看趋势",
+        actionLabel: "看趋势",
       });
     }
   }

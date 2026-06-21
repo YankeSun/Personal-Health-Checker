@@ -107,7 +107,7 @@ describe("trends-service", () => {
     expect(trend.averageDisplay).toBe("7.6");
     expect(trend.insight).toMatchObject({
       tone: "warning",
-      title: "睡眠记录较少",
+      title: "睡眠点位偏少",
     });
     expect(trend.comparison).toMatchObject({
       previousStartDate: "2026-03-21",

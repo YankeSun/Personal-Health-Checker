@@ -629,7 +629,7 @@ describe("mini program page behavior", () => {
 
     expect(page.data.trendAction).toEqual(
       expect.objectContaining({
-        title: "记录第一条体重",
+        title: "从今天开始",
         route: "/pages/today/today",
       }),
     );
@@ -678,8 +678,8 @@ describe("mini program page behavior", () => {
 
     expect(page.data.trendAction).toEqual(
       expect.objectContaining({
-        title: "记录还不连续",
-        description: "近 30 天记录 4/30 天。",
+        title: "点还不够密",
+        description: "已记录 4/30 天。",
         route: "/pages/today/today",
       }),
     );
