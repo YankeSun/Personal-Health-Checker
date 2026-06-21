@@ -18,13 +18,14 @@ function routeFromHref(href) {
 function buildFallbackInsight(dashboard) {
   const completed = dashboard.todayCompletedMetrics || 0;
   const total = dashboard.totalTrackedMetrics || 3;
+  const remaining = Math.max(total - completed, 0);
 
   if (completed < total) {
     return {
       id: "fallback-today",
       tone: "warning",
-      title: "今天还差一点",
-      description: `已完成 ${completed}/${total}。补齐后，今天就成一组。`,
+      title: "补上今日记录",
+      description: `已记录 ${completed}/${total}，还差 ${remaining} 项。`,
       actionHref: "/today",
       actionLabel: "继续记录",
     };
@@ -33,16 +34,26 @@ function buildFallbackInsight(dashboard) {
   return {
     id: "fallback-trends",
     tone: "success",
-    title: "今天这组已完成",
-    description: "现在可以看体重和日常线索有没有一起变化。",
+    title: "今日记录已完成",
+    description: "可以查看近期趋势。",
     actionHref: "/trends",
-    actionLabel: "看体重线",
+    actionLabel: "查看趋势",
   };
+}
+
+function getActionKicker(action, index) {
+  const href = action.actionHref || "";
+
+  if (href.startsWith("/today")) return index === 0 ? "今日记录" : "记录提醒";
+  if (href.startsWith("/trends")) return index === 0 ? "近期趋势" : "趋势";
+  if (href.startsWith("/settings")) return "目标";
+  return index === 0 ? "今日重点" : "下一步";
 }
 
 function decorateAction(action, index) {
   return {
     ...action,
+    kicker: getActionKicker(action, index),
     route: routeFromHref(action.actionHref),
     toneClass: toneClass(action.tone),
     isPrimary: index === 0,
@@ -58,7 +69,7 @@ function buildActionCards(dashboard, reminders) {
     title: reminder.title,
     description: reminder.description,
     actionHref: reminder.actionHref || "/today",
-    actionLabel: reminder.actionLabel || "去看看",
+    actionLabel: reminder.actionLabel || "查看",
   }));
 
   return cards.concat(reminderCards).slice(0, 3).map(decorateAction);
@@ -70,7 +81,7 @@ function decorateMetric(metric) {
   let statusClass = recorded ? "metric-recorded" : "metric-missing";
 
   if (metric.goalMet === true) {
-    statusLabel = "已对齐";
+    statusLabel = "已达成";
     statusClass = "metric-good";
   }
 
@@ -82,7 +93,7 @@ function decorateMetric(metric) {
   return {
     ...metric,
     valueLabel: metric.displayValue || "缺口",
-    detailLabel: metric.goalDeviationDescription || metric.goalDescription || "保持现在的节奏",
+    detailLabel: metric.goalDeviationDescription || metric.goalDescription || "保持当前节奏",
     statusLabel,
     statusClass,
   };
@@ -91,8 +102,8 @@ function decorateMetric(metric) {
 function buildWeightContext(rawContext) {
   if (!rawContext) {
     return {
-      title: "先留下体重线索",
-      description: "连续几天后，体重和日常线索会开始同屏出现。",
+      title: "开始记录体重",
+      description: "连续几天后，体重趋势会更清楚。",
       latestDisplay: "--",
       changeDisplay: "暂无",
       recordedDays: 0,

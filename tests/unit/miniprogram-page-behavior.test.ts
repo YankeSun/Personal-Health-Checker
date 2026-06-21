@@ -187,7 +187,7 @@ describe("mini program page behavior", () => {
     await page.saveRecord();
 
     expect(page.data.completedCount).toBe(3);
-    expect(page.data.message).toBe("今天这组已完成");
+    expect(page.data.message).toBe("今日记录已完成");
     expect(page.data.saving).toBe(false);
     expect(page.data.qualityWarnings).toEqual([{ id: "weight-outlier" }]);
     expect((globalThis as MiniProgramGlobals).wx.request).toHaveBeenCalledWith(
@@ -428,7 +428,7 @@ describe("mini program page behavior", () => {
     page.refreshDerivedState();
     await page.saveRecord();
 
-    expect(page.data.message).toBe("这一天已补齐");
+    expect(page.data.message).toBe("历史记录已补齐");
     expect((globalThis as MiniProgramGlobals).wx.request).toHaveBeenCalledWith(
       expect.objectContaining({
         url: "https://api.example.test/api/records/2026-06-10",
@@ -629,7 +629,7 @@ describe("mini program page behavior", () => {
 
     expect(page.data.trendAction).toEqual(
       expect.objectContaining({
-        title: "先留下第一条体重",
+        title: "记录第一条体重",
         route: "/pages/today/today",
       }),
     );
@@ -678,8 +678,8 @@ describe("mini program page behavior", () => {
 
     expect(page.data.trendAction).toEqual(
       expect.objectContaining({
-        title: "先把密度补起来",
-        description: "这一段有 4/30 天体重记录，线条还容易被缺口打断。",
+        title: "记录还不连续",
+        description: "近 30 天记录 4/30 天。",
         route: "/pages/today/today",
       }),
     );

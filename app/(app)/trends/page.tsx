@@ -145,7 +145,7 @@ export default async function TrendsPage({ searchParams }: TrendsPageProps) {
           </p>
         </article>
         <article className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
-          <p className="text-sm font-medium text-slate-500">达标率</p>
+          <p className="text-sm font-medium text-slate-500">目标达成</p>
           <p className="mt-3 text-3xl font-semibold text-slate-900">
             {trend.attainmentRate === null ? "未设置" : `${trend.attainmentRate}%`}
           </p>
@@ -188,7 +188,7 @@ export default async function TrendsPage({ searchParams }: TrendsPageProps) {
               </dd>
             </div>
             <div className="flex items-center justify-between gap-4">
-              <dt>达标率变化</dt>
+              <dt>目标达成变化</dt>
               <dd className="font-medium text-slate-900">
                 {trend.comparison.attainmentRateChange === null
                   ? "未设置目标"
@@ -204,7 +204,7 @@ export default async function TrendsPage({ searchParams }: TrendsPageProps) {
           <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
             <div className="max-w-3xl">
               <p className="text-sm font-semibold tracking-[0.18em] text-sky-700">
-              体重线索
+              日常标签
               </p>
               <h2 className="mt-2 text-xl font-semibold text-slate-900">
                 {trend.contextSummary.title}
@@ -217,7 +217,7 @@ export default async function TrendsPage({ searchParams }: TrendsPageProps) {
               <span className="font-semibold text-slate-900">
                 {trend.contextSummary.taggedDays}
               </span>{" "}
-              天有线索
+              天已添加标签
             </div>
           </div>
           {trend.contextSummary.topContextLabels.length > 0 ? (
@@ -236,7 +236,7 @@ export default async function TrendsPage({ searchParams }: TrendsPageProps) {
               className="mt-5 inline-flex rounded-full bg-slate-900 px-4 py-2 text-sm font-medium text-white transition hover:bg-slate-800"
               href="/today"
             >
-              补今天的线索
+              补今天的标签
             </AppLink>
           )}
         </section>

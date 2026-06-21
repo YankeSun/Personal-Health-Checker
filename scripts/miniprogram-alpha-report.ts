@@ -116,7 +116,7 @@ function buildDecisionReview(
       passed: snapshot.weightFillRate >= 50,
     },
     {
-      label: "上下文标签填写率",
+      label: "日常标签填写率",
       actual: `${snapshot.contextTagFillRate}%`,
       target: ">= 40%",
       passed: snapshot.contextTagFillRate >= 40,
@@ -321,7 +321,7 @@ function createSampleSnapshot(days: number): AlphaSnapshot {
         passed: true,
       },
       {
-        label: "上下文标签填写率",
+        label: "日常标签填写率",
         actual: 50,
         target: 40,
         passed: true,

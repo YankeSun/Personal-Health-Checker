@@ -1,23 +1,23 @@
 <view class="page trends-page">
   <view class="hero card">
     <view class="hero-topline">
-      <text class="eyebrow">WEIGHT LINE</text>
+      <text class="eyebrow">WEIGHT</text>
       <text class="date-label">最近 {{trend.days || 30}} 天</text>
     </view>
     <text class="hero-value">{{trend.latestDisplay || "--"}} {{trend.unitLabel || "kg"}}</text>
-    <text class="hero-subtitle">体重线 · {{trend.recordedDays || 0}}/{{trend.days || 30}} 天</text>
+    <text class="hero-subtitle">体重趋势 · {{trend.recordedDays || 0}}/{{trend.days || 30}} 天</text>
   </view>
 
   <view class="insight-card card {{insight.toneClass}}">
-    <text class="insight-kicker">这条线在说</text>
+    <text class="insight-kicker">趋势摘要</text>
     <text class="insight-title">{{insight.title}}</text>
     <text class="insight-copy">{{insight.description}}</text>
   </view>
 
   <view class="card spark-card">
     <view class="section-head">
-      <text class="section-title">体重线</text>
-      <text class="section-note">留白就是缺口</text>
+      <text class="section-title">体重趋势</text>
+      <text class="section-note">缺口留白</text>
     </view>
     <view class="spark-chart">
       <view wx:for="{{sparkPoints}}" wx:key="date" class="spark-column">
@@ -28,8 +28,8 @@
       </view>
     </view>
     <view class="spark-legend">
-      <text class="legend-item">实心 当天</text>
-      <text class="legend-item">浅色 补录 / 缺口</text>
+      <text class="legend-item">当天记录</text>
+      <text class="legend-item">补录 / 缺口</text>
     </view>
   </view>
 
@@ -37,7 +37,7 @@
     <view class="stat card">
       <text class="label">均值</text>
       <text class="metric-value">{{trend.averageDisplay || "--"}}</text>
-      <text class="stat-note">这一段</text>
+      <text class="stat-note">当前周期</text>
     </view>
     <view class="stat card">
       <text class="label">区间</text>
@@ -54,8 +54,8 @@
 
   <view wx:if="{{contextSummary}}" class="card context-card">
     <view class="section-head">
-      <text class="section-title">体重线索</text>
-      <text class="section-note">{{contextSummary.taggedDays || 0}} 天有线索</text>
+      <text class="section-title">日常标签</text>
+      <text class="section-note">{{contextSummary.taggedDays || 0}} 天已添加</text>
     </view>
     <text class="context-title">{{contextSummary.title}}</text>
     <text class="context-copy">{{contextSummary.description}}</text>
@@ -73,7 +73,7 @@
   </view>
 
   <view class="card block">
-    <text class="section-title">最近落点</text>
+    <text class="section-title">最近记录</text>
     <view wx:for="{{recentPoints}}" wx:key="date" class="point-row">
       <view>
         <text class="point-date">{{item.label}}</text>

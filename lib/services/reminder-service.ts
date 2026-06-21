@@ -240,26 +240,26 @@ export async function getReminderFeedByUserId(
       reminders.push({
         id: "inactive-return",
         tone: "warning",
-        title: `${inactivityDays} 天没留下记录`,
-        description: "先记今天。重新开始，比一次补齐更重要。",
+        title: `${inactivityDays} 天未记录`,
+        description: "先记今天，节奏就能重新开始。",
         actionHref: "/today",
-        actionLabel: "记今天",
+        actionLabel: "记录今天",
       });
     } else if (inactivityDays === 1) {
       reminders.push({
         id: "missing-all-today-soft",
         tone: "info",
-        title: "今天还没落点",
-        description: "补上今天这组，节奏就还在。",
+        title: "今天尚未记录",
+        description: "补上今天，记录节奏就还在。",
         actionHref: "/today",
-        actionLabel: "继续今天",
+        actionLabel: "记录今天",
       });
     } else {
       reminders.push({
         id: "missing-all-today",
         tone: "warning",
         title: "今天还没有记录",
-        description: "先补睡眠、体重和饮水。线索从今天开始。",
+        description: "先记录睡眠、体重和饮水。",
         actionHref: "/today",
         actionLabel: "记录今天",
       });
@@ -269,7 +269,7 @@ export async function getReminderFeedByUserId(
       id: "missing-some-today",
       tone: "warning",
       title: `今天还差 ${missingMetrics.length} 项`,
-      description: `缺口是 ${missingMetrics.map((metric) => metricLabels[metric]).join("、")}。补齐后，今天就完整。`,
+      description: `待补：${missingMetrics.map((metric) => metricLabels[metric]).join("、")}。`,
       actionHref: "/today",
       actionLabel: "继续记录",
     });
@@ -288,8 +288,8 @@ export async function getReminderFeedByUserId(
     reminders.push({
       id: `missing-streak-${longestMissingMetric.metric.toLowerCase()}`,
       tone: "warning",
-      title: `${metricLabels[longestMissingMetric.metric]}断了 ${longestMissingMetric.streak} 天`,
-      description: `先补这项，近 7 天的线会更连贯。`,
+      title: `${metricLabels[longestMissingMetric.metric]}连续缺口`,
+      description: `已缺 ${longestMissingMetric.streak} 天，先补这一项。`,
       actionHref:
         longestMissingMetric.latestDate === todayDate
           ? "/today"
@@ -304,8 +304,8 @@ export async function getReminderFeedByUserId(
     reminders.push({
       id: "goals-not-configured",
       tone: "info",
-      title: "目标还没设",
-      description: "设好目标后，对齐率和趋势线会更清楚。",
+      title: "先记录，目标稍后设置",
+      description: "目标会让趋势和提醒更清楚。",
       actionHref: "/settings",
       actionLabel: "设置目标",
     });
@@ -313,8 +313,8 @@ export async function getReminderFeedByUserId(
     reminders.push({
       id: "goals-partial",
       tone: "info",
-      title: `还有 ${METRIC_ORDER.length - activeGoals.length} 项目标未设`,
-      description: "补上目标，提醒会更贴近你的节奏。",
+      title: "目标尚未完整",
+      description: `还有 ${METRIC_ORDER.length - activeGoals.length} 项可设置。`,
       actionHref: "/settings",
       actionLabel: "补目标",
     });
@@ -339,7 +339,7 @@ export async function getReminderFeedByUserId(
     reminders.push({
       id: `goal-underperforming-${weakestGoal.goal.metric.toLowerCase()}`,
       tone: "warning",
-      title: `${metricLabels[weakestGoal.goal.metric]}最近待观察`,
+      title: `${metricLabels[weakestGoal.goal.metric]}目标偏低`,
       description: `最近 7 天有 ${weakestGoal.metDays}/7 天达到“${formatGoalShortLabel(
         weakestGoal.goal.metric,
         weakestGoal.goal,
@@ -364,7 +364,7 @@ export async function getReminderFeedByUserId(
     reminders.push({
       id: `goal-miss-streak-${longestGoalMiss.goal.metric.toLowerCase()}`,
       tone: "info",
-      title: `${metricLabels[longestGoalMiss.goal.metric]}连续 ${longestGoalMiss.streak} 天待观察`,
+      title: `${metricLabels[longestGoalMiss.goal.metric]}连续未达成`,
       description: `最近几天没有达到“${formatGoalShortLabel(
         longestGoalMiss.goal.metric,
         longestGoalMiss.goal,
@@ -382,19 +382,19 @@ export async function getReminderFeedByUserId(
     reminders.push({
       id: "streak-building",
       tone: "success",
-      title: "今天这组已完成",
+      title: "今日记录已完成",
       description: `再 ${streakMomentum.daysRemaining} 天，就到 ${streakMomentum.nextMilestone} 天连续。`,
       actionHref: "/dashboard",
-      actionLabel: "看连续进展",
+      actionLabel: "查看概览",
     });
   } else if (streakDays >= 3) {
     reminders.push({
       id: "consistency-streak",
       tone: "success",
-      title: `已连续完整记录 ${streakDays} 天`,
+      title: `已连续记录 ${streakDays} 天`,
       description:
         streakMomentum.nextMilestone === null
-          ? "连续数据会让趋势更稳定。"
+          ? "连续记录会让趋势更稳定。"
           : `再 ${streakMomentum.daysRemaining} 天，就到 ${streakMomentum.nextMilestone} 天连续。`,
       actionHref: "/dashboard",
       actionLabel: "看概览",
@@ -421,14 +421,14 @@ export async function getReminderFeedByUserId(
       reminders.push({
         id: `weekly-highpoint-${bestGoal.goal.metric.toLowerCase()}`,
         tone: "success",
-        title: `${metricLabels[bestGoal.goal.metric]}最近最稳`,
+        title: `${metricLabels[bestGoal.goal.metric]}保持良好`,
         description: `${bestGoal.metDays}/7 天达到“${formatGoalShortLabel(
           bestGoal.goal.metric,
           bestGoal.goal,
           profile,
         )}”。这是当前最容易保持的一项。`,
         actionHref: `/trends?metric=${metricQueryParams[bestGoal.goal.metric]}&days=7`,
-        actionLabel: "查看这项趋势",
+        actionLabel: "查看趋势",
       });
     }
   }

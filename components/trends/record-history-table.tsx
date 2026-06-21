@@ -47,7 +47,7 @@ export function RecordHistoryTable({ history }: RecordHistoryTableProps) {
         <article className="rounded-2xl border border-slate-200 bg-slate-50 p-5">
           <p className="text-sm font-medium text-slate-600">空白日期</p>
           <p className="mt-3 text-3xl font-semibold text-slate-900">{history.emptyDays}</p>
-          <p className="mt-2 text-sm text-slate-600">还没有线索</p>
+          <p className="mt-2 text-sm text-slate-600">还没有记录</p>
         </article>
       </div>
 

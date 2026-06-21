@@ -23,7 +23,7 @@ type PreviewWorkbenchProps = {
 };
 
 const screenTabs: Array<{ value: PreviewScreen; label: string; note: string }> = [
-  { value: "dashboard", label: "概览", note: "状态显影" },
+  { value: "dashboard", label: "概览", note: "看清状态" },
   { value: "today", label: "记录", note: "今天落点" },
   { value: "trends", label: "趋势", note: "变化成线" },
   { value: "settings", label: "我的", note: "偏好与目标" },
@@ -120,7 +120,7 @@ function PreviewTrendsPanel({
           </p>
         </article>
         <article className="rounded-[28px] border border-stone-200 bg-white/90 p-6 shadow-sm">
-          <p className="text-sm font-medium text-slate-500">达标率</p>
+          <p className="text-sm font-medium text-slate-500">目标达成</p>
           <p className="mt-3 text-3xl font-semibold text-slate-900">
             {trend.attainmentRate === null ? "未设置" : `${trend.attainmentRate}%`}
           </p>
@@ -160,7 +160,7 @@ export function PreviewWorkbench({ screen, metric, days }: PreviewWorkbenchProps
             <p className="text-xs font-semibold uppercase tracking-[0.22em] text-emerald-700">
               Daily Signals
             </p>
-            <p className="text-sm text-slate-700">三项落点，变化显影。</p>
+            <p className="text-sm text-slate-700">三项记录，看清变化。</p>
           </div>
           <div className="flex flex-wrap gap-3">
             <AppLink
@@ -188,11 +188,11 @@ export function PreviewWorkbench({ screen, metric, days }: PreviewWorkbenchProps
                 <h1 className="max-w-3xl text-5xl leading-tight text-slate-950 [font-family:var(--font-display)] sm:text-6xl">
                   把今天，
                   <br />
-                  记成线索。
+                  记下来。
                   <br />
                   让变化，
                   <br />
-                  自己显影。
+                  更清楚。
                 </h1>
                 <p className="max-w-2xl text-base leading-8 text-slate-700">
                   睡眠、体重、饮水。三项够轻，也够看见节奏。
@@ -271,7 +271,7 @@ export function PreviewWorkbench({ screen, metric, days }: PreviewWorkbenchProps
                 <div className="mt-5 flex items-center justify-between gap-3">
                   {[
                     { step: "01", label: "落点", accent: "bg-slate-900 text-white" },
-                    { step: "02", label: "显影", accent: "bg-emerald-600 text-white" },
+                    { step: "02", label: "看清", accent: "bg-emerald-600 text-white" },
                     { step: "03", label: "回看", accent: "bg-white text-slate-900 border border-slate-200" },
                   ].map((item, index) => (
                     <div className="flex flex-1 items-center gap-3" key={item.step}>

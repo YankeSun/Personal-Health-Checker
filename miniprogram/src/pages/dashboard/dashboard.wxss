@@ -128,14 +128,21 @@
 }
 
 .action-link {
-  display: inline-block;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
   margin-top: 18rpx;
   border-radius: 999rpx;
   background: #172033;
-  padding: 12rpx 20rpx;
+  height: 56rpx;
+  padding: 0 22rpx;
   color: #fffaf0;
   font-size: 24rpx;
   font-weight: 900;
+  line-height: 1;
+  text-align: center;
+  white-space: nowrap;
 }
 
 .grid {
@@ -172,8 +179,17 @@
 }
 
 .weight-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
   background: #f8f4ec;
   color: #6f675d;
+  height: 44rpx;
+  padding: 0 18rpx;
+  line-height: 1;
+  text-align: center;
+  white-space: nowrap;
 }
 
 .weight-values {
@@ -205,6 +221,14 @@
   flex-wrap: wrap;
   gap: 14rpx;
   margin-top: 22rpx;
+}
+
+.weight-card .chip {
+  height: 56rpx;
+  min-width: auto;
+  padding: 0 18rpx;
+  line-height: 1;
+  white-space: nowrap;
 }
 
 .metric-row {

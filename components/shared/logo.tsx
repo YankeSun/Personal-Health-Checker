@@ -8,7 +8,7 @@ export function Logo() {
         <p className="text-xs font-semibold uppercase tracking-[0.28em] text-emerald-700">
           Personal Health Checker
         </p>
-        <p className="text-sm text-slate-500">把日常记成线索</p>
+        <p className="text-sm text-slate-500">看清日常变化</p>
       </div>
     </div>
   );

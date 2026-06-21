@@ -205,7 +205,7 @@ function getWeightHint(weightValue, dateString, todayDate) {
 
 function getSaveSuccessMessage(completedCount, isToday) {
   if (completedCount === 3) {
-    return isToday ? "今天这组已完成" : "这一天已补齐";
+    return isToday ? "今日记录已完成" : "历史记录已补齐";
   }
 
   return isToday ? `已保存 ${completedCount}/3` : `已补录 ${completedCount}/3`;

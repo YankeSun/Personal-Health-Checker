@@ -75,7 +75,7 @@ describe("dashboard route", () => {
           id: "today-focus",
           tone: "success",
           title: "已连续 4 天",
-          description: "继续保持今天这组。",
+          description: "继续保持今日记录。",
           actionHref: "/trends",
           actionLabel: "看最近趋势",
         },

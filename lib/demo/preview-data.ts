@@ -367,18 +367,18 @@ export const previewDashboardOverview: DashboardOverview = {
     {
       id: "today-focus",
       tone: "warning",
-      title: "今天先补饮水",
-      description: "只差这一项，今天这组就完整了。",
+      title: "补上饮水",
+      description: "今天还差这一项。",
       actionHref: "/experience?screen=today",
-      actionLabel: "回到记录",
+      actionLabel: "继续记录",
     },
     {
       id: "weekly-focus-goal",
       tone: "warning",
-      title: "这周先看饮水",
-      description: "最近 7 天饮水对齐率最不稳定，先把这项拉回节奏。",
+      title: "饮水目标偏低",
+      description: "近 7 天达成 42.9%。",
       actionHref: "/experience?screen=trends&metric=water&days=7",
-      actionLabel: "看 7 天",
+      actionLabel: "查看趋势",
     },
   ],
   weightContext: {
@@ -389,7 +389,7 @@ export const previewDashboardOverview: DashboardOverview = {
     trend: "stable",
     title: "最近 7 天体重基本稳定",
     description:
-      "记录 6/7 天，较第一条 -0.2 kg。常见线索是清淡、正常活动和晨起称重，它们是线索，不是结论。",
+      "记录 6/7 天，较首日 -0.2 kg。常见日常标签：清淡 3 次、正常活动 3 次、晨起称重 4 次。仅供回顾。",
     topContextLabels: [
       { label: "清淡", count: 3 },
       { label: "正常", count: 3 },
@@ -407,25 +407,25 @@ export const previewReminderFeed: ReminderFeed = {
       id: "missing-water-today",
       tone: "warning",
       title: "今天还差饮水",
-      description: "睡眠和体重已落点，再补饮水，今天就完整。",
+      description: "待补：饮水。",
       actionHref: "/experience?screen=today",
-      actionLabel: "回到记录",
+      actionLabel: "继续记录",
     },
     {
       id: "water-attainment-pressure",
       tone: "info",
-      title: "饮水最近待观察",
-      description: "最近 7 天对齐率 42.9%，这条线值得先看。",
+      title: "饮水目标偏低",
+      description: "近 7 天达成 42.9%。",
       actionHref: "/experience?screen=trends&metric=water&days=7",
-      actionLabel: "查看饮水趋势",
+      actionLabel: "查看趋势",
     },
     {
       id: "weight-in-range",
       tone: "success",
-      title: "体重仍在目标区间附近",
+      title: "体重保持良好",
       description: "最近一个月波动平稳，节奏正在成形。",
       actionHref: "/experience?screen=trends&metric=weight&days=30",
-      actionLabel: "查看体重趋势",
+      actionLabel: "查看趋势",
     },
   ],
 };
@@ -527,25 +527,25 @@ function buildTrend(metricParam: TrendMetricParam, daysParam: TrendDaysParam): T
       completionRate < 50
         ? {
             tone: "warning",
-            title: `先把${metricLabels[metricParam]}记录补齐`,
-            description: `最近 ${days} 天只记录了 ${validValues.length}/${days} 天，这项趋势更容易被缺口打断。`,
+            title: `${metricLabels[metricParam]}记录较少`,
+            description: `近 ${days} 天记录 ${validValues.length}/${days} 天。`,
           }
         : attainmentRate < 50
           ? {
               tone: "warning",
-              title: `${metricLabels[metricParam]}最近值得多看一眼`,
-              description: `最近 ${days} 天对齐率只有 ${attainmentRate}% ，可以先观察这项最近为什么更难保持。`,
+              title: `${metricLabels[metricParam]}目标偏低`,
+              description: `近 ${days} 天达成 ${attainmentRate}%。`,
             }
           : averageDeltaDisplay
             ? {
                 tone: "info",
-                title: `${metricLabels[metricParam]}最近出现了明显变化`,
-                description: `比上一段平均变化 ${averageDeltaDisplay}。`,
+                title: `${metricLabels[metricParam]}有变化`,
+                description: `较上一段 ${averageDeltaDisplay}。`,
               }
             : {
                 tone: "success",
-                title: `${metricLabels[metricParam]}最近比较稳定`,
-                description: `最近 ${days} 天的记录频率和整体波动都比较平稳。`,
+                title: `${metricLabels[metricParam]}保持稳定`,
+                description: "记录频率和波动都较稳定。",
               },
     comparison: {
       previousStartDate: previousDates[0],
@@ -568,8 +568,8 @@ function buildTrend(metricParam: TrendMetricParam, daysParam: TrendDaysParam): T
     contextSummary:
       metric === Metric.WEIGHT
         ? {
-            title: "这些线索常和体重同天出现",
-            description: `这一段有 ${Math.min(validValues.length, 5)}/${validValues.length} 天带有线索。它们是线索，不是结论。`,
+            title: "日常标签",
+            description: `${Math.min(validValues.length, 5)}/${validValues.length} 天已添加。仅供回顾，不作判断。`,
             taggedDays: Math.min(validValues.length, 5),
             topContextLabels: [
               { label: "清淡", count: 3 },

@@ -38,11 +38,11 @@ export default async function HomePage() {
               <h1 className="max-w-4xl text-5xl leading-tight text-slate-950 [font-family:var(--font-display)] sm:text-6xl">
                 把每天，
                 <br />
-                记成线索。
+                记下来。
                 <br />
                 让变化，
                 <br />
-                自己显影。
+                更清楚。
               </h1>
               <p className="max-w-2xl text-base leading-8 text-slate-700">
                 睡眠、体重、饮水。三项足够轻，也足够看见节奏。
@@ -78,7 +78,7 @@ export default async function HomePage() {
               <p className="text-xs font-semibold uppercase tracking-[0.22em] text-slate-500">
                 Dashboard
               </p>
-              <p className="mt-3 text-2xl font-semibold text-slate-950">状态显影</p>
+              <p className="mt-3 text-2xl font-semibold text-slate-950">看清状态</p>
               <p className="mt-2 text-sm leading-6 text-slate-600">
                 连续 · 达标 · 提醒
               </p>

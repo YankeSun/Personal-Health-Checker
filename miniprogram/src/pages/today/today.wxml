@@ -42,7 +42,7 @@
   <view class="record-card card">
     <view class="section-head">
       <text class="section-title">今日三项</text>
-      <text class="section-note">三项到位，今天就有线索。</text>
+      <text class="section-note">三项到位，今日记录就完整。</text>
     </view>
 
     <view class="field weight-field">
@@ -72,8 +72,8 @@
 
   <view class="context-card card">
     <view class="section-head">
-      <text class="section-title">体重线索</text>
-      <text class="section-note">给这次称重一点上下文。</text>
+      <text class="section-title">日常标签</text>
+      <text class="section-note">记录饮食、活动和称重时段。</text>
     </view>
 
     <view class="context-group">

@@ -5,7 +5,7 @@
       <text class="unit-pill">{{profile.weightUnit || "KG"}} / {{profile.waterUnit || "ML"}}</text>
     </view>
     <text class="title">{{profile.displayName || "微信用户"}}</text>
-    <text class="profile-copy">记录、回看、调整。让每天的变化慢慢显影。</text>
+    <text class="profile-copy">记录、回看、调整。让每天的变化更清楚。</text>
   </view>
 
   <view class="card block alpha-card">

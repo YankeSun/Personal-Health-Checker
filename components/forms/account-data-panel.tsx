@@ -90,7 +90,7 @@ export function AccountDataPanel() {
           </p>
           <h2 className="text-2xl font-semibold text-slate-900">数据归你</h2>
           <p className="max-w-2xl text-sm leading-6 text-slate-600">
-            记录、目标、体重线索和账号数据，都可以导出；也可以全部删除。
+            记录、目标、日常标签和账号数据，都可以导出；也可以全部删除。
           </p>
         </div>
         <button

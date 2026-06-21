@@ -96,7 +96,7 @@ export function HistoryMonthView({ overview }: HistoryMonthViewProps) {
         <article className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
           <p className="text-sm font-medium text-slate-500">空白天数</p>
           <p className="mt-3 text-3xl font-semibold text-slate-900">{overview.emptyDays}</p>
-          <p className="mt-2 text-sm text-slate-600">还没有线索</p>
+          <p className="mt-2 text-sm text-slate-600">还没有记录</p>
         </article>
         <article className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
           <p className="text-sm font-medium text-slate-500">记录密度</p>
@@ -112,11 +112,11 @@ export function HistoryMonthView({ overview }: HistoryMonthViewProps) {
           <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
             <div>
               <p className="text-sm font-semibold tracking-[0.18em] text-sky-700">
-                体重线索
+                日常标签
               </p>
               <h2 className="mt-2 text-xl font-semibold text-slate-900">
                 本月有 {overview.weightContextSummary.taggedWeightDays}/
-                {overview.weightContextSummary.recordedWeightDays} 天带有线索
+                {overview.weightContextSummary.recordedWeightDays} 天已添加标签
               </h2>
             </div>
             {overview.weightContextSummary.topContextLabels.length > 0 ? (
@@ -234,7 +234,7 @@ export function HistoryMonthView({ overview }: HistoryMonthViewProps) {
                 <th className="pb-4 pr-4 font-medium">日期</th>
                 <th className="pb-4 pr-4 font-medium">睡眠</th>
                 <th className="pb-4 pr-4 font-medium">体重</th>
-                <th className="pb-4 pr-4 font-medium">体重线索</th>
+                <th className="pb-4 pr-4 font-medium">日常标签</th>
                 <th className="pb-4 pr-4 font-medium">饮水</th>
                 <th className="pb-4 pr-4 font-medium">状态</th>
                 <th className="pb-4 font-medium text-right">操作</th>

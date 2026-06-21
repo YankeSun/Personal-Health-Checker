@@ -245,7 +245,7 @@ export function TodayRecordForm({
       setSuccess(
         nextSummary.isComplete
           ? initialValues.date === dateControls?.maxDate
-            ? "今天这组已完成"
+            ? "今日记录已完成"
             : payload?.record?.isBackfilled
               ? "这次补录已入列"
               : "这一天已完成"
@@ -358,7 +358,7 @@ export function TodayRecordForm({
             {dateControls?.isToday ? "今天落点" : "每日落点"}
           </h1>
           <p className="text-sm leading-6 text-slate-600">
-            睡眠、体重、饮水。三项到位，今天就有线索。
+            睡眠、体重、饮水。三项到位，今日记录就完整。
           </p>
         </div>
 
@@ -459,7 +459,7 @@ export function TodayRecordForm({
                 </div>
                 <div className="rounded-2xl bg-white px-3 py-3 text-sm text-slate-700 shadow-sm">
                   <p className="font-medium text-slate-900">2. 看概览</p>
-                  <p className="mt-1 text-xs text-slate-500">状态显影</p>
+                  <p className="mt-1 text-xs text-slate-500">看清状态</p>
                 </div>
                 <div className="rounded-2xl bg-white px-3 py-3 text-sm text-slate-700 shadow-sm">
                   <p className="font-medium text-slate-900">3. 明天继续</p>
@@ -578,13 +578,13 @@ export function TodayRecordForm({
         <section className="mt-6 rounded-3xl border border-slate-200 bg-slate-50/80 p-5">
           <div className="flex flex-wrap items-start justify-between gap-3">
             <div>
-              <h2 className="text-base font-semibold text-slate-900">体重线索</h2>
+              <h2 className="text-base font-semibold text-slate-900">日常标签</h2>
               <p className="mt-1 text-sm leading-6 text-slate-600">
-                给这次称重一点上下文。
+                记录饮食、活动和称重时段。
               </p>
             </div>
             <span className="rounded-full bg-white px-3 py-1.5 text-xs font-medium text-slate-600 ring-1 ring-slate-200">
-              {contextTagCount} 条线索
+              {contextTagCount} 个标签
             </span>
           </div>
           <div className="mt-5 grid gap-4 lg:grid-cols-2">
@@ -694,7 +694,7 @@ export function TodayRecordForm({
           <h2 className="text-base font-semibold text-slate-900">记录口径</h2>
           <ul className="mt-4 space-y-3 text-sm leading-6 text-slate-600">
             <li>睡眠：昨晚总时长，例如 7.5 小时。</li>
-            <li>体重：尽量固定时段，线条更干净。</li>
+            <li>体重：尽量固定时段，趋势更清楚。</li>
             <li>饮水：按全天累计量，晚些补也可以。</li>
           </ul>
         </section>

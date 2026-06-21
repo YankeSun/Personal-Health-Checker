@@ -144,7 +144,7 @@ describe("reminder-service", () => {
       id: "missing-some-today",
       title: "今天还差 1 项",
     });
-    expect(feed.reminders.some((reminder) => reminder.title.includes("饮水最近待观察"))).toBe(true);
+    expect(feed.reminders.some((reminder) => reminder.title.includes("饮水目标偏低"))).toBe(true);
   });
 
   it("returns no reminders when in-app reminders are disabled", async () => {
@@ -302,7 +302,7 @@ describe("reminder-service", () => {
       expect.arrayContaining([
         expect.objectContaining({
           id: "missing-streak-water",
-          title: "饮水断了 2 天",
+          title: "饮水连续缺口",
           actionHref: "/today",
         }),
       ]),
@@ -332,8 +332,8 @@ describe("reminder-service", () => {
       expect.arrayContaining([
         expect.objectContaining({
           id: "inactive-return",
-          title: "4 天没留下记录",
-          actionLabel: "记今天",
+          title: "4 天未记录",
+          actionLabel: "记录今天",
         }),
       ]),
     );
@@ -429,7 +429,7 @@ describe("reminder-service", () => {
       expect.arrayContaining([
         expect.objectContaining({
           id: "goal-miss-streak-sleep",
-          title: "睡眠连续 3 天待观察",
+          title: "睡眠连续未达成",
           actionHref: "/trends?metric=sleep&days=7",
         }),
       ]),
@@ -526,7 +526,7 @@ describe("reminder-service", () => {
       expect.arrayContaining([
         expect.objectContaining({
           id: "weekly-highpoint-weight",
-          title: "体重最近最稳",
+          title: "体重保持良好",
         }),
         expect.objectContaining({
           id: "consistency-streak",
@@ -565,7 +565,7 @@ describe("reminder-service", () => {
       expect.arrayContaining([
         expect.objectContaining({
           id: "streak-building",
-          title: "今天这组已完成",
+          title: "今日记录已完成",
           description: expect.stringContaining("再 1 天"),
         }),
       ]),

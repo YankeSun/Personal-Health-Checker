@@ -93,7 +93,7 @@ export default async function TodayPage({ searchParams }: TodayPageProps) {
         showWelcome
           ? {
               title: "从今天落点",
-              description: "三项到位，第一条线索就会出现。",
+              description: "三项到位，第一条记录就会出现。",
             }
           : undefined
       }

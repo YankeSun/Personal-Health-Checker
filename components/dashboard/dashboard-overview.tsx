@@ -115,7 +115,7 @@ export function DashboardOverviewPanel({ overview, reminderFeed }: DashboardOver
         <div className="flex flex-col gap-5 lg:flex-row lg:items-start lg:justify-between">
           <div className="max-w-3xl">
             <p className="text-sm font-semibold tracking-[0.18em] text-slate-500">
-            体重线索
+            体重趋势
             </p>
             <h2 className="mt-2 text-2xl font-semibold text-slate-900">
               {weightContext.title}
@@ -161,7 +161,7 @@ export function DashboardOverviewPanel({ overview, reminderFeed }: DashboardOver
             </p>
             <h2 className="mt-2 text-2xl font-semibold">30 天体重回看</h2>
             <p className="mt-3 text-sm leading-6 text-slate-200">
-              体重变化、记录密度、目标进度和日常线索，整理成一份清晰月报。当前可加入等待名单。
+              体重变化、记录完成度、目标进度和日常标签，整理成一份清晰月报。当前可加入等待名单。
             </p>
           </div>
           <div className="rounded-3xl bg-white p-4 text-slate-900">
@@ -288,7 +288,7 @@ export function DashboardOverviewPanel({ overview, reminderFeed }: DashboardOver
                     </dd>
                   </div>
                   <div className="flex items-center justify-between gap-4">
-                    <dt>达标率</dt>
+                    <dt>目标达成</dt>
                     <dd className="font-medium text-slate-900">
                       {metric.attainmentRate === null ? "未设置" : `${metric.attainmentRate}%`}
                     </dd>
@@ -371,7 +371,7 @@ export function DashboardOverviewPanel({ overview, reminderFeed }: DashboardOver
                       </dd>
                     </div>
                     <div className="flex items-center justify-between gap-4">
-                      <dt>达标率变化</dt>
+                      <dt>目标达成变化</dt>
                       <dd className="font-medium text-slate-900">
                         {metric.attainmentRateChange === null
                           ? "未设置"

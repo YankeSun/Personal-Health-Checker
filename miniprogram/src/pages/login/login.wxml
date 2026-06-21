@@ -1,7 +1,7 @@
 <view class="page login-page">
   <view class="hero card">
     <text class="eyebrow">PERSONAL HEALTH CHECKER</text>
-    <text class="title">把今天，记成线索</text>
+    <text class="title">把今天，记下来</text>
     <text class="subtitle">体重、睡眠、饮水。轻轻记下，慢慢看见。</text>
 
     <view class="agreement" bindtap="toggleLegalAccepted">

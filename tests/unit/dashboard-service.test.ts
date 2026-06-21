@@ -179,7 +179,7 @@ describe("dashboard-service", () => {
     });
     expect(overview.insights[1]).toMatchObject({
       id: "weekly-focus-goal",
-      title: "这周先看睡眠",
+      title: "睡眠目标偏低",
     });
     expect(overview.windows[0].days).toBe(7);
     expect(overview.windows[0].completeRecordDays).toBe(4);
@@ -248,7 +248,7 @@ describe("dashboard-service", () => {
     expect(overview.todayCompletedMetrics).toBe(2);
     expect(overview.insights[0]).toMatchObject({
       id: "today-focus",
-      title: "今天先补体重",
+      title: "补上体重",
     });
     expect(overview.windows[0].completionRate).toBe(14.3);
   });

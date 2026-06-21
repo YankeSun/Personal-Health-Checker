@@ -371,7 +371,7 @@ export function GoalsForm({ initialValues, previewMode = false }: GoalsFormProps
                     <p className="mt-2 text-sm leading-6 text-slate-600">
                       {goal.isActive
                         ? (goalRuleDescription ?? "填好目标值后，这项才会参与判断。")
-                        : "关闭后，这项不参与达标率、提醒和趋势线。"}
+                        : "关闭后，这项不参与目标达成、提醒和趋势。"}
                     </p>
                   </div>
                 </div>
@@ -415,7 +415,7 @@ export function GoalsForm({ initialValues, previewMode = false }: GoalsFormProps
         <section className="rounded-3xl border border-emerald-200 bg-emerald-50/70 p-6">
           <h3 className="text-base font-semibold text-emerald-950">目标会影响</h3>
           <ul className="mt-4 space-y-3 text-sm leading-6 text-emerald-900">
-            <li>概览页的 7 天 / 30 天达标率。</li>
+            <li>概览页的 7 天 / 30 天目标达成。</li>
             <li>站内提醒的优先级。</li>
             <li>趋势图里的目标线。</li>
           </ul>

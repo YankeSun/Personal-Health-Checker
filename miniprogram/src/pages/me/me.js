@@ -18,21 +18,21 @@ const alphaTaskItems = [
   {
     key: "record",
     title: "记录今天",
-    description: "先留下体重，再补睡眠、饮水和体重线索。",
+    description: "先记录体重，再补睡眠、饮水和日常标签。",
     actionLabel: "去记录",
     route: "/pages/today/today",
   },
   {
     key: "dashboard",
     title: "看今日概览",
-    description: "看看今天的进度、连续状态和体重线索。",
+    description: "查看今日进度、连续状态和体重趋势。",
     actionLabel: "看概览",
     route: "/pages/dashboard/dashboard",
   },
   {
     key: "trend",
     title: "回看体重趋势",
-    description: "看最近 30 天的体重线和日常线索。",
+    description: "查看最近 30 天的体重趋势和日常标签。",
     actionLabel: "看趋势",
     route: "/pages/trends/trends",
   },
@@ -47,7 +47,7 @@ const alphaTaskItems = [
 
 const reportReasonItems = [
   "汇总 30 天体重变化和目标进度",
-  "回看饮食、活动和称重时段线索",
+  "回顾饮食、活动和称重时段",
   "开放后优先体验",
 ];
 

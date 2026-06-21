@@ -675,7 +675,7 @@ export async function getMiniProgramAlphaSnapshot(days = 30) {
       passed: recordedDays > 0 && weightFilledDays / recordedDays >= 0.5,
     },
     {
-      label: "上下文标签填写率",
+      label: "日常标签填写率",
       actual: recordedDays === 0 ? 0 : roundTo((contextTagFilledDays / recordedDays) * 100, 1),
       target: 40,
       passed: recordedDays > 0 && contextTagFilledDays / recordedDays >= 0.4,

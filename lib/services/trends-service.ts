@@ -297,24 +297,24 @@ function buildTrendInsight({
   if (completionRate < 50) {
     return {
       tone: "warning",
-      title: `${metricLabel}线还不够连续`,
-      description: `最近 ${days} 天记录 ${recordedDays}/${days} 天，先把缺口补稳。`,
+      title: `${metricLabel}记录较少`,
+      description: `近 ${days} 天记录 ${recordedDays}/${days} 天。`,
     };
   }
 
   if (attainmentRate !== null && attainmentRate < 50) {
     return {
       tone: "warning",
-      title: `${metricLabel}值得多看一眼`,
-      description: `最近 ${days} 天对齐率 ${attainmentRate}%。`,
+      title: `${metricLabel}目标偏低`,
+      description: `近 ${days} 天达成 ${attainmentRate}%。`,
     };
   }
 
   if (isFluctuating && fluctuationDisplay) {
     return {
       tone: "info",
-      title: `${metricLabel}波动更明显`,
-      description: `最近 ${days} 天波动值 ${fluctuationDisplay}，适合回看日常节奏。`,
+      title: `${metricLabel}波动变大`,
+      description: `近 ${days} 天波动 ${fluctuationDisplay}。`,
     };
   }
 
@@ -325,15 +325,15 @@ function buildTrendInsight({
   ) {
     return {
       tone: "info",
-      title: `${metricLabel}出现变化`,
-      description: `比上一段平均变化 ${averageDeltaDisplay}。`,
+      title: `${metricLabel}有变化`,
+      description: `较上一段 ${averageDeltaDisplay}。`,
     };
   }
 
   return {
     tone: "success",
-    title: `${metricLabel}最近很稳`,
-    description: `记录频率和波动都在稳定区间。`,
+    title: `${metricLabel}保持稳定`,
+    description: "记录频率和波动都较稳定。",
   };
 }
 
@@ -385,8 +385,8 @@ function buildContextSummary({
 
   if (recordedWeightDays === 0) {
     return {
-      title: "先留下体重线",
-      description: "几天之后，体重和日常线索会开始同屏出现。",
+      title: "开始记录体重",
+      description: "有了连续记录，趋势会更清楚。",
       taggedDays: 0,
       topContextLabels: [],
     };
@@ -394,16 +394,16 @@ function buildContextSummary({
 
   if (taggedDays === 0) {
     return {
-      title: "给体重线补一点线索",
-      description: "下次记录时加上饮食、活动或称重时段，线条会更好读。",
+      title: "添加日常标签",
+      description: "饮食、活动和称重时段可帮助回顾趋势。",
       taggedDays: 0,
       topContextLabels: [],
     };
   }
 
   return {
-    title: "这些线索常和体重同天出现",
-    description: `${taggedDays}/${recordedWeightDays} 天带有线索。它们是线索，不是结论。`,
+    title: "日常标签",
+    description: `${taggedDays}/${recordedWeightDays} 天已添加。仅供回顾，不作判断。`,
     taggedDays,
     topContextLabels,
   };

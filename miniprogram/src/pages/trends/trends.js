@@ -11,8 +11,8 @@ function buildInsight(trend) {
 
   return {
     toneClass: toneClass(insight.tone),
-    title: insight.title || "先留下体重线",
-    description: insight.description || "连续几天后，变化会更清楚。",
+    title: insight.title || "开始记录体重",
+    description: insight.description || "记录几天后，趋势会更清楚。",
   };
 }
 
@@ -24,8 +24,8 @@ function buildComparison(trend) {
       title: "和上一段比",
       value: comparison.averageDeltaDisplay,
       description: comparison.previousAverageDisplay
-        ? `上一段平均 ${comparison.previousAverageDisplay}，这次变化可作回看线索。`
-        : "上一段记录较少，先作为参考。",
+        ? `上一段平均 ${comparison.previousAverageDisplay}，本段变化可作参考。`
+        : "上一段记录较少，暂不比较。",
       directionClass: `delta-${comparison.averageDeltaDirection || "none"}`,
     };
   }
@@ -34,7 +34,7 @@ function buildComparison(trend) {
     return {
       title: "和上一段比",
       value: "基本接近",
-      description: `上一段平均 ${comparison.previousAverageDisplay}，目前变化不明显。`,
+      description: `上一段平均 ${comparison.previousAverageDisplay}，变化不明显。`,
       directionClass: "delta-flat",
     };
   }
@@ -42,7 +42,7 @@ function buildComparison(trend) {
   return {
     title: "和上一段比",
     value: "待积累",
-    description: "上一段记录还不够，先连续几天再看。",
+    description: "记录更多后再比较。",
     directionClass: "delta-none",
   };
 }
@@ -54,8 +54,8 @@ function buildTrendAction(trend) {
 
   if (recordedDays === 0) {
     return {
-      title: "先留下第一条体重",
-      description: "第一条线索出现后，趋势才会开始显影。",
+      title: "记录第一条体重",
+      description: "有记录后，趋势才会出现。",
       label: "记录今天",
       route: "/pages/today/today",
     };
@@ -63,8 +63,8 @@ function buildTrendAction(trend) {
 
   if (recordedDays < Math.ceil(days * 0.35)) {
     return {
-      title: "先把密度补起来",
-      description: `这一段有 ${recordedDays}/${days} 天体重记录，线条还容易被缺口打断。`,
+      title: "记录还不连续",
+      description: `近 ${days} 天记录 ${recordedDays}/${days} 天。`,
       label: "继续记录",
       route: "/pages/today/today",
     };
@@ -72,16 +72,16 @@ function buildTrendAction(trend) {
 
   if (contextSummary && contextSummary.taggedDays === 0) {
     return {
-      title: "给体重补一点线索",
-      description: "下次加上饮食、活动或称重时段，线条会更好读。",
-      label: "补今天线索",
+      title: "添加日常标签",
+      description: "饮食、活动和称重时段可帮助回顾趋势。",
+      label: "补今天",
       route: "/pages/today/today",
     };
   }
 
   return {
     title: "回到今天",
-    description: "每天一条体重线索，变化会自己显影。",
+    description: "保持记录，趋势会更清楚。",
     label: "记录今天",
     route: "/pages/today/today",
   };
