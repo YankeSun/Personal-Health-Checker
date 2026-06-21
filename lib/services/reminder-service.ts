@@ -305,7 +305,7 @@ export async function getReminderFeedByUserId(
       id: "goals-not-configured",
       tone: "info",
       title: "目标还没设",
-      description: "设好目标后，达标率和趋势线会更清楚。",
+      description: "设好目标后，对齐率和趋势线会更清楚。",
       actionHref: "/settings",
       actionLabel: "设置目标",
     });

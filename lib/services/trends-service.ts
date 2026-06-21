@@ -306,7 +306,7 @@ function buildTrendInsight({
     return {
       tone: "warning",
       title: `${metricLabel}值得多看一眼`,
-      description: `最近 ${days} 天达标率 ${attainmentRate}%。`,
+      description: `最近 ${days} 天对齐率 ${attainmentRate}%。`,
     };
   }
 
@@ -386,7 +386,7 @@ function buildContextSummary({
   if (recordedWeightDays === 0) {
     return {
       title: "先留下体重线",
-      description: "几天之后，体重和日常背景会开始同屏出现。",
+      description: "几天之后，体重和日常线索会开始同屏出现。",
       taggedDays: 0,
       topContextLabels: [],
     };
@@ -394,7 +394,7 @@ function buildContextSummary({
 
   if (taggedDays === 0) {
     return {
-      title: "给体重线补一点上下文",
+      title: "给体重线补一点线索",
       description: "下次记录时加上饮食、活动或称重时段，线条会更好读。",
       taggedDays: 0,
       topContextLabels: [],
@@ -403,7 +403,7 @@ function buildContextSummary({
 
   return {
     title: "这些线索常和体重同天出现",
-    description: `${taggedDays}/${recordedWeightDays} 天带有背景。它们是线索，不是结论。`,
+    description: `${taggedDays}/${recordedWeightDays} 天带有线索。它们是线索，不是结论。`,
     taggedDays,
     topContextLabels,
   };

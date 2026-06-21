@@ -224,7 +224,7 @@ check(
 );
 check("dashboard page reads summary", dashboardJs.includes("/api/dashboard"));
 check("dashboard page surfaces action insights", hasAll(dashboardJs, ["actionCards", "weightContext", "handleAction"]));
-check("dashboard page shows weekly focus and weight context", hasAll(dashboardWxml, ["今天先看", "体重线索", "今日三项"]));
+check("dashboard page shows weekly focus and weight context", hasAll(dashboardWxml, ["今天先看", "体重线索", "今天三项"]));
 check(
   "dashboard page supports load retry diagnostics",
   hasAll(dashboardJs, ["toErrorState", "retryLastAction"]) &&
@@ -232,7 +232,7 @@ check(
 );
 check("trends page reads weight trend", trendsJs.includes("/api/trends?metric=weight"));
 check("trends page surfaces insight, comparison, and context", hasAll(trendsJs, ["buildInsight", "buildComparison", "buildSparkPoints", "buildTrendAction"]));
-check("trends page shows weight trend review flow", hasAll(trendsWxml, ["趋势洞察", "最近走势", "体重线索", "最近记录"]));
+check("trends page shows weight trend review flow", hasAll(trendsWxml, ["这条线在说", "体重线", "体重线索", "最近落点"]));
 check(
   "trends page supports load retry diagnostics",
   hasAll(trendsJs, ["toErrorState", "retryLastAction"]) &&

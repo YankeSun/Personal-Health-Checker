@@ -679,7 +679,7 @@ describe("mini program page behavior", () => {
     expect(page.data.trendAction).toEqual(
       expect.objectContaining({
         title: "先把密度补起来",
-        description: "当前窗口有 4/30 天体重记录，线条还容易被缺口打断。",
+        description: "这一段有 4/30 天体重记录，线条还容易被缺口打断。",
         route: "/pages/today/today",
       }),
     );

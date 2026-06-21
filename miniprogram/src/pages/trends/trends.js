@@ -64,7 +64,7 @@ function buildTrendAction(trend) {
   if (recordedDays < Math.ceil(days * 0.35)) {
     return {
       title: "先把密度补起来",
-      description: `当前窗口有 ${recordedDays}/${days} 天体重记录，线条还容易被缺口打断。`,
+      description: `这一段有 ${recordedDays}/${days} 天体重记录，线条还容易被缺口打断。`,
       label: "继续记录",
       route: "/pages/today/today",
     };
@@ -107,7 +107,7 @@ function buildSparkPoints(points, unitLabel) {
     return {
       date: point.date,
       label: point.label,
-      valueLabel: hasValue ? `${point.value} ${unitLabel}` : "未记录",
+      valueLabel: hasValue ? `${point.value} ${unitLabel}` : "缺口",
       heightPercent,
       hasValue,
       isBackfilled: Boolean(point.isBackfilled),
@@ -123,7 +123,7 @@ function buildSparkPoints(points, unitLabel) {
 function buildRecentPoints(points, unitLabel) {
   return (Array.isArray(points) ? points.slice(-7).reverse() : []).map((point) => ({
     ...point,
-    valueLabel: point.value === null ? "未记录" : `${point.value} ${unitLabel}`,
+    valueLabel: point.value === null ? "缺口" : `${point.value} ${unitLabel}`,
     sourceLabel: point.isBackfilled ? "补录" : "当天",
     sourceClass: point.isBackfilled ? "source-backfilled" : "source-current",
   }));

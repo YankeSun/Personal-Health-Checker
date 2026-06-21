@@ -469,7 +469,7 @@ function buildPeriodChangeInsight(
       id: "period-improvement",
       tone: "success",
       title: `${mostImproved.label}更稳了`,
-      description: `最近 ${windowSummary.days} 天达标率提升 +${mostImproved.attainmentRateChange}%。`,
+      description: `最近 ${windowSummary.days} 天对齐率提升 +${mostImproved.attainmentRateChange}%。`,
       actionHref: `/trends?metric=${mostImproved.metric.toLowerCase()}&days=${windowSummary.days}`,
       actionLabel: `查看${mostImproved.label}趋势`,
     };
@@ -480,7 +480,7 @@ function buildPeriodChangeInsight(
       id: "period-decline",
       tone: "warning",
       title: `${mostDeclined.label}值得多看一眼`,
-      description: `最近 ${windowSummary.days} 天达标率变化 ${mostDeclined.attainmentRateChange}%。`,
+      description: `最近 ${windowSummary.days} 天对齐率变化 ${mostDeclined.attainmentRateChange}%。`,
       actionHref: `/trends?metric=${mostDeclined.metric.toLowerCase()}&days=${windowSummary.days}`,
       actionLabel: `查看${mostDeclined.label}趋势`,
     };
@@ -527,7 +527,7 @@ function buildWeeklyFocusInsight(
       id: "weekly-focus-goal",
       tone: "warning",
       title: `这周先看${weakestGoalMetric.label}`,
-      description: `最近 ${windowSummary.days} 天达标率 ${weakestGoalMetric.attainmentRate}%。`,
+      description: `最近 ${windowSummary.days} 天对齐率 ${weakestGoalMetric.attainmentRate}%。`,
       actionHref: `/trends?metric=${weakestGoalMetric.metric.toLowerCase()}&days=7`,
       actionLabel: "查看最近 7 天",
     };
@@ -542,7 +542,7 @@ function buildWeeklyFocusInsight(
       id: "weekly-focus-stable",
       tone: "success",
       title: `${strongestMetric.label}这周最稳`,
-      description: `最近 ${windowSummary.days} 天达标率 ${strongestMetric.attainmentRate}%。`,
+      description: `最近 ${windowSummary.days} 天对齐率 ${strongestMetric.attainmentRate}%。`,
       actionHref: `/trends?metric=${strongestMetric.metric.toLowerCase()}&days=7`,
       actionLabel: "看看这项变化",
     };
@@ -606,7 +606,7 @@ function buildWeightContext(
       changeDisplay: null,
       trend: "none",
       title: "先留下第一条体重线索",
-      description: "连续几天后，体重和日常背景会开始对上节奏。",
+      description: "连续几天后，体重和日常线索会开始对上节奏。",
       topContextLabels: [],
     };
   }
@@ -619,7 +619,7 @@ function buildWeightContext(
       changeDisplay: null,
       trend: "none",
       title: "第一条体重线索已出现",
-      description: "再连续几天，背景和波动会更容易同屏回看。",
+      description: "再连续几天，线索和波动会更容易同屏回看。",
       topContextLabels,
     };
   }
@@ -632,7 +632,7 @@ function buildWeightContext(
         : "有所上升";
   const contextDescription =
     topContextLabels.length > 0
-      ? `这几天最常出现的背景是 ${topContextLabels
+      ? `这几天最常出现的线索是 ${topContextLabels
           .map((item) => `${item.label} ${item.count} 次`)
           .join("、")}。它们是线索，不是结论。`
       : "补充饮食、活动和称重时段后，波动会更容易读懂。";
@@ -708,7 +708,7 @@ export async function getDashboardOverviewByUserId(
       id: "dashboard-goals-cta",
       tone: "info",
       title: "目标可以稍后设",
-      description: "设好目标后，达标率和提醒会更清楚。",
+      description: "设好目标后，对齐率和提醒会更清楚。",
       actionHref: "/settings",
       actionLabel: "去设置目标",
     });

@@ -1,11 +1,11 @@
 <view class="page dashboard-page">
   <view class="hero card">
     <view class="hero-topline">
-      <text class="eyebrow">DASHBOARD</text>
+      <text class="eyebrow">OVERVIEW</text>
       <text class="date-label">{{dashboard.todayDate || "今日"}}</text>
     </view>
-    <text class="hero-title">今天 {{dashboard.todayCompletedMetrics || 0}}/{{dashboard.totalTrackedMetrics || 3}}</text>
-    <text class="hero-subtitle">连续记录 {{dashboard.streakDays || 0}} 天</text>
+    <text class="hero-title">今天进度 {{dashboard.todayCompletedMetrics || 0}}/{{dashboard.totalTrackedMetrics || 3}}</text>
+    <text class="hero-subtitle">连续 {{dashboard.streakDays || 0}} 天</text>
     <view class="progress-track">
       <view class="progress-fill" style="width: {{completionPercent}}%;"></view>
     </view>
@@ -28,14 +28,14 @@
 
   <view class="grid">
     <view class="stat card">
-      <text class="label">记录密度</text>
+      <text class="label">记录率</text>
       <text class="metric-value">{{window.completionRate || 0}}%</text>
-      <text class="stat-note">最近 {{window.days || 7}} 天</text>
+      <text class="stat-note">近 {{window.days || 7}} 天</text>
     </view>
     <view class="stat card">
-      <text class="label">达标率</text>
+      <text class="label">目标对齐</text>
       <text class="metric-value">{{windowAttainmentRate}}%</text>
-      <text class="stat-note">目标对齐</text>
+      <text class="stat-note">已设目标</text>
     </view>
   </view>
 
@@ -46,11 +46,11 @@
     </view>
     <view class="weight-values">
       <view>
-        <text class="label">最新</text>
+        <text class="label">最近体重</text>
         <text class="weight-value">{{weightContext.latestDisplay}}</text>
       </view>
       <view>
-        <text class="label">变化</text>
+        <text class="label">变化幅度</text>
         <text class="weight-value">{{weightContext.changeDisplay}}</text>
       </view>
     </view>
@@ -64,7 +64,7 @@
   </view>
 
   <view class="card block">
-    <text class="section-title">今日三项</text>
+    <text class="section-title">今天三项</text>
     <view wx:for="{{metricRows}}" wx:key="metric" class="metric-row">
       <view class="metric-main">
         <text class="metric-name">{{item.label}}</text>
@@ -78,7 +78,7 @@
   </view>
 
   <view wx:if="{{windowMetrics.length > 0}}" class="card block">
-    <text class="section-title">最近 {{window.days || 7}} 天</text>
+    <text class="section-title">近 {{window.days || 7}} 天速览</text>
     <view wx:for="{{windowMetrics}}" wx:key="metric" class="week-row">
       <text class="week-name">{{item.label}}</text>
       <text class="week-value">{{item.latestLabel}}</text>

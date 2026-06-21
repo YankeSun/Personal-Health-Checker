@@ -376,7 +376,7 @@ export const previewDashboardOverview: DashboardOverview = {
       id: "weekly-focus-goal",
       tone: "warning",
       title: "这周先看饮水",
-      description: "最近 7 天饮水达标率最不稳定，先把这项拉回节奏。",
+      description: "最近 7 天饮水对齐率最不稳定，先把这项拉回节奏。",
       actionHref: "/experience?screen=trends&metric=water&days=7",
       actionLabel: "看 7 天",
     },
@@ -415,7 +415,7 @@ export const previewReminderFeed: ReminderFeed = {
       id: "water-attainment-pressure",
       tone: "info",
       title: "饮水最近待观察",
-      description: "最近 7 天达标率 42.9%，这条线值得先看。",
+      description: "最近 7 天对齐率 42.9%，这条线值得先看。",
       actionHref: "/experience?screen=trends&metric=water&days=7",
       actionLabel: "查看饮水趋势",
     },
@@ -534,7 +534,7 @@ function buildTrend(metricParam: TrendMetricParam, daysParam: TrendDaysParam): T
           ? {
               tone: "warning",
               title: `${metricLabels[metricParam]}最近值得多看一眼`,
-              description: `最近 ${days} 天达标率只有 ${attainmentRate}% ，可以先观察这项最近为什么更难保持。`,
+              description: `最近 ${days} 天对齐率只有 ${attainmentRate}% ，可以先观察这项最近为什么更难保持。`,
             }
           : averageDeltaDisplay
             ? {
@@ -568,8 +568,8 @@ function buildTrend(metricParam: TrendMetricParam, daysParam: TrendDaysParam): T
     contextSummary:
       metric === Metric.WEIGHT
         ? {
-            title: "这些背景经常和体重记录同天出现",
-            description: `当前窗口内有 ${Math.min(validValues.length, 5)}/${validValues.length} 天带有背景标签。它们是回看线索，不代表体重变化的直接原因。`,
+            title: "这些线索常和体重同天出现",
+            description: `这一段有 ${Math.min(validValues.length, 5)}/${validValues.length} 天带有线索。它们是线索，不是结论。`,
             taggedDays: Math.min(validValues.length, 5),
             topContextLabels: [
               { label: "清淡", count: 3 },

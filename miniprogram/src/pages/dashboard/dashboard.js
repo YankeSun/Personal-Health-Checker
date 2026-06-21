@@ -33,10 +33,10 @@ function buildFallbackInsight(dashboard) {
   return {
     id: "fallback-trends",
     tone: "success",
-      title: "今天这组已完成",
-      description: "现在可以看体重和日常线索有没有一起变化。",
+    title: "今天这组已完成",
+    description: "现在可以看体重和日常线索有没有一起变化。",
     actionHref: "/trends",
-    actionLabel: "看体重趋势",
+    actionLabel: "看体重线",
   };
 }
 
@@ -81,7 +81,7 @@ function decorateMetric(metric) {
 
   return {
     ...metric,
-    valueLabel: metric.displayValue || "未记录",
+    valueLabel: metric.displayValue || "缺口",
     detailLabel: metric.goalDeviationDescription || metric.goalDescription || "保持现在的节奏",
     statusLabel,
     statusClass,
@@ -92,9 +92,9 @@ function buildWeightContext(rawContext) {
   if (!rawContext) {
     return {
       title: "先留下体重线索",
-      description: "连续几天后，体重和日常背景会开始同屏出现。",
+      description: "连续几天后，体重和日常线索会开始同屏出现。",
       latestDisplay: "--",
-      changeDisplay: "暂无变化",
+      changeDisplay: "暂无",
       recordedDays: 0,
       topContextLabels: [],
     };
@@ -103,7 +103,7 @@ function buildWeightContext(rawContext) {
   return {
     ...rawContext,
     latestDisplay: rawContext.latestDisplay || "--",
-    changeDisplay: rawContext.changeDisplay || "暂无变化",
+    changeDisplay: rawContext.changeDisplay || "暂无",
     topContextLabels: rawContext.topContextLabels || [],
   };
 }
