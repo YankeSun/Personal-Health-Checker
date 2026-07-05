@@ -1,9 +1,13 @@
-import { getMiniProgramAlphaSnapshot } from "@/lib/services/observability-service";
+import type {
+  getMiniProgramAlphaSnapshot as getMiniProgramAlphaSnapshotType,
+} from "@/lib/services/observability-service";
 import { spawnSync } from "node:child_process";
 import { mkdirSync, writeFileSync } from "node:fs";
 import path from "node:path";
 
-type AlphaSnapshot = Awaited<ReturnType<typeof getMiniProgramAlphaSnapshot>>;
+import { loadNextLikeEnvValues } from "./env-diagnostics";
+
+type AlphaSnapshot = Awaited<ReturnType<typeof getMiniProgramAlphaSnapshotType>>;
 type DecisionReview = {
   recommendation: "needs_data" | "hold_and_improve" | "beta_candidate";
   quantitativeGates: Array<{
@@ -512,7 +516,7 @@ async function main() {
   const normalizedDays = Number.isFinite(days) ? days : 30;
   const snapshot = sample
     ? createSampleSnapshot(normalizedDays)
-    : await getMiniProgramAlphaSnapshot(normalizedDays);
+    : await getDatabaseSnapshot(normalizedDays);
   const decisionReview = sample
     ? applySampleDecisionGuard(buildDecisionReview(snapshot, resolvedEvidence))
     : buildDecisionReview(snapshot, resolvedEvidence);
@@ -536,6 +540,16 @@ async function main() {
   }
 
   console.log(output);
+}
+
+async function getDatabaseSnapshot(days: number) {
+  loadNextLikeEnvValues(["DATABASE_URL"]);
+
+  const { getMiniProgramAlphaSnapshot } = await import(
+    "@/lib/services/observability-service"
+  );
+
+  return getMiniProgramAlphaSnapshot(days);
 }
 
 main().catch((error) => {

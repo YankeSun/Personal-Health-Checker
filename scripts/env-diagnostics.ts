@@ -102,6 +102,22 @@ export function getEnvFileValue(key: string) {
   };
 }
 
+export function loadNextLikeEnvValues(keys: string[]) {
+  return keys.map((key) => {
+    const resolved = resolveNextLikeEnvValue(key);
+
+    if (resolved.value && resolved.source !== "process.env") {
+      process.env[key] = resolved.value;
+    }
+
+    return {
+      key,
+      loaded: Boolean(resolved.value),
+      source: resolved.source,
+    };
+  });
+}
+
 export function describeDatabaseUrl(databaseUrl: string | null) {
   if (!databaseUrl) {
     return {
@@ -131,4 +147,3 @@ export function describeDatabaseUrl(databaseUrl: string | null) {
     };
   }
 }
-

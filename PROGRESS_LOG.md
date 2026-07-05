@@ -242,6 +242,12 @@ npm run analytics:report -- --days=30
 
 下面这部分是按时间顺序记录的简短变更日志。
 
+## 2026-07-05
+
+- 按第一性原理重排当前主线并派出 sub-agent 并行审查：确认下一步不是继续加功能，而是清零小程序 Alpha-001 发放前 P0 blocker；Web MVP 和小程序 Alpha 壳已基本具备，真实缺口集中在合规占位、体验版 / 真机证据、10 人 Alpha 数据、竞品真机实测和 Day 10 复盘证据。
+- 修复观察报表本地运行链路：`analytics:report` 和 `analytics:miniprogram` 现在会在动态加载 Prisma 服务前按 Next-like 优先级加载 `.env.local` / `.env` 的 `DATABASE_URL`，避免 `db:doctor` 可连但报表脚本因未加载环境变量而在 `ensureDatabaseSchema` 处失败；同时补充 env diagnostics 单测。
+- 保留微信开发者工具写入的小程序编译配置 `minifyWXML`，把它纳入 Git 管理，减少体验版前 Git dirty gate 的误阻塞；当前 `alpha:readiness -- --vercel --remote` 仍因合规占位保持 RED，不能邀请外部 alpha 用户。
+
 ## 2026-06-21
 
 - 收紧小程序概览 / 趋势行动入口：把大块行动卡改成右侧小胶囊 CTA，固定高度、最小宽度和 flex 居中，解决按钮文字不居中的视觉问题；同时把动态洞察文案继续压缩为 `去记录`、`看趋势`、`先有记录`、`点还不够密` 等更短、更像产品界面的表达，并同步更新相关测试。
