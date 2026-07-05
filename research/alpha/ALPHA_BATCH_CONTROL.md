@@ -13,10 +13,10 @@
 | Batch status | internal_testing |
 | Owner | Yanke Sun |
 | Planned start date | 待 2 台真机验收通过后确定 |
-| Git commit | 102d6f4 |
+| Git commit | e63d3c1 |
 | API domain | https://health-tracker-web-umber.vercel.app |
 | Mini program AppID | wx746a5b88f991d447 |
-| Experience build version | 0.1.1 |
+| Experience build version | 0.1.2 |
 | Target users | 10 |
 | Invited users |  |
 | Active alpha users |  |
@@ -29,19 +29,19 @@ Do not invite external users until every P0 gate is green.
 | Gate | Evidence | Status | Owner | Notes |
 |---|---|---|---|---|
 | Git working tree clean | `npm run alpha:readiness -- --vercel --remote` includes `Git working tree: clean` | ready | Codex | Passed before upload |
-| Local evidence pack generated | `npm run alpha:evidence-pack -- --batch Alpha-001 --vercel --remote` | blocked / ready |  |  |
+| Local evidence pack generated | `npm run alpha:evidence-pack -- --batch Alpha-001 --vercel --remote` | ready | Codex | Generated local private preflight, phone-session templates and pack index |
 | Experience gate passed | `npm run alpha:gate:experience -- --batch Alpha-001` | ready | Codex | GREEN on 2026-07-05 |
 | Invite gate passed | `npm run alpha:invite-gate -- --batch Alpha-001` after 2 real-device sessions are filled | blocked / ready |  |  |
 | Alpha readiness summary reviewed | `npm run alpha:readiness -- --vercel --remote` output | ready | Codex | GREEN with optional email warnings only |
 | Alpha preflight report saved | `npm run alpha:preflight -- --vercel --remote --out research/alpha/preflight/Alpha-001.md` | ready | Codex | Saved as local private experience-gate preflight |
-| Phone session notes created | `npm run alpha:phone-session -- --batch Alpha-001 --tester internal-01` and `internal-02` | blocked / ready |  |  |
-| Strict launch check passed | `npm run launch:check:strict` | blocked / ready |  |  |
+| Phone session notes created | `npm run alpha:phone-session -- --batch Alpha-001 --tester internal-01` and `internal-02` | ready | Codex | Templates generated; still need real-device results and evidence files |
+| Strict launch check passed | `npm run launch:check:strict` | ready | Codex | Covered by strict alpha experience gate |
 | Remote experience check passed | `npm run miniprogram:check:experience` | ready | Codex | Remote API, database and WeChat backend credentials passed |
 | Real AppID configured | `miniprogram/project.config.json` is not `touristappid` | ready | Codex | Real AppID present |
 | Vercel production env configured | Vercel env screenshot or CLI confirmation | ready | Codex | Required env names verified by readiness |
 | Request domain configured | WeChat public platform screenshot | ready | User / Codex | User confirmed; remote experience request passed |
 | Privacy and legal entries configured | WeChat privacy setting screenshot | ready | Codex / User | Repository legal copy resolved; WeChat backend still should be visually checked |
-| 2 real-device sessions passed | `PHONE_TEST_SESSION_TEMPLATE.md` copies with evidence | blocked / ready |  |  |
+| 2 real-device sessions passed | `PHONE_TEST_SESSION_TEMPLATE.md` copies with evidence | blocked | User / Codex | Need one iPhone and one Android real-device run with screenshots or recordings |
 
 ## 3. Daily Operating Cadence
 
