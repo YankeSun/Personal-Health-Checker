@@ -91,8 +91,14 @@ for (const snippet of ["needs_users", "First Weight Record Time", "Record Days I
   check(`alpha evidence template includes ${snippet}`, alphaEvidence.includes(snippet));
 }
 
+check(
+  "alpha batch control includes a valid batch lifecycle status",
+  ["needs_config", "internal_testing", "recruiting", "running", "review", "closed"].some((status) =>
+    alphaBatchControl.includes(status),
+  ),
+);
+
 for (const snippet of [
-  "needs_config",
   "Alpha-001",
   "Release Gates",
   "alpha:evidence-pack",

@@ -248,6 +248,7 @@ npm run analytics:report -- --days=30
 - 修复观察报表本地运行链路：`analytics:report` 和 `analytics:miniprogram` 现在会在动态加载 Prisma 服务前按 Next-like 优先级加载 `.env.local` / `.env` 的 `DATABASE_URL`，避免 `db:doctor` 可连但报表脚本因未加载环境变量而在 `ensureDatabaseSchema` 处失败；同时补充 env diagnostics 单测。
 - 保留微信开发者工具写入的小程序编译配置 `minifyWXML`，把它纳入 Git 管理，减少体验版前 Git dirty gate 的误阻塞；当前 `alpha:readiness -- --vercel --remote` 仍因合规占位保持 RED，不能邀请外部 alpha 用户。
 - 收口个人开发者 Alpha 合规文案：隐私保护指引、用户协议、健康免责声明和小程序内 legal 页面已写明个人开发者主体、联系邮箱、客服方式、生效日期、当前免费内测口径、未来收费提示、适用法律和争议解决方式；`alpha:readiness -- --vercel --remote` 的合规文档 blocker 已清零，剩余为邮件可选 warning 与真实发放证据。
+- 上传微信体验版 0.1.1：`alpha:gate:experience -- --batch Alpha-001` 已 GREEN，微信开发者工具 CLI 成功上传 85.1KB 体验版包；`ALPHA_BATCH_CONTROL.md` 已记录本批次 API 域名、真实 AppID、上传版本和当前 internal_testing 状态，下一步进入 2 台真机验收。
 
 ## 2026-06-21
 
