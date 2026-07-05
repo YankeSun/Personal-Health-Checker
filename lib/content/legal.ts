@@ -25,8 +25,16 @@ export const legalDocs: LegalDoc[] = [
     slug: "privacy",
     title: "隐私保护指引",
     description: "说明 Personal Health Checker 如何处理账号资料、健康记录和使用数据。",
-    updatedAt: "2026-06-12",
+    updatedAt: "2026-07-05",
     sections: [
+      {
+        title: "运营者与联系",
+        bullets: [
+          "运营主体 / 个人信息处理者：个人开发者 Yanke Sun（以微信公众平台登记主体为准）。",
+          "联系邮箱：yankesun14@gmail.com。",
+          "客服方式：通过联系邮箱提交问题，也可以通过小程序内“我的 - Alpha 反馈”提交使用问题。",
+        ],
+      },
       {
         title: "我们会收集哪些信息",
         bullets: [
@@ -46,6 +54,12 @@ export const legalDocs: LegalDoc[] = [
         ],
       },
       {
+        title: "健康信息边界",
+        paragraphs: [
+          "睡眠、体重、饮水和日常背景标签可能涉及健康相关个人信息。我们仅在你主动填写并同意本指引后处理这些信息，目的限于个人记录、趋势回看、目标反馈和产品内测分析。",
+        ],
+      },
+      {
         title: "数据控制",
         bullets: [
           "你可以在账号数据入口导出个人资料、目标、记录、相关上下文数据和与账号关联的产品事件。",
@@ -59,13 +73,17 @@ export const legalDocs: LegalDoc[] = [
           "我们使用服务端会话、密码加密和访问校验保护账号与记录数据。健康记录属于敏感个人信息，请仅在你信任的设备和网络环境中使用本服务。",
         ],
       },
+      {
+        title: "生效日期",
+        paragraphs: ["本指引自 2026 年 7 月 5 日起生效。"],
+      },
     ],
   },
   {
     slug: "terms",
     title: "用户协议",
     description: "说明 Personal Health Checker 的使用边界、账号规则和数据责任。",
-    updatedAt: "2026-06-12",
+    updatedAt: "2026-07-05",
     sections: [
       {
         title: "服务定位",
@@ -96,13 +114,28 @@ export const legalDocs: LegalDoc[] = [
           "我们会围绕持续记录、数据可信度和回看价值持续改进产品。新增功能可能会先以体验入口或等待名单形式出现，并在成熟后进入稳定功能。",
         ],
       },
+      {
+        title: "内测与收费",
+        paragraphs: [
+          "当前 Alpha / 内测版本免费使用，不提供付费服务，不创建订单，不收取费用。“30 天体重观察报告”等入口仅用于收集内测意向，不代表已经开通付费服务。",
+          "如果未来提供收费功能，我们会在用户购买前明确展示服务内容、价格、支付方式、退款规则，并在用户确认后再开通。",
+        ],
+      },
+      {
+        title: "联系与争议解决",
+        bullets: [
+          "运营主体 / 个人信息处理者：个人开发者 Yanke Sun（以微信公众平台登记主体为准）。",
+          "联系邮箱 / 客服方式：yankesun14@gmail.com；也可以通过小程序内“我的 - Alpha 反馈”提交使用问题。",
+          "本协议适用中华人民共和国大陆地区法律。因本产品或本协议产生的争议，双方应先友好协商解决；协商不成的，任何一方可向有管辖权的人民法院提起诉讼。",
+        ],
+      },
     ],
   },
   {
     slug: "health-disclaimer",
     title: "健康免责声明",
     description: "说明趋势、目标和提醒的非医疗属性。",
-    updatedAt: "2026-06-12",
+    updatedAt: "2026-07-05",
     sections: [
       {
         title: "记录不是诊断",

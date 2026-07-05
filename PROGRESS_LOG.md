@@ -247,6 +247,7 @@ npm run analytics:report -- --days=30
 - 按第一性原理重排当前主线并派出 sub-agent 并行审查：确认下一步不是继续加功能，而是清零小程序 Alpha-001 发放前 P0 blocker；Web MVP 和小程序 Alpha 壳已基本具备，真实缺口集中在合规占位、体验版 / 真机证据、10 人 Alpha 数据、竞品真机实测和 Day 10 复盘证据。
 - 修复观察报表本地运行链路：`analytics:report` 和 `analytics:miniprogram` 现在会在动态加载 Prisma 服务前按 Next-like 优先级加载 `.env.local` / `.env` 的 `DATABASE_URL`，避免 `db:doctor` 可连但报表脚本因未加载环境变量而在 `ensureDatabaseSchema` 处失败；同时补充 env diagnostics 单测。
 - 保留微信开发者工具写入的小程序编译配置 `minifyWXML`，把它纳入 Git 管理，减少体验版前 Git dirty gate 的误阻塞；当前 `alpha:readiness -- --vercel --remote` 仍因合规占位保持 RED，不能邀请外部 alpha 用户。
+- 收口个人开发者 Alpha 合规文案：隐私保护指引、用户协议、健康免责声明和小程序内 legal 页面已写明个人开发者主体、联系邮箱、客服方式、生效日期、当前免费内测口径、未来收费提示、适用法律和争议解决方式；`alpha:readiness -- --vercel --remote` 的合规文档 blocker 已清零，剩余为邮件可选 warning 与真实发放证据。
 
 ## 2026-06-21
 
